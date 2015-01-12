@@ -2,8 +2,12 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 
-	$pdo = new PDO('pgsql:host=localhost;dbname=mytest;user=ere;password=ere');
-	$stmt = $pdo->prepare("SELECT * FROM mytest;");
+	require_once "config.inc.php";
+	require_once "inc.db.php";
+
+	$pdo = new \sys\PDO();
+
+	$stmt = $pdo->prepare('SELECT * FROM "user";');
 	$stmt->execute();
 	$data = $stmt->fetchAll();
 ?>
