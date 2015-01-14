@@ -1,5 +1,6 @@
 <?php
 	namespace sys;
+
 	class PDO extends \PDO {
 		function __construct($dsn = null){
 			global $conf;
@@ -11,32 +12,9 @@
 			}
 
 			parent::__construct($dsn);
+
+			//$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('sys\PDOStatment', array($this)));
+			$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
-	}
-
-	function db_connect(){
-		global $conf;
-		$dbconf = $conf['db'];
-
-		$mysqli = new mysqli($dbconf['host'], $dbconf['user'], $dbconf['password'], $dbconf['dbname']);
-
-		if(!empty($dbconf['encoding'])) $mysqli->set_charset($dbconf['encoding']);
-		/* The below command will automatically start transaction
-		$mysqli->autocommit(false);
-		*/
-
-		return $mysqli;
-	}
-
-	function db_close($mysqli, $isCommit = null){
-		if($isCommit !== null){
-			if($isCommit){
-				$mysqli->commit();
-			} else{
-				$mysqli->rollback();
-			}
-		}
-
-		$mysqli->close();
 	}
 ?>

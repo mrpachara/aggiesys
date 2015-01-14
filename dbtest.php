@@ -1,15 +1,18 @@
 <?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
-
 	require_once "config.inc.php";
 	require_once "inc.db.php";
 
 	$pdo = new \sys\PDO();
 
-	$stmt = $pdo->prepare('SELECT * FROM "user";');
-	$stmt->execute();
-	$data = $stmt->fetchAll();
+	try{
+		$stmt = $pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
+		$stmt->execute(array(
+			':id' => 1
+		));
+		$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	} catch(PDOException $excp){
+		$data = $excp->getMessage();
+	}
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="AutosMart" data-ng-init="contentPath='content/'">
