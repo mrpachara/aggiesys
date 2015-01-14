@@ -16,9 +16,7 @@
 	header( 'Cache-Control: post-check=0, pre-check=0', false );
 	header( 'Pragma: no-cache' );
 
-	if(!empty($conf['session']['maxlifetime'])) ini_set('session.gc_maxlifetime', $conf['session']['maxlifetime']);
-	session_name($conf['session']['name']);
-	session_start();
+	$_session = new \sys\Sessions();
 
 	if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 		function magicQuotes_awStripslashes(&$value, $key) {$value = stripslashes($value);}

@@ -12,7 +12,9 @@
 	$conf['session']['name'] = 'AGGIESYSSESSION';
 	$conf['session']['lsessionNS'] = 'LSESSION';
 	$conf['session']['gsessionNS'] = 'GSESSION';
-	$conf['session']['maxlifetime'] = 10800;
+	$conf['session']['gc_probability'] = 1;
+	$conf['session']['gc_divisor'] = 100;
+	$conf['session']['gc_maxlifetime'] = 10800;
 
 	$conf['db'] = array();
 	$conf['db']['host'] = 'localhost';

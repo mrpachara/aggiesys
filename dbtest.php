@@ -1,12 +1,21 @@
 <?php
+	$tstmp_start = time();
+	echo "<pre>{$tstmp_start}</pre>";
 	require_once "config.inc.php";
 	require_once "inc.db.php";
 	require_once "inc.sessions.php";
 
+	echo "<pre>".time()."</pre>";
 	$_session = new \sys\Sessions();
+	if(empty($_SESSION['timestamp'])){
+		$_SESSION['test'] = 'test';
+	} else{
+		unset($_SESSION['test']);
+	}
 	$_SESSION['timestamp'] = time();
 	$pdo = new \sys\PDO();
 
+	echo "<pre>".time()."</pre>";
 	try{
 		$stmt = $pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
 		$stmt->execute(array(
@@ -29,5 +38,7 @@
 	<body>
 		<pre><?php var_dump($data); ?></pre>
 		<pre><?php var_dump($_SESSION); ?></pre>
+		<pre>User: <?php var_dump($_session->getUser()); ?></pre>
+		<pre>Time: <?= (time() - $tstmp_start) ?></pre>
 	</body>
 </html>
