@@ -14,7 +14,8 @@
 			parent::__construct($dsn);
 
 			//$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('sys\PDOStatment', array($this)));
-			$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			//$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
 		}
 	}
 ?>
