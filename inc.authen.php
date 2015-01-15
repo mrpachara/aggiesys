@@ -2,10 +2,32 @@
 	namespace sys;
 
 	class Authentication(){
-		private $pdo
+		private $pdo;
+		private $session;
 
-		function __construct{
+		function __construct($session){
 			$this->pdo = new PDO();
+
+			$this->session = $session;
+		}
+
+		public function login($username, $password){
+			try{
+				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = :password));');
+				$stmt->execute(array(
+					 ':username' => $username
+					,':password' => $password
+				));
+				$user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+				if(!empty($user['id'])){
+					$this->session->setUser($user['id']);
+				}
+
+				return (!empty($session))? $session['data'] : null;
+			} catch(\PDOException $excp){
+				$this->excp = $excp;
+			}
 		}
 	}
 

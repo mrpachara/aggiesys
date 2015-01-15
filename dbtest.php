@@ -8,7 +8,8 @@
 	echo "<pre>".time()."</pre>";
 	$_session = new \sys\Sessions();
 	if(empty($_SESSION['timestamp'])){
-		$_SESSION['test'] = 'test';
+		$_SESSION
+		['test'] = 'test';
 	} else{
 		unset($_SESSION['test']);
 	}
@@ -27,6 +28,8 @@
 	}
 
 	if(!empty($_GET['sleep'])) sleep($_GET['sleep']);
+
+	$_session->login('root', '1234');
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="AutosMart" data-ng-init="contentPath='content/'">

@@ -28,8 +28,8 @@
 
 	$conf['authoz'] = array();
 	$conf['authoz']['default'] = 'ALL';
-	$conf['authoz']['superusername'] = 'su';
-	$conf['authoz']['superuserrole'] = 'SUPERUSER';
+	$conf['authoz']['superusername'] = 'root';
+	$conf['authoz']['superuserrole'] = 'ROOT';
 	$conf['authoz']['forbidden_code'] = 403;
 	$conf['authoz']['forbidden_message'] = 'Forbidden';
 

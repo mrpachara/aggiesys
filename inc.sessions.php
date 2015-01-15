@@ -33,6 +33,46 @@
 			}
 		}
 
+		private function setUser($id){
+			global $conf;
+
+			$conf_authoz = $conf['authoz'];
+
+			if(empty($this->pdo) || !empty($this->excp) || empty($id)) return false;
+
+			try{
+				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
+				$stmt->execute(array(
+					 ':id' => $id
+				));
+				$user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+				if(!empty($user['id'])){
+					unset($user['password']);
+					$roles = (array)$conf_authoz['default'];
+
+					$stmt = $this->pdo->prepare('SELECT * FROM "userrole" WHERE "id_user" = :id_user;');
+					$stmt->execute(array(
+						 ':id_user' => $user['id']
+					));
+
+					while($role = $stmt->fetch(\PDO::FETCH_ASSOC)){
+						$roles[] = $role['role'];
+					}
+
+					$user['roles'] = array_unique($roles);
+
+					$this->user = $user;
+				}
+
+				return !empty($this->user);
+			} catch(\PDOException $excp){
+				$this->excp = $excp;
+			}
+
+			return false;
+		}
+
 		// return bool
 		public function open($save_path, $name){
 			//echo "<pre>session->open:".time()."</pre>";
@@ -59,12 +99,8 @@
 				));
 				$session = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-				if(!empty($session)){
-					$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
-					$stmt->execute(array(
-						 ':id' => $session['id_user']
-					));
-					$this->user = $stmt->fetch(\PDO::FETCH_ASSOC);
+				if(!empty($session['id_user'])){
+					$this->setUser($session['id_user']);
 				}
 
 				return (!empty($session))? $session['data'] : null;
@@ -86,7 +122,7 @@
 					 ':id' => $session_id
 					,':maxlifetime' => $this->gc_maxlifetime.' second'
 					,':data' => $session_data
-					,':id_user' => (!empty($this->user['id_user']))? $this->user['id_user'] : null
+					,':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
 				));
 				if($stmt->rowCount() == 0){
 					$stmt = $this->pdo->prepare('INSERT INTO "sessions" ("id", "expires", "data", "id_user") VALUES (:id, (CURRENT_TIMESTAMP + :maxlifetime::interval), :data, :id_user);');
@@ -94,7 +130,7 @@
 						 ':id' => $session_id
 						,':maxlifetime' => $this->gc_maxlifetime.' second'
 						,':data' => $session_data
-						,':id_user' => (!empty($this->user['id_user']))? $this->user['id_user'] : null
+						,':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
 					));
 				}
 
@@ -108,7 +144,7 @@
 
 		// return bool
 		public function destroy($session_id){
-			//echo "<pre>session->destroy:".time()."</pre>";
+			echo "<pre>session->destroy({$session_id}):".time()."</pre>";
 			if(empty($this->pdo) || !empty($this->excp)) return false;
 
 			try{
@@ -163,8 +199,22 @@
 			return $this->user;
 		}
 
-		public function setUser($user = null){
-			$this->user = $user;
+		public function login($username, $password){
+			if(empty($this->pdo) || !empty($this->excp)) return false;
+
+			try{
+				$stmt = $this->pdo->prepare('SELECT "id" FROM "user" WHERE (("username" = :username) AND ("password" = crypt(:password, "password")));');
+				$stmt->execute(array(
+					 ':username' => $username
+					,':password' => $password
+				));
+
+				return $this->setUser($stmt->fetchColumn());
+			} catch(\PDOException $excp){
+				$this->excp = $excp;
+			}
+
+			return false;
 		}
 	}
 ?>
