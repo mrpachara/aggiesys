@@ -16,7 +16,7 @@
 
 			$conf_session = $conf['session'];
 
-			echo "<pre>session->__construct:".time()."</pre>";
+			//echo "<pre>session->__construct:".time()."</pre>";
  			$this->gc_maxlifetime = ini_get('session.gc_maxlifetime');
 			try{
 				$this->pdo = new PDO();
@@ -36,7 +36,7 @@
 
 		// return bool
 		public function open($save_path, $name){
-			echo "<pre>session->open:".time()."</pre>";
+			//echo "<pre>session->open:".time()."</pre>";
 			if(empty($this->pdo)) return false;
 
 			try{
@@ -50,7 +50,7 @@
 
 		// return string
 		public function read($session_id){
-			echo "<pre>session->read:".time()."</pre>";
+			//echo "<pre>session->read:".time()."</pre>";
 			if(empty($this->pdo) || !empty($this->excp)) return false;
 
 			try{
@@ -78,7 +78,7 @@
 
 		// return bool
 		public function write($session_id , $session_data){
-			echo "<pre>session->write:".time()."</pre>";
+			//echo "<pre>session->write:".time()."</pre>";
 			if(empty($this->pdo) || !empty($this->excp)) return false;
 
 			try{
@@ -109,7 +109,7 @@
 
 		// return bool
 		public function destroy($session_id){
-			echo "<pre>session->destroy:".time()."</pre>";
+			//echo "<pre>session->destroy:".time()."</pre>";
 			if(empty($this->pdo) || !empty($this->excp)) return false;
 
 			try{
@@ -128,7 +128,7 @@
 
 		// return bool
 		public function gc($maxlifetime){
-			echo "<pre>session->gc:".time()."</pre>";
+			//echo "<pre>session->gc:".time()."</pre>";
 			if(empty($this->pdo) || !empty($this->excp)) return false;
 
 			try{
@@ -145,7 +145,7 @@
 
 		// return bool
 		public function close(){
-			echo "<pre>session->close:".time()."</pre>";
+			//echo "<pre>session->close:".time()."</pre>";
 			if(empty($this->pdo)) return false;
 
 			if(empty($this->excp)){
