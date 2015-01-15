@@ -34,9 +34,9 @@
 	$conf['authoz']['forbidden_message'] = 'Forbidden';
 
 	$conf['page'] = array();
-	$conf['page']['login'] = 'login.php';
-	$conf['page']['logout'] = 'logout.php';
-	$conf['page']['main'] = 'main.php';
+	$conf['page']['login'] = BASEPATH.'login.php';
+	$conf['page']['logout'] = BASEPATH.'logout.php';
+	$conf['page']['main'] = BASEPATH.'main.php';
 
 	$conf['pagestage'] = array();
 	$conf['pagestage']['maxpageid'] = 20;

@@ -2,9 +2,10 @@
 	require_once "config.inc.php";
 
 	require_once "inc.pdo.php";
+	require_once "inc.user.php";
 	require_once "inc.sessions.php";
 	//require_once "inc.authen.php";
-	require_once "inc.authoz.php";
+	//require_once "inc.authoz.php";
 	require_once "inc.pagestage.php";
 
 	require_once "inc.thdate.php";
@@ -17,7 +18,7 @@
 	header( 'Cache-Control: post-check=0, pre-check=0', false );
 	header( 'Pragma: no-cache' );
 
-	$_session = new \sys\Sessions();
+	$_session = new \sys\Sessions(new \sys\UserService());
 
 	if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 		function magicQuotes_awStripslashes(&$value, $key) {$value = stripslashes($value);}

@@ -3,10 +3,10 @@
 	echo "<pre>{$tstmp_start}</pre>";
 	require_once "config.inc.php";
 	require_once "inc.pdo.php";
+	require_once "inc.user.php";
 	require_once "inc.sessions.php";
 
-	echo "<pre>".time()."</pre>";
-	$_session = new \sys\Sessions();
+	$_session = new \sys\Sessions(new \sys\UserService());
 	if(empty($_SESSION['timestamp'])){
 		$_SESSION
 		['test'] = 'test';
@@ -16,7 +16,6 @@
 	$_SESSION['timestamp'] = time();
 	$pdo = new \sys\PDO();
 
-	echo "<pre>".time()."</pre>";
 	try{
 		$stmt = $pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
 		$stmt->execute(array(
@@ -29,7 +28,11 @@
 
 	if(!empty($_GET['sleep'])) sleep($_GET['sleep']);
 
-	$_session->login('root', '1234');
+	$_session->login('admin', '1234');
+
+	$arraytest = (array)null + array('xx' => 2);
+
+	$_session->authozPage("DDDD");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="AutosMart" data-ng-init="contentPath='content/'">
@@ -40,6 +43,7 @@
 	</head>
 	<body>
 		<pre><?php var_dump($data); ?></pre>
+		<pre><?php var_dump($arraytest); ?></pre>
 		<pre><?php var_dump($_SESSION); ?></pre>
 		<pre>User: <?php var_dump($_session->getUser()); ?></pre>
 		<pre>Time: <?= (time() - $tstmp_start) ?></pre>

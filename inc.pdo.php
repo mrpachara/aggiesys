@@ -12,12 +12,11 @@
 			}
 
 			//echo "<pre>PDO:".time().":".date("Y-m-d H:i:s")."</pre>";
-			parent::__construct($dsn, $user, $password, $option);
+			parent::__construct($dsn, $user, $password, (array)$option + array(
+				 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION)
+				// \PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING
+			);
 			//echo "<pre>PDO:".time().":".date("Y-m-d H:i:s")."</pre>";
-
-			//$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('sys\PDOStatment', array($this)));
-			$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			//$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
 		}
 	}
 ?>

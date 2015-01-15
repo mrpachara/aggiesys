@@ -3,22 +3,22 @@
 		global $conf;
 		$sessionconf = $conf['session'];
 		$authozconf = $conf['authoz'];
-		
+
 		$roles = (array)$roles;
 		if(!empty($authozconf['superuserrole'])) $roles = array_merge($roles, (array)$authozconf['superuserrole']);
-		
+
 		$tmpintersect = null;
 		$user = authen_getUser();
 		if(!empty($user)) $tmpintersect = array_intersect($roles,(array)$user['roles']);
-		
+
 		return (!empty($tmpintersect));
 	}
-	
+
 	function authoz_grantpage($roles, &$errors){
 		global $conf;
 		$authozconf = $conf['authoz'];
 		$pageconf = $conf['page'];
-		
+
 		if(!authoz_grant($roles)){
 			$errors = (array)$errors;
 			$errors[] = "Access Denie!!!";
