@@ -148,10 +148,10 @@
 			if(empty($this->pdo)) return false;
 
 			if(empty($this->excp)){
-				echo "<pre>session->close(commit)</pre>";
+				//echo "<pre>session->close(commit)</pre>";
 				return $this->pdo->commit();
 			} else{
-				echo "<pre>session->close(rollBack)</pre>";
+				//echo "<pre>session->close(rollBack)</pre>";
 				echo "<pre>".($this->excp->getMessage())."</pre>";
 				return $this->pdo->rollBack();
 			}

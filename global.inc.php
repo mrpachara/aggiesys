@@ -1,7 +1,7 @@
 <?php
 	require_once "config.inc.php";
 
-	require_once "inc.db.php";
+	require_once "inc.pdo.php";
 	require_once "inc.authen.php";
 	require_once "inc.authoz.php";
 	require_once "inc.pagestage.php";
