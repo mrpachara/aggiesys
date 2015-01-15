@@ -20,7 +20,6 @@
  			$this->gc_maxlifetime = ini_get('session.gc_maxlifetime');
 			try{
 				$this->pdo = new PDO();
-				//echo "<pre>".time()."</pre>";
 
 				// Set handler to overide SESSION
 				session_set_save_handler($this, true);

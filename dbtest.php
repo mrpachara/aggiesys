@@ -2,7 +2,7 @@
 	$tstmp_start = time();
 	echo "<pre>{$tstmp_start}</pre>";
 	require_once "config.inc.php";
-	require_once "inc.db.php";
+	require_once "inc.pdo.php";
 	require_once "inc.sessions.php";
 
 	echo "<pre>".time()."</pre>";
