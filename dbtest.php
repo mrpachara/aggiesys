@@ -32,7 +32,6 @@
 
 	$arraytest = (array)null + array('xx' => 2);
 
-	$_session->authozPage("DDDD");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="AutosMart" data-ng-init="contentPath='content/'">
@@ -42,7 +41,9 @@
 		<title>DB Test</title>
 	</head>
 	<body>
+		<pre><?php var_dump(get_current_user()); ?></pre>
 		<pre><?php var_dump($data); ?></pre>
+		<pre><?php var_dump($conf); ?></pre>
 		<pre><?php var_dump($arraytest); ?></pre>
 		<pre><?php var_dump($_SESSION); ?></pre>
 		<pre>User: <?php var_dump($_session->getUser()); ?></pre>
