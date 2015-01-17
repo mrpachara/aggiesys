@@ -16,7 +16,7 @@
 			if(empty($user)) return $use;
 
 			unset($user['password']);
-			$roles = (array)$conf_authoz['default'];
+			$roles = (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array();
 
 			if(!empty($user['id'])){
 				$stmt = $this->pdo->prepare('SELECT * FROM "userrole" WHERE "id_user" = :id_user;');

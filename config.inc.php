@@ -6,12 +6,14 @@
 
 	$conf = array();
 
+	$conf['app'] = array();
+	$conf['app']['name'] = 'AggieSys';
+
 	$conf['debug'] = 1;
 
 	$conf['session'] = array();
 	$conf['session']['name'] = 'AGGIESYSSESSION';
-	$conf['session']['lsessionNS'] = 'LSESSION';
-	$conf['session']['gsessionNS'] = 'GSESSION';
+	$conf['session']['gsessionNS'] = '__GSESSION__';
 	$conf['session']['gc_probability'] = 1;
 	$conf['session']['gc_divisor'] = 100;
 	$conf['session']['gc_maxlifetime'] = 10800;

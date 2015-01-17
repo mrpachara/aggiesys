@@ -1,12 +1,10 @@
 <?php
 	$tstmp_start = time();
-	echo "<pre>{$tstmp_start}</pre>";
-	require_once "config.inc.php";
-	require_once "inc.pdo.php";
-	require_once "inc.user.php";
-	require_once "inc.sessions.php";
 
-	$_session = new \sys\Sessions(new \sys\UserService());
+	require_once "global.inc.php";
+
+	$_session->authozPage();
+
 	if(empty($_SESSION['timestamp'])){
 		$_SESSION
 		['test'] = 'test';
@@ -19,7 +17,7 @@
 	try{
 		$stmt = $pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
 		$stmt->execute(array(
-			':id' => 1
+			':id' => $_session->getUser()['id']
 		));
 		$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	} catch(PDOException $excp){
@@ -27,10 +25,6 @@
 	}
 
 	if(!empty($_GET['sleep'])) sleep($_GET['sleep']);
-
-	$_session->login('admin', '1234');
-
-	$arraytest = (array)null + array('xx' => 2);
 
 ?>
 <!DOCTYPE html>
@@ -41,12 +35,23 @@
 		<title>DB Test</title>
 	</head>
 	<body>
-		<pre><?php var_dump(get_current_user()); ?></pre>
-		<pre><?php var_dump($data); ?></pre>
-		<pre><?php var_dump($conf); ?></pre>
-		<pre><?php var_dump($arraytest); ?></pre>
-		<pre><?php var_dump($_SESSION); ?></pre>
-		<pre>User: <?php var_dump($_session->getUser()); ?></pre>
-		<pre>Time: <?= (time() - $tstmp_start) ?></pre>
+		<pre>Start Timestamp: <?php print_r($tstmp_start); ?></pre>
+		<a href="_session.php">Session</a>
+		<a href="logout.php">Logout</a>
+		<hr />
+
+		<h4>Data:</h4>
+		<pre><?php print_r($data); ?></pre>
+		<hr />
+
+		<h4>Config:</h4>
+		<pre><?php print_r($conf); ?></pre>
+		<hr />
+
+		<h4>User:</h4>
+		<pre><?php print_r($_session->getUser()); ?></pre>
+		<hr />
+
+		<pre>Using Time: <?= (time() - $tstmp_start) ?></pre>
 	</body>
 </html>

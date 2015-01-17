@@ -11,6 +11,27 @@
 		private $excp = null;
 		private $user = null;
 
+		public static function forbidden_html($code, $message){
+			global $conf;
+
+			$conf_page = $conf['page'];
+
+			header("Content-Type: text/html; charset=utf-8");
+
+			return $message."<br /><a href=\"{$conf_page['login']}\">Longin or Switch user</a>";
+		}
+
+		public static function forbidden_json($code, $message){
+			header("Content-Type: application/json; charset=utf-8");
+
+			return json_encode(array(
+				 'error' => array(
+					 'code' => $code
+					,'message' => $message
+				)
+			));
+		}
+
 		function __construct($userService){
 			global $conf;
 
@@ -166,7 +187,9 @@
 
 			$conf_authoz = $conf['authoz'];
 
+			if(($roles === null) && !empty($conf_authoz['default'])) $roles = (array)$conf_authoz['default'];
 			$roles = (array)$roles;
+
 			if(!empty($conf_authoz['superuserrole'])) $roles = array_merge($roles, (array)$conf_authoz['superuserrole']);
 
 			$tmpintersect = null;
@@ -175,19 +198,15 @@
 			return !empty($tmpintersect);
 		}
 
-		function authozPage($roles){
+		function authozPage($roles = null, $message_func = null){
 			global $conf;
 
 			$conf_authoz = $conf['authoz'];
 			$conf_page = $conf['page'];
 
 			if(!$this->authoz($roles)){
-				//$errors = (array)$errors;
-				//$errors[] = "Access Denie!!!";
 				header("HTTP/1.1 {$conf_authoz['forbidden_code']} {$conf_authoz['forbidden_message']}");
-				//header("Location: {$pageconf['login']}");
-				exit($conf_authoz['forbidden_message']."<br /><a href=\"{$conf_page['login']}\">longin or switch user</a>");
-				//exit($authozconf['forbidden_message']);
+				exit(call_user_func(($message_func === null)? 'static::forbidden_html' : $message_func, $conf_authoz['forbidden_code'], $conf_authoz['forbidden_message']));
 			}
 		}
 	}
