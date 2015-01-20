@@ -6,6 +6,10 @@
 		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote(BASEPATH)).'/', '', $file);
 	}
 
+	function reflocation($absoulteLocalPath){
+		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote(LOCALPATH)).'/', BASEPATH, $absoulteLocalPath);
+	}
+
 	function basepath(){
 		$fdir = preg_replace('/\\\\/', '/', __DIR__);
 		$fdir = preg_replace('/\/$/', '', $fdir);
@@ -25,6 +29,7 @@
 		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote($rdir)).'/', $root_prefix, $fdir);
 	}
 
+	define("LOCALPATH", preg_replace('/\\\\/', '/', __DIR__).'/');
 	define("BASEPATH", basepath());
 	define("APPPATH", BASEPATH.explode('/', substr($_SERVER['REQUEST_URI'], strlen(BASEPATH)))[0].'/');
 ?>

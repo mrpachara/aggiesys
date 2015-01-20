@@ -41,6 +41,13 @@
 		<a href="login/logout">Logout</a>
 		<hr />
 
+		<h4>PATH:</h4>
+		<pre><?php echo LOCALPATH; ?></pre>
+		<pre><?php echo BASEPATH; ?></pre>
+		<pre><?php echo reflocation(__DIR__); ?></pre>
+		<pre><?php echo localpath(__FILE__); ?></pre>
+		<hr />
+
 		<h4>Data:</h4>
 		<pre><?php print_r($data); ?></pre>
 		<hr />

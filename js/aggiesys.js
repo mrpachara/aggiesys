@@ -44,6 +44,14 @@ window.app = aggiesys;
 	});
 
 	aggiesys.controller('LoginController', function($scope, $http, $mdToast, $location){
+		$http.get(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-action.svg')
+			.success(function(xml){
+				console.log(xml);
+			})
+			.error(function(data, status, headers, config){
+				console.log(status, data);
+			})
+		;
 		$scope.data = {
 			 'username': ''
 			,'password': ''
@@ -86,4 +94,17 @@ window.app = aggiesys;
 			;
 		};
 	});
+
+
+	/*angular.injector().invoke(function($http){
+		var $http = angular.injector().get('$http');
+		$http.get(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-action.svg')
+			.success(function(xml){
+				console.log(xml);
+			})
+			.error(function(data, status, headers, config){
+				console.log(status, data);
+			})
+		;
+	});*/
 })(this, this.document, this.jQuery, this.angular);
