@@ -26,4 +26,5 @@
 	}
 
 	define("BASEPATH", basepath());
+	define("APPPATH", BASEPATH.explode('/', substr($_SERVER['REQUEST_URI'], strlen(BASEPATH)))[0].'/');
 ?>

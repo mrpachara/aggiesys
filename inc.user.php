@@ -13,7 +13,7 @@
 
 			$conf_authoz = $conf['authoz'];
 
-			if(empty($user)) return $use;
+			if(empty($user)) return $user;
 
 			unset($user['password']);
 			$roles = (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array();

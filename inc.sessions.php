@@ -158,16 +158,18 @@
 		// return bool
 		public function close(){
 			//echo "<pre>session->close:".time()."</pre>";
+			$return = null;
 			if(empty($this->excp)){
 				//echo "<pre>session->close(commit)</pre>";
-				return $this->pdo->commit();
+				$return = $this->pdo->commit();
 			} else{
 				//echo "<pre>session->close(rollBack)</pre>";
 				//echo "<pre>".($this->excp->getMessage())."</pre>";
-				return $this->pdo->rollBack();
+				$return = $this->pdo->rollBack();
 			}
+			$this->pdo = null;
 
-			return false;
+			return $return;
 		}
 
 		public function getUser(){
