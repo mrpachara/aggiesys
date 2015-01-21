@@ -53,9 +53,22 @@ ng-view,
 [ng-view] {
 	padding: 1em;
 }
+
+ic-svg,
+[ic-svg] {
+	width: 24px;
+	height: 24px;
+}
+
+ic-svg>svg,
+[ic-svg]>svg {
+	width: 100%;
+	height: 100%;
+}
+
 		</style>
-	</head>
 	<body layout="row" ng-controller="LayoutController">
+		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 		<!-- md-whiteframe-z2 -->
 		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-md')">
 			<md-toolbar>
@@ -78,8 +91,8 @@ ng-view,
 			<!-- md-scroll-shrink -->
 			<md-toolbar>
 				<header id="ly-header" layout="row">
-					<div class="md-toolbar-tools">
-						<button hide-gt-md ng-click="openSidenav()">X</button>
+					<div class="md-toolbar-tools" hide-gt-md>
+						<ic-svg ic-href="#ic_menu_24px" ng-click="openSidenav()"></ic-svg>
 					</div>
 					<h2 class="md-toolbar-tools">
 						<span>xxx</span>

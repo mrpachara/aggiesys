@@ -1,17 +1,17 @@
-var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate']);
+var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg']);
 window.app = aggiesys;
 
 (function(window, document, $, angular){
 	'use strict';
 
-	aggiesys.config(function($routeProvider, $locationProvider){
+	aggiesys.config(function($routeProvider, $locationProvider, $icSvgProvider){
 		$routeProvider
 			.when('/', {
 				 redirectTo:'/login'
 			})
 			.when('/:module', {
 				 templateUrl: function(params){
-					console.log(params);
+					//console.log(params);
 					return BASEPATH + 'modules/' + params['module'] + '/view/index.php';
 				}
 				,resolve: function(){
@@ -26,6 +26,8 @@ window.app = aggiesys;
 		;
 
 		$locationProvider.html5Mode(true);
+
+		$icSvgProvider.url(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-navigation.svg');
 	});
 
 	var requestAsURIEncode = function(data){
@@ -44,14 +46,6 @@ window.app = aggiesys;
 	});
 
 	aggiesys.controller('LoginController', function($scope, $http, $mdToast, $location){
-		$http.get(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-action.svg')
-			.success(function(xml){
-				console.log(xml);
-			})
-			.error(function(data, status, headers, config){
-				console.log(status, data);
-			})
-		;
 		$scope.data = {
 			 'username': ''
 			,'password': ''
