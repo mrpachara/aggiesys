@@ -2,12 +2,12 @@
 	/*
 		IMPOTENT: THIS FILE MUST PUT ON ROOT DIRECTORY OF APPLICATION.
 	*/
-	function localpath($file){
-		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote(BASEPATH)).'/', '', $file);
-	}
-
 	function reflocation($absoulteLocalPath){
-		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote(LOCALPATH)).'/', BASEPATH, $absoulteLocalPath);
+		$basepath = preg_replace('/\/$/', '', BASEPATH);
+		$localpath = preg_replace('/\/$/', '', LOCALPATH);
+		$absoulteLocalPath = preg_replace('/\\\\/', '/', $absoulteLocalPath);
+
+		return preg_replace('/^'.preg_replace('/\//', '\/', preg_quote($localpath)).'/', $basepath, $absoulteLocalPath);
 	}
 
 	function basepath(){

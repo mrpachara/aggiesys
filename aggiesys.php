@@ -20,6 +20,7 @@
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-route/angular-route.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
+		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 
 		<script>
 var BASEPATH = '<?= BASEPATH ?>';
@@ -55,20 +56,27 @@ ng-view,
 }
 
 ic-svg,
-[ic-svg] {
+[ic-svg],
+[data-ic-svg] {
+	display: inline-block;
+	padding: 0px;
+	margin: 0px;
+
 	width: 24px;
 	height: 24px;
+
+	flex: 0 0 auto;
 }
 
 ic-svg>svg,
-[ic-svg]>svg {
+[ic-svg]>svg,
+[data-ic-svg] {
 	width: 100%;
 	height: 100%;
 }
 
 		</style>
 	<body layout="row" ng-controller="LayoutController">
-		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 		<!-- md-whiteframe-z2 -->
 		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-md')">
 			<md-toolbar>
@@ -92,7 +100,7 @@ ic-svg>svg,
 			<md-toolbar>
 				<header id="ly-header" layout="row">
 					<div class="md-toolbar-tools" hide-gt-md>
-						<ic-svg ic-href="#ic_menu_24px" ng-click="openSidenav()"></ic-svg>
+						<ic-svg ic-href="#ic_menu" ng-click="openSidenav()"></ic-svg>
 					</div>
 					<h2 class="md-toolbar-tools">
 						<span>xxx</span>

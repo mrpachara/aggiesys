@@ -1,4 +1,4 @@
-(function (window, document, angular){
+(function (angular){
 	'use strict';
 
 	var prop = {};
@@ -14,51 +14,66 @@
 
 						return this;
 					}
+					,'svgTransform': function(fn){
+						prop['svgTransform'] = fn;
+
+						return this;
+					}
 					,'$get': function(){
 						return {};
 					}
 				};
 			});
 		})
-		.run(function($window, $http){
+		.run(function($q, $http, $window){
 			var domParser = (new $window.DOMParser());
 
-			if(typeof prop['url'] != 'undefined'){
-				promise = $http.get(prop['url'])
-					.success(function(svgString){
-						var svg = domParser.parseFromString(svgString, 'image/svg+xml');
+			var appendSvg = function(svgString, contentType, link){
+				var svg = domParser.parseFromString(svgString, contentType);
 
-						var svgElem = svg.documentElement;
-						svgElem.removeAttribute('width');
-						svgElem.removeAttribute('height');
-						svgElem.removeAttribute('viewBox');
+				if(typeof prop['svgTransform'] === 'function'){
+					svg = prop['svgTransform'](svg) || svg;
+				}
 
-						angular.forEach(svgElem.children, function(elem){
-							if(elem.nodeName.toLowerCase() === 'svg'){
-								var symbolElem = svg.createElementNS('http://www.w3.org/2000/svg', 'symbol');
-								symbolElem.setAttribute('id', elem.getAttribute('id'));
-								symbolElem.setAttribute('viewBox', elem.getAttribute('viewBox'));
+				svg.documentElement.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
+				var importedNode = $window.document.importNode(svg.documentElement, true);
+				importedNode.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
+				importedNode.setAttribute('style', 'display: none;');
+				angular.element('head').append(importedNode);
+			};
 
-								angular.element(symbolElem).append(elem.childNodes);
-								svgElem.replaceChild(symbolElem, elem);
-							}
-						});
-						var svgChildNodes = svgElem.childNodes;
+			var loadSvg = function(link){
+				var defer = $q.defer();
 
-						var defsElem = svg.createElementNS('http://www.w3.org/2000/svg', 'defs');
-						angular.element(defsElem).append(svgChildNodes);
-						svgElem.appendChild(defsElem);
+				$http.get(link)
+					.success(function(data, status, headers, config){
+						if(headers('Content-Type').split(';')[0].trim().toLocaleLowerCase() === 'application/json'){
+							var svgCounter = data.links.length;
 
-						angular.element('head').append(document.importNode(svgElem, true));
-
-						return svg;
+							angular.forEach(data.links, function(link){
+								loadSvg(link)
+									.finally(function(){
+										if(--svgCounter === 0){
+											defer.resolve();
+										}
+									})
+								;
+							});
+						} else{
+							appendSvg(data, headers('Content-Type'), link);
+							defer.resolve();
+						}
 					})
 					.error(function(svg){
-						console.log(svg);
-
-						return svg;
+						defer.resolve();
 					})
 				;
+
+				return defer.promise;
+			};
+
+			if(typeof prop['url'] != 'undefined'){
+				promise = loadSvg(prop['url']);
 			}
 		})
 		.directive('icSvg', function(){
@@ -66,20 +81,18 @@
 				 'strict': 'EAC'
 				,'link': function($scope, $element, $attrs){
 					return promise.then(function(){
-						//$scope.$watch($attrs.icHref, function(value){
-							$element.empty();
+						$element.empty();
 
-							var svgElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'svg');
-							var useElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'use');
-							useElem.setAttributeNS('http://www.w3.org/1999/xlink', 'href', $attrs.icHref);
+						var svgElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'svg');
+						var useElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'use');
+						useElem.setAttributeNS('http://www.w3.org/1999/xlink', 'href', $attrs.icHref);
 
-							svgElem.appendChild(useElem);
+						svgElem.appendChild(useElem);
 
-							$element.append(svgElem);
-						//});
+						$element.append(svgElem);
 					});
 				}
 			};
 		})
 	;
-})(this, this.document, this.angular);
+})(this.angular);

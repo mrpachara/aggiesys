@@ -27,7 +27,35 @@ window.app = aggiesys;
 
 		$locationProvider.html5Mode(true);
 
-		$icSvgProvider.url(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-navigation.svg');
+		$icSvgProvider
+			.url(BASEPATH + 'icons/material-design-icons/links.php')
+			.svgTransform(function(svg){
+				var svgFragment = svg.createDocumentFragment();
+
+				angular.forEach(svg.documentElement.childNodes, function(node){
+					if((node.nodeType === svg.ELEMENT_NODE) && (node.nodeName.toLowerCase() === 'svg')){
+						var symbolElem = svg.createElementNS('http://www.w3.org/2000/svg', 'symbol');
+						var idSplit = node.getAttribute('id').split('_');
+						idSplit.pop();
+						symbolElem.setAttribute('id', idSplit.join('_'));
+						symbolElem.setAttribute('viewBox', node.getAttribute('viewBox'));
+						symbolElem.setAttribute('preserveAspectRatio', 'xMidYMid meet')
+
+						angular.element(symbolElem).append(node.childNodes);
+
+						node = symbolElem;
+					}
+
+					svgFragment.appendChild(node);
+				});
+
+				var newSvgElem = svg.createElementNS('http://www.w3.org/2000/svg', 'svg');
+				newSvgElem.appendChild(svgFragment);
+				svg.replaceChild(newSvgElem, svg.documentElement);
+
+				return svg;
+			})
+		;
 	});
 
 	var requestAsURIEncode = function(data){
