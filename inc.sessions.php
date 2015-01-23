@@ -25,9 +25,11 @@
 			header("Content-Type: application/json; charset=utf-8");
 
 			return json_encode(array(
-				 'error' => array(
-					 'code' => $code
-					,'message' => $message
+				 'errors' => array(
+					 array(
+						 'code' => $code
+						,'message' => $message
+					)
 				)
 			));
 		}
@@ -170,6 +172,15 @@
 			$this->pdo = null;
 
 			return $return;
+		}
+
+		public function getAll($page = null, $search = null){
+			if(!empty($this->excp)) return;
+
+			$stmt = $this->pdo->prepare('SELECT "sessions"."id", "expires", "user"."username" FROM "sessions" LEFT JOIN "user" ON("sessions"."id_user" = "user"."id")');
+			$stmt->execute();
+
+			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		}
 
 		public function getUser(){

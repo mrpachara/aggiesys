@@ -1,0 +1,21 @@
+<table>
+	<thead>
+		<tr>
+			<th  ng-repeat="field in model.fields" ng-bind="field"></th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="item in model.items">
+			<td ng-repeat="field in model.fields" ng-bind="item[field]"></td>
+			<td>
+				<md-button ng-click="self(item.id)">
+					<ic-svg ic-href="#ic_mode_edit"></ic-svg>
+				</md-button>
+				<md-button ng-click="remove(item.id)">
+					<ic-svg ic-href="#ic_highlight_remove"></ic-svg>
+				</md-button>
+			</td>
+		</tr>
+	</tbody>
+</table>

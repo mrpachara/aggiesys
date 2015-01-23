@@ -1,14 +1,40 @@
 var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg']);
 window.app = aggiesys;
 
-(function(window, document, $, angular){
+(function($, angular){
 	'use strict';
 
-	aggiesys.config(function($routeProvider, $locationProvider, $icSvgProvider){
+	var modulesResover = function(){
+
+	};
+
+	aggiesys.config(function($routeProvider, $locationProvider, $icSvgProvider, $mdToastProvider){
 		$routeProvider
 			.when('/', {
 				 redirectTo:'/login'
 			})
+			.when('/login', {
+				'templateUrl': BASEPATH + 'modules/login/view/index.php'
+			})
+			.when('/:module', {
+				 'templateUrl': BASEPATH + 'views/list.html'
+				,'controller': 'ListEntityController'
+				,'resolve': {
+					'model': function($route, $http, $mdToast){
+						return $http.get(BASEPATH + '/modules/' + $route.current.params.module + '/list.php')
+							.then(function(req){
+								return req.data;
+							}, function(req){
+								$mdToast.show(
+									$mdToast.simple()
+										.content(req.statusText)
+								);
+							})
+						;
+					}
+				}
+			})
+			/*
 			.when('/:module', {
 				 templateUrl: function(params){
 					//console.log(params);
@@ -23,6 +49,7 @@ window.app = aggiesys;
 					return BASEPATH + 'modules/' + params['module'] + '/' + params['operator'] + '.php';
 				}
 			})
+			*/
 		;
 
 		$locationProvider.html5Mode(true);
@@ -39,7 +66,7 @@ window.app = aggiesys;
 						idSplit.pop();
 						symbolElem.setAttribute('id', idSplit.join('_'));
 						symbolElem.setAttribute('viewBox', node.getAttribute('viewBox'));
-						symbolElem.setAttribute('preserveAspectRatio', 'xMidYMid meet')
+						symbolElem.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
 						angular.element(symbolElem).append(node.childNodes);
 
@@ -56,6 +83,17 @@ window.app = aggiesys;
 				return svg;
 			})
 		;
+
+		console.log($mdToastProvider.setDefaults);
+		/*
+		$mdToastProvider
+			.setDefaults({
+				'options': function(){
+					return {'capsule': true};
+				}
+			})
+		;
+		*/
 	});
 
 	var requestAsURIEncode = function(data){
@@ -117,16 +155,15 @@ window.app = aggiesys;
 		};
 	});
 
+	/* GLOBAL Controller */
+	app.controller('ListEntityController', function($scope, $http, $location, model){
+		$scope.model = model;
+		$scope.self = function(id){
+			$location.path(model.selfUrl + ((typeof id != 'undefined')? '/' + id : ''));
+		};
 
-	/*angular.injector().invoke(function($http){
-		var $http = angular.injector().get('$http');
-		$http.get(BASEPATH + 'icons/material-desing-icons/svg/svg-sprite-action.svg')
-			.success(function(xml){
-				console.log(xml);
-			})
-			.error(function(data, status, headers, config){
-				console.log(status, data);
-			})
-		;
-	});*/
-})(this, this.document, this.jQuery, this.angular);
+		$scope.remove = function(id){
+			$location.path(model.removeUrl + '/' + id);
+		}
+	});
+})(this.jQuery, this.angular);

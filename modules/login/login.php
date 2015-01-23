@@ -24,7 +24,7 @@
 		session_destroy();
 	}
 
-	$json['post'] = $_POST;
+	//$json['post'] = $_POST;
 
 	header("Content-Type: application/json; charset=utf-8");
 	echo json_encode($json);
