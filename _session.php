@@ -11,6 +11,9 @@
 <a href="_session_destroy.php">session destroy</a>
 <?php
 	echo "<pre>";
+	var_dump($_session->getUser());
+	echo "</pre>";
+	echo "<pre>";
 	var_dump($_SESSION);
 	echo "</pre>";
 ?>

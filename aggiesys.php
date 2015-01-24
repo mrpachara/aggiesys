@@ -23,7 +23,7 @@
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 
 		<script>
-var BASEPATH = '<?= BASEPATH ?>';
+var BASEPATH = <?= json_encode(BASEPATH) ?>;
 		</script>
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 
@@ -75,6 +75,15 @@ ic-svg>svg,
 	height: 100%;
 }
 
+table.entity-list {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table.entity-list th,
+table.entity-list td {
+	border: 1px solid gray;
+}
 		</style>
 	<body layout="row" ng-controller="LayoutController">
 		<!-- md-whiteframe-z2 -->

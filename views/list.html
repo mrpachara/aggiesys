@@ -1,4 +1,8 @@
-<table>
+<table class="entity-list">
+	<colgroup>
+		<col  ng-repeat="field in model.fields" style="text-align: left;" />
+		<col style="width: 5em;" />
+	</colgroup>
 	<thead>
 		<tr>
 			<th  ng-repeat="field in model.fields" ng-bind="field"></th>
@@ -9,11 +13,11 @@
 		<tr ng-repeat="item in model.items">
 			<td ng-repeat="field in model.fields" ng-bind="item[field]"></td>
 			<td>
-				<md-button ng-click="self(item.id)">
+				<md-button ng-click="self(item.id)" aria-label="edit">
 					<ic-svg ic-href="#ic_mode_edit"></ic-svg>
 				</md-button>
-				<md-button ng-click="remove(item.id)">
-					<ic-svg ic-href="#ic_highlight_remove"></ic-svg>
+				<md-button ng-click="remove(item.id)" aria-label="delete">
+					<ic-svg ic-href="#ic_delete"></ic-svg>
 				</md-button>
 			</td>
 		</tr>

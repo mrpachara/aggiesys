@@ -8,6 +8,25 @@ window.app = aggiesys;
 
 	};
 
+	var modelPromise = function($q, $http, $mdToast, module, operator){
+		var defer = $q.defer();
+
+		$http.get(BASEPATH + 'modules/' + module + '/' + operator + '.php')
+			.then(function(req){
+				defer.resolve(req.data);
+			}, function(req){
+				$mdToast.show(
+					$mdToast.simple()
+						.content(req.statusText)
+				);
+
+				defer.reject(req.data, req.statusText);
+			})
+		;
+
+		return defer.promise;
+	};
+
 	aggiesys.config(function($routeProvider, $locationProvider, $icSvgProvider, $mdToastProvider){
 		$routeProvider
 			.when('/', {
@@ -17,20 +36,29 @@ window.app = aggiesys;
 				'templateUrl': BASEPATH + 'modules/login/view/index.php'
 			})
 			.when('/:module', {
-				 'templateUrl': BASEPATH + 'views/list.html'
+				 'redirectTo': function(params){
+					return '/' + params['module'] + '/list'
+				}
+			})
+			.when('/:module/list', {
+				 'templateUrl': function(params){
+					return BASEPATH + 'views/list.html'
+				}
 				,'controller': 'ListEntityController'
 				,'resolve': {
-					'model': function($route, $http, $mdToast){
-						return $http.get(BASEPATH + '/modules/' + $route.current.params.module + '/list.php')
-							.then(function(req){
-								return req.data;
-							}, function(req){
-								$mdToast.show(
-									$mdToast.simple()
-										.content(req.statusText)
-								);
-							})
-						;
+					'model': function($q, $route, $http, $mdToast){
+						return modelPromise($q, $http, $mdToast, $route.current.params.module, 'list');
+					}
+				}
+			})
+			.when('/:module/list', {
+				 'templateUrl': function(params){
+					return BASEPATH + 'views/list.html'
+				}
+				,'controller': 'ListEntityController'
+				,'resolve': {
+					'model': function($q, $route, $http, $mdToast){
+						return modelPromise($q, $http, $mdToast, $route.current.params.module, 'list');
 					}
 				}
 			})
@@ -84,7 +112,7 @@ window.app = aggiesys;
 			})
 		;
 
-		console.log($mdToastProvider.setDefaults);
+		//console.log($mdToastProvider.setDefaults);
 		/*
 		$mdToastProvider
 			.setDefaults({
