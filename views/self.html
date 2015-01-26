@@ -13,7 +13,7 @@
 	<div ng-repeat="field in model.fields" ng-switch on="field.edit">
 		<div flex ng-switch-when="checkbox" ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxListController">
 			<label ng-bind="field.name"></label>
-			<md-checkbox ng-repeat="item in items" ng-model="isChecked[item]" required aria-label="{{field.name + ' ' + item}}">{{item}}</md-checkbox>
+			<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.data]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.data}}">{{item.data}}</md-checkbox>
 		</div>
 		<md-input-container flex ng-switch-default>
 			<label ng-bind="field.name"></label>

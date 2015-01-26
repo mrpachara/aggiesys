@@ -213,11 +213,11 @@ window.app = aggiesys;
 		$http.get(url)
 			.then(function(response){
 				angular.forEach(response.data.items, function(item){
-					$scope.items.push(item.data);
+					$scope.items.push(item);
 
 					var binded = $scope.$eval($attrs.ngModel);
-					angular.forEach($scope.items, function(value){
-						$scope.isChecked[value] = (binded.indexOf(value) > -1);
+					angular.forEach($scope.items, function(item){
+						$scope.isChecked[item.data] = (binded.indexOf(item.data) > -1);
 					});
 				});
 

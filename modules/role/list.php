@@ -18,9 +18,12 @@
 	);
 
 	foreach($allowedroles as $role){
-		$json['items'][] = array(
+		$item =  array(
 			 'data' => $role
 		);
+
+		if(in_array($role, (array)$conf['authoz']['specialroles'])) $item['classes'] = array('md-warn');
+		$json['items'][] = $item;
 	}
 
 	header("Content-Type: application/json; charset=utf-8");
