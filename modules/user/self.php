@@ -13,27 +13,37 @@
 
 	$json = array(
 		 'links' => array()
+		,'status' => (empty($_GET['id']))? "new" : "exist"
 	);
+
+	if(empty($_GET['id'])) $json['mode'] = "update";
 
 	try{
 		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
+
+		if($data === false){
+			throw new Exception("{$_moduleName} whith id '{$_GET['id']}' not found", 404);
+		}
 
 		$json['links'][] =  array(
 			 'rel' => 'update'
 			,'type' => 'post'
 			,'href' => "{$_modulePath}/update.php"
+			,'classes' => array("md-primary")
 		);
 
 		$json['links'][] =  array(
 			 'rel' => 'delete'
 			,'type' => 'get'
 			,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
+			,'classes' => array("md-warn")
 		);
 
 		$json['data'] = $data;
 
 		$json['fields'] = $_fields;
 	} catch(Exception $excp){
+		header("HTTP/1.1 {$excp->getCode()} {$excp->getMessage()}");
 		$json['errors'] = array(
 			 'code' => $excp->getCode()
 			,'message' => $excp->getMessage()
@@ -41,5 +51,5 @@
 	}
 
 	header("Content-Type: application/json; charset=utf-8");
-	echo json_encode($json);
+	exit(json_encode($json));
 ?>

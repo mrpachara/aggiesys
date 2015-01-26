@@ -17,16 +17,25 @@
 			return $stmt->fetchAll(\PDO::FETCH_COLUMN);
 		}
 
-		function get($id){
-			$stmt = $this->pdo->prepare('SELECT "id", "username", "fullname" FROM "user" WHERE "id" = :id;');
-			$stmt->execute(array(
-				 ':id' => $id
-			));
+		function get($id = null){
+			$user = null;
+			if($id === null) {
+				$user = array(
+					 "username" => null
+					,"fullname" => null
+					,"roles" => array()
+				);
+			} else{
+				$stmt = $this->pdo->prepare('SELECT "id", "username", "fullname" FROM "user" WHERE "id" = :id;');
+				$stmt->execute(array(
+					 ':id' => $id
+				));
 
-			$user = $stmt->fetch(\PDO::FETCH_ASSOC);
+				$user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-			if(!empty($user['id'])){
-				$user['roles'] = $this->getRoles($user['id']);
+				if(!empty($user['id'])){
+					$user['roles'] = $this->getRoles($user['id']);
+				}
 			}
 
 			return $user;

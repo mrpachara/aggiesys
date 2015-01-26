@@ -168,9 +168,10 @@ window.app = aggiesys;
 	});
 
 	/* GLOBAL Controller */
-	app.controller('AppViewController', function($scope, $http, $location, $route, $mdToast, model){
+	app.controller('AppViewController', function($scope, $http, $location, $route, $window, $mdToast, model){
 		//console.log(model);
-		$scope.model = model;
+		$scope.model = angular.copy(model);
+		$scope.mode = (typeof model.mode != 'undefined')? model.mode : null;
 
 		$scope.execute = function(link){
 			if(link.type === 'view'){
@@ -196,12 +197,30 @@ window.app = aggiesys;
 			}
 		};
 
+		$scope.historyBack = function(){
+				$window.history.back();
+		};
+
+		$scope.changeMode = function(mode){
+			if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
+
+			if((mode === null) && (typeof model.mode != 'undefined')){
+				$scope.historyBack();
+			} else{
+				$scope.mode = mode;
+			}
+		};
+
 		$scope.showModel = function(){
 			console.log($scope.model);
 		};
+
+		$scope.showScope = function(){
+			console.log($scope);
+		};
 	});
 
-	app.controller('AppViewCheckboxListController', function($scope, $attrs, $http){
+	app.controller('AppViewCheckboxDomainController', function($scope, $attrs, $http){
 		$scope.items = [];
 		$scope.isChecked = {};
 
@@ -216,6 +235,8 @@ window.app = aggiesys;
 					$scope.items.push(item);
 
 					var binded = $scope.$eval($attrs.ngModel);
+					//if(typeof binded === 'undefined') binded = $scope.$eval($attrs.ngModel + ' = []');
+
 					angular.forEach($scope.items, function(item){
 						$scope.isChecked[item.data] = (binded.indexOf(item.data) > -1);
 					});

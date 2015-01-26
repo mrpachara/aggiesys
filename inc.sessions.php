@@ -179,6 +179,11 @@
 			if(!empty($this->excp)) return false;
 
 			try{
+				$stmt = $this->pdo->prepare('DELETE FROM "sessions" WHERE "id" = :id;');
+				$stmt->execute(array(
+					 ':id' => $session_id
+				));
+
 				$stmt = $this->pdo->prepare('INSERT INTO "sessions" ("id") VALUES (:id);');
 				$stmt->execute(array(
 					 ':id' => $session_id

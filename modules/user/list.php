@@ -46,6 +46,7 @@
 
 		$json['fields'] = $_fields;
 	} catch(Exception $excp){
+		header("HTTP/1.1 {$excp->getCode()} {$excp->getMessage()}");
 		$json['errors'] = array(
 			 'code' => $excp->getCode()
 			,'message' => $excp->getMessage()
@@ -53,5 +54,5 @@
 	}
 
 	header("Content-Type: application/json; charset=utf-8");
-	echo json_encode($json);
+	exit(json_encode($json));
 ?>

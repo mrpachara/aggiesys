@@ -18,7 +18,7 @@
 	//header( 'Cache-Control: post-check=0, pre-check=0', false );
 	//header( 'Pragma: no-cache' );
 
-	$_session = new \sys\Sessions(new \sys\UserService());
+	$GLOBALS['_session'] = $_session = new \sys\Sessions(new \sys\UserService());
 	if(empty($_SESSION[$conf['session']['gsessionNS']])) $_SESSION[$conf['session']['gsessionNS']] = array();
 
 	if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {

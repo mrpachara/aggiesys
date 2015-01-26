@@ -11,7 +11,9 @@
 		)
 		,array(
 			 'name' => "roles"
-			,'edit' => "checkbox"
+			,'display' => array(
+				 'update' => "checkbox.domain"
+			)
 			,'links' => array(
 				array(
 					'rel' => "domain"

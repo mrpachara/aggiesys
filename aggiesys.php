@@ -113,6 +113,8 @@ table.app-view-list .app-view-list-value {
 	display: inline-block;
 }
 
+form.app-view-self {
+}
 @media (max-width: 600px) {
 	table.app-view-list>*>tr {
 		padding-top: 1em;

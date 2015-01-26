@@ -3,31 +3,54 @@
 		<use xlink:href="#ic_insert_drive_file" />
 	</symbol>
 	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
-		<use xlink:href="#ic_mode_edit" />
+		<use xlink:href="#ic_pageview" />
+	</symbol>
+	<symbol id="ic_view_list_update" viewBox="0 0 24 24">
+		<use xlink:href="#ic_edit" />
 	</symbol>
 	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
 		<use xlink:href="#ic_delete" />
 	</symbol>
 </svg>
-<form name="selfForm" method="post" action=/abcdef/1234" class="app-view-self" layout="column">
-	<div ng-repeat="field in model.fields" ng-switch on="field.edit">
-		<div flex ng-switch-when="checkbox" ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxListController">
-			<label ng-bind="field.name"></label>
-			<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.data]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.data}}">{{item.data}}</md-checkbox>
+<form name="selfForm" method="post" class="app-view-self" layout="column">
+	<div ng-repeat="field in model.fields" ng-switch on="(field.display || {})[mode]">
+		<div ng-switch-when="checkbox.domain">
+			<div flex ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxDomainController">
+				<label ng-bind="field.name"></label>
+				<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.data]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.data}}">{{item.data}}</md-checkbox>
+			</div>
 		</div>
 		<md-input-container flex ng-switch-default>
 			<label ng-bind="field.name"></label>
-			<input type="text" name="{{field.name}}" ng-required="field.required" ng-readonly="field.readonly" ng-model="model.data[field.name]" />
+			<input type="text" name="{{field.name}}" ng-required="field.required" ng-readonly="(mode === null) || ((model.status != 'new') && (field.readonly))" ng-model="model.data[field.name]" />
 			<div ng-messages="selfForm[field.name].$error">
 				<div ng-message="required">This is required.</div>
 			</div>
 		</md-input-container>
 	</div>
-	<div layout layout-align="center center">
-		<md-button type="button" class="md-primary" name="_action" value="LOGIN" ng-click="showModel()" style="padding: 0.50em 1.00em;">Show Model</md-button>
-		<md-button ng-repeat="link in model.links" ng-hide="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity" style="padding: 0.50em 1.00em;">
+	<div layout ng-hide="mode === null" layout-align="left center" style="padding: 0.5em 0px;">
+		<md-button type="submit" ng-repeat="link in model.links" ng-show="(link.href != null) && (mode == link.rel)" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+			<span style="margin-top: 0.25em;">{{link.rel}}</span>
 		</md-button>
-		<md-button type="submit" class="md-primary" name="_action" value="LOGIN" style="padding: 0.50em 1.00em;">Submit</md-button>
+		<md-button type="button" ng-click="changeMode(null)" layout layout-align="center center" aria-label="cancel entity" class="md-warn" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
+			<ic-svg ic-href="#ic_cancel"></ic-svg>
+			<span style="margin-top: 0.25em;">Cancel</span>
+		</md-button>
 	</div>
+	<div layout ng-show="mode === null" layout-align="left center" style="padding: 0.5em 0px;">
+		<md-button type="button" ng-repeat="link in model.links" ng-hide="link.href === null" ng-class="link.classes" ng-click="changeMode(link.rel)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+			<span style="margin-top: 0.25em;">{{link.rel}}</span>
+		</md-button>
+		<md-button type="button" ng-click="historyBack()" layout layout-align="center center" aria-label="navigate back" class="md-warn" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
+			<ic-svg ic-href="#ic_navigate_before"></ic-svg>
+			<span style="margin-top: 0.25em;">Back</span>
+		</md-button>
+	</div>
+	<!--
+	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+		<span style="margin-top: 0.25em;">Show Scope</span>
+	</md-button>
+	-->
 </form>
