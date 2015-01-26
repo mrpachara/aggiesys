@@ -75,14 +75,67 @@ ic-svg>svg,
 	height: 100%;
 }
 
-table.entity-list {
+table.app-view-list {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-table.entity-list th,
-table.entity-list td {
-	border: 1px solid gray;
+table.app-view-list>*>tr {
+	height: 3em;
+	border-bottom: 1px solid gray;
+}
+
+table.app-view-list>thead>tr>th {
+	text-align: left;
+}
+
+table.app-view-list .app-view-action-list {
+	justify-content: space-around;
+}
+
+table.app-view-list .app-view-list-altheader{
+	display: none;
+
+	color: blue;
+	font-weight: bold;
+
+	width: 25%;
+	text-align: right;
+
+	padding-right: 1em;
+}
+
+table.app-view-list .app-view-list-altheader::after {
+	content: ':';
+}
+
+table.app-view-list .app-view-list-value {
+	display: inline-block;
+}
+
+@media (max-width: 600px) {
+	table.app-view-list>*>tr {
+		padding-top: 1em;
+		padding-bottom: 1em;
+	}
+
+	table.app-view-list>thead>tr>th:not(:last-child){
+		display: none;
+	}
+
+	table.app-view-list>thead>tr>th:first-child{
+		display: block;
+
+		visibility: hidden;
+	}
+
+	table.app-view-list>tbody>tr>td:not(:last-child){
+		display: flex;
+	}
+
+	table.app-view-list .app-view-list-altheader{
+		display: inline-block;
+	}
 }
 		</style>
 	<body layout="row" ng-controller="LayoutController">
@@ -109,7 +162,9 @@ table.entity-list td {
 			<md-toolbar>
 				<header id="ly-header" layout="row">
 					<div class="md-toolbar-tools" hide-gt-md>
-						<ic-svg ic-href="#ic_menu" ng-click="openSidenav()"></ic-svg>
+						<md-button ng-click="openSidenav()" aria-label="show side nav">
+							<ic-svg ic-href="#ic_menu"></ic-svg>
+						</md-button>
 					</div>
 					<h2 class="md-toolbar-tools">
 						<span>xxx</span>
@@ -123,7 +178,14 @@ table.entity-list td {
 					</ul>
 				</header>
 			</md-toolbar>
-			<md-content layout="column" flex>
+<!--
+<div layout="row" layout-align="left center" style="height: 0px; padding-left: 4em; align-items: center;">
+	<md-button class="md-fab md-warn" aria-label="New document">
+		<ic-svg ic-href="#ic_view_list_create"></ic-svg>
+	</md-button>
+</div>
+-->
+			<md-content layout="column" flex style="overflow-y: scroll;">
 				<main ng-view flex></main>
 			</md-content>
 		</div>

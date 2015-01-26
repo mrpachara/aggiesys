@@ -16,7 +16,12 @@
 			if(empty($user)) return $user;
 
 			unset($user['password']);
-			$roles = (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array();
+
+			$roles = array_merge(
+				 (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array()
+				,(($user['username'] == $conf_authoz['superusername']) && !empty($conf_authoz['superuserrole']))? (array)$conf_authoz['superuserrole'] : array()
+			);
+			if($user['username'] == $conf_authoz['superusername'])
 
 			if(!empty($user['id'])){
 				$stmt = $this->pdo->prepare('SELECT * FROM "userrole" WHERE "id_user" = :id_user;');

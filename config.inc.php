@@ -34,6 +34,8 @@
 	$conf['authoz']['superuserrole'] = 'ROOT';
 	$conf['authoz']['forbidden_code'] = 403;
 	$conf['authoz']['forbidden_message'] = 'Forbidden';
+	$conf['authoz']['allowedroles'] = array("USER", "STAFF");
+	$conf['authoz']['specialroles'] = array("ADMIN");
 
 	$conf['page'] = array();
 	$conf['page']['login'] = BASEPATH.'login.php';

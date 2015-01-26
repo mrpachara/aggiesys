@@ -1,24 +1,43 @@
-<table class="entity-list">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
+	<symbol id="ic_view_list_create" viewBox="0 0 24 24">
+		<use xlink:href="#ic_insert_drive_file" />
+	</symbol>
+	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
+		<use xlink:href="#ic_mode_edit" />
+	</symbol>
+	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
+		<use xlink:href="#ic_delete" />
+	</symbol>
+</svg>
+<table class="app-view-list">
 	<colgroup>
-		<col  ng-repeat="field in model.fields" style="text-align: left;" />
+		<col  ng-repeat="field in model.fields" />
 		<col style="width: 5em;" />
 	</colgroup>
 	<thead>
 		<tr>
-			<th  ng-repeat="field in model.fields" ng-bind="field"></th>
-			<th>Action</th>
+			<th  ng-repeat="field in model.fields" ng-bind="field.name"></th>
+			<th>
+				<div layout="row" class="app-view-action-list">
+					<md-button ng-repeat="link in model.links" ng-hide="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+					</md-button>
+				</div>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr ng-repeat="item in model.items">
-			<td ng-repeat="field in model.fields" ng-bind="item[field]"></td>
+			<td ng-repeat="field in model.fields">
+				<label ng-bind="field.name" flex="40" class="app-view-list-altheader"></label>
+				<span ng-bind="item.data[field.name]" flex="60" class="app-view-list-value"></span>
+			</td>
 			<td>
-				<md-button ng-click="self(item.id)" aria-label="edit">
-					<ic-svg ic-href="#ic_mode_edit"></ic-svg>
-				</md-button>
-				<md-button ng-click="remove(item.id)" aria-label="delete">
-					<ic-svg ic-href="#ic_delete"></ic-svg>
-				</md-button>
+				<div layout="row" class="app-view-action-list">
+					<md-button ng-repeat="link in item.links" ng-disabled="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+					</md-button>
+				</div>
 			</td>
 		</tr>
 	</tbody>

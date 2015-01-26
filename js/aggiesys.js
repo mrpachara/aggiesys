@@ -8,19 +8,25 @@ window.app = aggiesys;
 
 	};
 
-	var modelPromise = function($q, $http, $mdToast, module, operator){
+	var modelPromise = function($q, $route, $http, $mdToast){
 		var defer = $q.defer();
 
-		$http.get(BASEPATH + 'modules/' + module + '/' + operator + '.php')
-			.then(function(req){
-				defer.resolve(req.data);
-			}, function(req){
+		var url = BASEPATH + 'modules/' + $route.current.params.module + '/' + $route.current.params.operation + '.php';
+
+		if(typeof $route.current.params.id != 'undefined'){
+			url = url + '?id=' + encodeURIComponent($route.current.params.id);
+		}
+
+		$http.get(url)
+			.then(function(response){
+				defer.resolve(response.data);
+			}, function(response){
 				$mdToast.show(
 					$mdToast.simple()
-						.content(req.statusText)
+						.content(response.statusText)
 				);
 
-				defer.reject(req.data, req.statusText);
+				defer.reject(response.data, response.statusText);
 			})
 		;
 
@@ -40,7 +46,18 @@ window.app = aggiesys;
 					return '/' + params['module'] + '/list'
 				}
 			})
-			.when('/:module/list', {
+			.when('/:module/:operation/:id?', {
+				 'templateUrl': function(params){
+					return BASEPATH + 'views/' + params.operation + '.html'
+				}
+				,'controller': 'AppViewController'
+				,'resolve': {
+					'model': function($q, $route, $http, $mdToast){
+						return modelPromise($q, $route, $http, $mdToast);
+					}
+				}
+			})
+			.when('/:module/xxx', {
 				 'templateUrl': function(params){
 					return BASEPATH + 'views/list.html'
 				}
@@ -51,33 +68,6 @@ window.app = aggiesys;
 					}
 				}
 			})
-			.when('/:module/list', {
-				 'templateUrl': function(params){
-					return BASEPATH + 'views/list.html'
-				}
-				,'controller': 'ListEntityController'
-				,'resolve': {
-					'model': function($q, $route, $http, $mdToast){
-						return modelPromise($q, $http, $mdToast, $route.current.params.module, 'list');
-					}
-				}
-			})
-			/*
-			.when('/:module', {
-				 templateUrl: function(params){
-					//console.log(params);
-					return BASEPATH + 'modules/' + params['module'] + '/view/index.php';
-				}
-				,resolve: function(){
-					console.log('called');
-				}
-			})
-			.when('/:module/:operator*', {
-				 templateUrl: function(params){
-					return BASEPATH + 'modules/' + params['module'] + '/' + params['operator'] + '.php';
-				}
-			})
-			*/
 		;
 
 		$locationProvider.html5Mode(true);
@@ -111,20 +101,9 @@ window.app = aggiesys;
 				return svg;
 			})
 		;
-
-		//console.log($mdToastProvider.setDefaults);
-		/*
-		$mdToastProvider
-			.setDefaults({
-				'options': function(){
-					return {'capsule': true};
-				}
-			})
-		;
-		*/
 	});
 
-	var requestAsURIEncode = function(data){
+	var requestAsUriEncode = function(data){
 		var requestBodys = [];
 		for(var key in data){
 			requestBodys.push(key + '=' + encodeURIComponent(data[key]));
@@ -153,19 +132,24 @@ window.app = aggiesys;
 
 			$http.post($form.attr('action'), $scope.data, {
 				 'headers': {'Content-Type': $form.prop('enctype')}
-				,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsURIEncode : $http.defaults.transformResponse
+				,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
 				,'responseType': 'json'
 			})
 				.success(function(data){
 					$scope.errors = [];
 
-					$mdToast.show(
-						$mdToast.simple()
-							.content(data.links[0].href)
-							//.position('top right')
-					);
+					angular.forEach(data.links, function(link){
+						if((link.rel === 'main') && (link.type === 'redirect')){
+							$location.path(link.href);
 
-					$location.path(data.links[0].href);
+							$mdToast.show(
+								$mdToast.simple()
+									.content('redirect to ' + link.rel)
+									//.position('top right')
+							);
+						}
+					});
+
 				})
 				.error(function(data){
 					//$scope.errors = data.errors;
@@ -184,14 +168,75 @@ window.app = aggiesys;
 	});
 
 	/* GLOBAL Controller */
-	app.controller('ListEntityController', function($scope, $http, $location, model){
+	app.controller('AppViewController', function($scope, $http, $location, $route, $mdToast, model){
+		//console.log(model);
 		$scope.model = model;
-		$scope.self = function(id){
-			$location.path(model.selfUrl + ((typeof id != 'undefined')? '/' + id : ''));
+
+		$scope.execute = function(link){
+			if(link.type === 'view'){
+				$location.path(link.href);
+			} else{
+				$http[link.type](link.href, ($.inArray(link.type, ['post']))? {
+					 'data': $scope.model
+				} : {})
+					.then(function(response){
+						$mdToast.show(
+							$mdToast.simple()
+								.content(response.data['message'])
+						);
+
+						$route.reload();
+					}, function(response){
+						$mdToast.show(
+							$mdToast.simple()
+								.content(response.statusText)
+						);
+					})
+				;
+			}
 		};
 
-		$scope.remove = function(id){
-			$location.path(model.removeUrl + '/' + id);
-		}
+		$scope.showModel = function(){
+			console.log($scope.model);
+		};
+	});
+
+	app.controller('AppViewCheckboxListController', function($scope, $attrs, $http){
+		$scope.items = [];
+		$scope.isChecked = {};
+
+		var url = null;
+		angular.forEach($scope.$eval($attrs.ngLinks), function(link){
+			if(link.rel == 'domain') url = link.href;
+		});
+
+		$http.get(url)
+			.then(function(response){
+				angular.forEach(response.data.items, function(item){
+					$scope.items.push(item.data);
+
+					var binded = $scope.$eval($attrs.ngModel);
+					angular.forEach($scope.items, function(value){
+						$scope.isChecked[value] = (binded.indexOf(value) > -1);
+					});
+				});
+
+				$scope.$watchCollection('isChecked', function(values){
+					var binded = $scope.$eval($attrs.ngModel);
+					binded.splice(0, binded.length);
+
+					angular.forEach(values, function(value, key){
+						if(value) binded.push(key);
+					});
+				});
+			}, function(response){
+				$mdToast.show(
+					$mdToast.simple()
+						.content(response.statusText)
+				);
+
+				defer.reject(response.data, response.statusText);
+			})
+		;
 	});
 })(this.jQuery, this.angular);

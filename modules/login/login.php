@@ -3,11 +3,14 @@
 
 	$json = array();
 	if(!empty($_POST['username']) && !empty($_POST['password']) && $_session->login($_POST['username'], $_POST['password'])){
+		$_session->create(session_id());
+
 		$json = array(
 			 'links' => array(
 				 array(
-					 'rel' => 'redirect'
-					,'href' => '/dbtest'
+					 'rel' => 'main'
+					,'type' => 'redirect'
+					,'href' => '/user'
 				)
 			)
 		);

@@ -15,16 +15,15 @@
 			));
 
 			return $stmt->fetchAll(\PDO::FETCH_COLUMN);
-			//return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		}
 
 		function get($id){
-			$stmt = $this->pdo->prepare('SELECT "username", "fullname" FROM "user" WHERE "id" = :id;');
+			$stmt = $this->pdo->prepare('SELECT "id", "username", "fullname" FROM "user" WHERE "id" = :id;');
 			$stmt->execute(array(
 				 ':id' => $id
 			));
 
-			$user = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			$user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 			if(!empty($user['id'])){
 				$user['roles'] = $this->getRoles($user['id']);

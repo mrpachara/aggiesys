@@ -3,15 +3,31 @@
 
 	$_session->authozPage("ADMIN", "static::forbidden_json");
 
-	$_modulePath = basename(__DIR__);
+	$_modulePath = reflocation(__DIR__);
+	$_moduleName = basename(__DIR__);
+
 	$json = array(
-		 'selfUrl' => "/{$_modulePath}/self"
-		,'removeUrl' => "/{$_modulePath}/remove"
+		 'links' => array()
+		,'items' => array()
 	);
 
 	try{
-		$json['items'] = $_session->getAll();
-		$json['fields'] = array_keys($json['items'][0]);
+		foreach($_session->getAll() as $data){
+			$item = array(
+				 'links' => array()
+				,'data' => $data
+			);
+
+			$item['links'][] = array(
+				 'rel' => 'delete'
+				,'type' => 'get'
+				,'href' => (session_id() == $data['id'])? null : $_modulePath."/delete.php?id={$data['id']}"
+			);
+
+			$json['items'][] = $item;
+		}
+
+		$json['fields'] = array('id', 'expires', 'username');
 	} catch(PDOException $excp){
 		$json['errors'] = array(
 			 'code' => $excp->getCode()

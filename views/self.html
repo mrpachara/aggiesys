@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
+	<symbol id="ic_view_list_create" viewBox="0 0 24 24">
+		<use xlink:href="#ic_insert_drive_file" />
+	</symbol>
+	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
+		<use xlink:href="#ic_mode_edit" />
+	</symbol>
+	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
+		<use xlink:href="#ic_delete" />
+	</symbol>
+</svg>
+<form name="selfForm" method="post" action=/abcdef/1234" class="app-view-self" layout="column">
+	<div ng-repeat="field in model.fields" ng-switch on="field.edit">
+		<div flex ng-switch-when="checkbox" ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxListController">
+			<label ng-bind="field.name"></label>
+			<md-checkbox ng-repeat="item in items" ng-model="isChecked[item]" required aria-label="{{field.name + ' ' + item}}">{{item}}</md-checkbox>
+		</div>
+		<md-input-container flex ng-switch-default>
+			<label ng-bind="field.name"></label>
+			<input type="text" name="{{field.name}}" ng-required="field.required" ng-readonly="field.readonly" ng-model="model.data[field.name]" />
+			<div ng-messages="selfForm[field.name].$error">
+				<div ng-message="required">This is required.</div>
+			</div>
+		</md-input-container>
+	</div>
+	<div layout layout-align="center center">
+		<md-button type="button" class="md-primary" name="_action" value="LOGIN" ng-click="showModel()" style="padding: 0.50em 1.00em;">Show Model</md-button>
+		<md-button ng-repeat="link in model.links" ng-hide="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity" style="padding: 0.50em 1.00em;">
+			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+		</md-button>
+		<md-button type="submit" class="md-primary" name="_action" value="LOGIN" style="padding: 0.50em 1.00em;">Submit</md-button>
+	</div>
+</form>

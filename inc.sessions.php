@@ -103,15 +103,6 @@
 					,':data' => $session_data
 					,':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
 				));
-				if($stmt->rowCount() == 0){
-					$stmt = $this->pdo->prepare('INSERT INTO "sessions" ("id", "expires", "data", "id_user") VALUES (:id, (CURRENT_TIMESTAMP + :maxlifetime::interval), :data, :id_user);');
-					$stmt->execute(array(
-						 ':id' => $session_id
-						,':maxlifetime' => ini_get('session.gc_maxlifetime').' second'
-						,':data' => $session_data
-						,':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
-					));
-				}
 
 				return ($stmt->rowCount() == 1);
 			} catch(\PDOException $excp){
@@ -177,10 +168,28 @@
 		public function getAll($page = null, $search = null){
 			if(!empty($this->excp)) return;
 
-			$stmt = $this->pdo->prepare('SELECT "sessions"."id", "expires", "user"."username" FROM "sessions" LEFT JOIN "user" ON("sessions"."id_user" = "user"."id")');
+			$stmt = $this->pdo->prepare('SELECT "sessions"."id", "expires", "user"."username", "user"."id" as id_user FROM "sessions" LEFT JOIN "user" ON("sessions"."id_user" = "user"."id")');
 			$stmt->execute();
 
 			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		}
+
+		public function create($session_id){
+			//echo "<pre>session->create:".time()."</pre>";
+			if(!empty($this->excp)) return false;
+
+			try{
+				$stmt = $this->pdo->prepare('INSERT INTO "sessions" ("id") VALUES (:id);');
+				$stmt->execute(array(
+					 ':id' => $session_id
+				));
+
+				return ($stmt->rowCount() == 1);
+			} catch(\PDOException $excp){
+				$this->excp = $excp;
+			}
+
+			return false;
 		}
 
 		public function getUser(){

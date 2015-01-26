@@ -12,37 +12,25 @@
 	$_moduleName = basename(__DIR__);
 
 	$json = array(
-		 'links' => array(
-			 array(
-				 'rel' => 'create'
-				,'type' => 'view'
-				,'href' => $_moduleName."/self"
-			)
-		)
-		,'items' => array()
+		 'links' => array()
 	);
 
 	try{
-		foreach($userService->getAll() as $data){
-			$item = array(
-				 'links' => array()
-				,'data' => $data
-			);
+		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
 
-			$item['links'][] = array(
-				 'rel' => 'self'
-				,'type' => 'view'
-				,'href' => "{$_moduleName}/self/{$data['id']}"
-			);
+		$json['links'][] =  array(
+			 'rel' => 'update'
+			,'type' => 'post'
+			,'href' => "{$_modulePath}/update.php"
+		);
 
-			$item['links'][] = array(
-				 'rel' => 'delete'
-				,'type' => 'get'
-				,'href' => "{$_modulePath}/delete.php?id={$data['id']}"
-			);
+		$json['links'][] =  array(
+			 'rel' => 'delete'
+			,'type' => 'get'
+			,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
+		);
 
-			$json['items'][] = $item;
-		}
+		$json['data'] = $data;
 
 		$json['fields'] = $_fields;
 	} catch(Exception $excp){
