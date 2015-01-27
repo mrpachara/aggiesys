@@ -12,8 +12,8 @@
 		<use xlink:href="#ic_delete" />
 	</symbol>
 </svg>
-<form name="selfForm" method="post" class="app-view-self" layout="column">
-	<div ng-repeat="field in model.fields" ng-switch on="(field.display || {})[mode]">
+<form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column">
+	<div ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" ng-switch on="(field.display || {})[(mode || '')]">
 		<div ng-switch-when="checkbox.domain">
 			<div flex ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxDomainController">
 				<label ng-bind="field.name"></label>
@@ -22,30 +22,30 @@
 		</div>
 		<md-input-container flex ng-switch-default>
 			<label ng-bind="field.name"></label>
-			<input type="text" name="{{field.name}}" ng-required="field.required" ng-readonly="(mode === null) || ((model.status != 'new') && (field.readonly))" ng-model="model.data[field.name]" />
+			<input type="text" name="{{field.name}}" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]" />
 			<div ng-messages="selfForm[field.name].$error">
 				<div ng-message="required">This is required.</div>
 			</div>
 		</md-input-container>
 	</div>
 	<div layout ng-hide="mode === null" layout-align="left center" style="padding: 0.5em 0px;">
-		<md-button type="submit" ng-repeat="link in model.links" ng-show="(link.href != null) && (mode == link.rel)" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+		<md-button type="submit" ng-repeat="link in model.links" ng-show="(link.href != null) && (mode == link.rel)" ng-click="setLink(link)" ng-class="link.classes" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
-			<span style="margin-top: 0.25em;">{{link.rel}}</span>
+			<span>{{link.rel}}</span>
 		</md-button>
-		<md-button type="button" ng-click="changeMode(null)" layout layout-align="center center" aria-label="cancel entity" class="md-warn" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
+		<md-button type="button" ng-click="exitMode()" layout layout-align="center center" aria-label="cancel entity" class="md-warn" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
 			<ic-svg ic-href="#ic_cancel"></ic-svg>
-			<span style="margin-top: 0.25em;">Cancel</span>
+			<span>Cancel</span>
 		</md-button>
 	</div>
 	<div layout ng-show="mode === null" layout-align="left center" style="padding: 0.5em 0px;">
-		<md-button type="button" ng-repeat="link in model.links" ng-hide="link.href === null" ng-class="link.classes" ng-click="changeMode(link.rel)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+		<md-button type="button" ng-repeat="link in model.links" ng-hide="link.href === null" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
-			<span style="margin-top: 0.25em;">{{link.rel}}</span>
+			<span>{{link.rel}}</span>
 		</md-button>
 		<md-button type="button" ng-click="historyBack()" layout layout-align="center center" aria-label="navigate back" class="md-warn" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
 			<ic-svg ic-href="#ic_navigate_before"></ic-svg>
-			<span style="margin-top: 0.25em;">Back</span>
+			<span>Back</span>
 		</md-button>
 	</div>
 	<!--

@@ -31,11 +31,6 @@
 		$_tmpsess = (!empty($_SESSION[$conf['session']['gsessionNS']]['__tmpsess']))? $_SESSION[$conf['session']['gsessionNS']]['__tmpsess'] : array();
 		unset($_SESSION[$conf['session']['gsessionNS']]['__tmpsess']);
 
-		$_SESSION[$conf['session']['gsessionNS']]['__tmpsess'] = array(
-			'uri' => $_SERVER['REQUEST_URI'],
-			'qs' => $_SERVER['QUERY_STRING']
-		);
-
 		$_ntmpsess =& $_SESSION[$conf['session']['gsessionNS']]['__tmpsess'];
 	}
 ?>

@@ -15,6 +15,8 @@
 		 'links' => array()
 	);
 
+	$json['post'] = $_POST;
+/*
 	try{
 		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
 
@@ -54,7 +56,7 @@
 			,'message' => $excp->getMessage()
 		);
 	}
-
+*/
 	header("Content-Type: application/json; charset=utf-8");
 	exit(json_encode($json));
 ?>

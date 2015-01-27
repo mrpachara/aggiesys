@@ -14,7 +14,7 @@
 	$json = array(
 		 'links' => array(
 			 array(
-				 'rel' => 'create'
+				 'rel' => 'new'
 				,'type' => 'view'
 				,'href' => $_moduleName."/self"
 			)
@@ -33,12 +33,6 @@
 				 'rel' => 'self'
 				,'type' => 'view'
 				,'href' => "{$_moduleName}/self/{$data['id']}"
-			);
-
-			$item['links'][] = array(
-				 'rel' => 'delete'
-				,'type' => 'get'
-				,'href' => "{$_modulePath}/delete.php?id={$data['id']}"
 			);
 
 			$json['items'][] = $item;

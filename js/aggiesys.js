@@ -33,7 +33,37 @@ window.app = aggiesys;
 		return defer.promise;
 	};
 
-	aggiesys.config(function($routeProvider, $locationProvider, $icSvgProvider, $mdToastProvider){
+	var requestAsUriEncode = function(data){
+		var requestBodies = [];
+
+		var deepEncodeURIComponent = function(keyConverter, data){
+			if(angular.isArray(data)){
+				angular.forEach(data, function(value){
+					deepEncodeURIComponent(function(){
+						var index = 0;
+
+						return keyConverter() + '[' + (index++) + ']';
+					}, value);
+				});
+			} else if(angular.isObject(data)){
+				angular.forEach(data, function(value, key){
+					deepEncodeURIComponent(function(){
+						return keyConverter() + '[' + key + ']';
+					}, value);
+				});
+			} else{
+				requestBodies.push(keyConverter() + '=' + encodeURIComponent(data));
+			}
+		}
+
+		deepEncodeURIComponent(function(){
+			return '';
+		}, data);
+
+		return requestBodies.join('&');
+	};
+
+	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider){
 		$routeProvider
 			.when('/', {
 				 redirectTo:'/login'
@@ -72,6 +102,23 @@ window.app = aggiesys;
 
 		$locationProvider.html5Mode(true);
 
+		$httpProvider.interceptors.push(function($q){
+			return {
+				 'request': function(config){
+					angular.forEach(config.headers, function(value, header){
+						if(
+							   (header.toLowerCase() === 'content-type')
+							&& (value.split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')
+						){
+							config.transformRequest = requestAsUriEncode;
+						}
+					});
+
+					return config;
+				}
+			};
+		});
+
 		$icSvgProvider
 			.url(BASEPATH + 'icons/material-design-icons/links.php')
 			.svgTransform(function(svg){
@@ -103,15 +150,6 @@ window.app = aggiesys;
 		;
 	});
 
-	var requestAsUriEncode = function(data){
-		var requestBodys = [];
-		for(var key in data){
-			requestBodys.push(key + '=' + encodeURIComponent(data[key]));
-		}
-
-		return requestBodys.join('&');
-	};
-
 	aggiesys.controller('LayoutController', function($scope, $mdSidenav){
 		$scope.openSidenav = function(){
 			$mdSidenav('left').open();
@@ -122,6 +160,41 @@ window.app = aggiesys;
 		$scope.data = {
 			 'username': ''
 			,'password': ''
+			,'test1': ['123', '456']
+			,'test2': [
+				 {
+					 'a': 1
+					,'b': 2
+				}
+				,{
+					 'c': 3
+					,'d':4
+				}
+			]
+			,'test3': {
+				 'abc': 321
+				,'efg': 654
+			}
+			,'test4': {
+				 'i': ['aa', 'bb']
+				,'j': {
+					 'x1': 'x'
+					,'x2': 'xx'
+					,'x3': 'xxx'
+				}
+				,'k': [
+					 {
+						 'y1': 'y'
+						,'y2': 'yy'
+						,'y3': 'yyy'
+					}
+					,{
+						 'z1': 'z'
+						,'z2': 'zz'
+						,'z3': 'zzz'
+					}
+				]
+			}
 		};
 
 		$scope.errors = [];
@@ -132,7 +205,7 @@ window.app = aggiesys;
 
 			$http.post($form.attr('action'), $scope.data, {
 				 'headers': {'Content-Type': $form.prop('enctype')}
-				,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
+				//,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
 				,'responseType': 'json'
 			})
 				.success(function(data){
@@ -168,47 +241,105 @@ window.app = aggiesys;
 	});
 
 	/* GLOBAL Controller */
-	app.controller('AppViewController', function($scope, $http, $location, $route, $window, $mdToast, model){
+	app.controller('AppViewController', function($scope, $q, $http, $location, $route, $window, $mdToast, $mdDialog, model){
 		//console.log(model);
 		$scope.model = angular.copy(model);
 		$scope.mode = (typeof model.mode != 'undefined')? model.mode : null;
 
 		$scope.execute = function(link){
-			if(link.type === 'view'){
+			if(link.type === 'submit'){
+				if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
+
+				$scope.mode = link.rel;
+			} else if(link.type === 'view'){
 				$location.path(link.href);
 			} else{
-				$http[link.type](link.href, ($.inArray(link.type, ['post']))? {
-					 'data': $scope.model
-				} : {})
-					.then(function(response){
-						$mdToast.show(
-							$mdToast.simple()
-								.content(response.data['message'])
-						);
+				var promise = $q.defer().resolve();
 
-						$route.reload();
-					}, function(response){
-						$mdToast.show(
-							$mdToast.simple()
-								.content(response.statusText)
-						);
-					})
-				;
+				if(typeof link.confirm != 'undefined'){
+					var confirm = $mdDialog.confirm()
+						.title(link.confirm.title)
+						.content(link.confirm.content)
+						.ariaLabel('comfirm ' + link.rel)
+						.ok('OK')
+						.cancel('Cancel')
+					;
+
+					promise = $mdDialog.show(confirm);
+				}
+
+				promise.then(function(){
+					$http[link.type](link.href, ($.inArray(link.type, ['post']))? {
+						 'data': $scope.model
+					} : {})
+						.then(function(response){
+							$mdToast.show(
+								$mdToast.simple()
+									.content(response.data['message'])
+							);
+
+							$route.reload();
+						}, function(response){
+							$mdToast.show(
+								$mdToast.simple()
+									.content(response.statusText)
+							);
+						})
+					;
+				});
+			}
+		};
+
+		var submitLink = null;
+		$scope.setLink = function(link){
+			submitLink = link;
+		}
+
+		$scope.submit = function(ev){
+			ev.preventDefault();
+
+			var link = submitLink;
+			submitLink = null;
+
+			var $form = $(ev.delegateTarget);
+
+			$http.post(link.href, $scope.model.data, {
+				 'headers': {'Content-Type': $form.prop('enctype')}
+				,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
+				,'responseType': 'json'
+			})
+				.then(function(response){
+					angular.forEach(response.data.links, function(link){
+						if((link.rel === 'main') && (link.type === 'redirect')){
+							$location.path(link.href);
+
+							$mdToast.show(
+								$mdToast.simple()
+									.content('redirect to ' + link.rel)
+							);
+						}
+					});
+				},function(response){
+					$mdToast.show(
+						$mdToast.simple()
+							.content(response.statusText)
+					);
+				})
+			;
+		};
+
+		$scope.exitMode = function(){
+			if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
+
+			if(typeof model.mode != 'undefined'){
+				$scope.historyBack();
+			} else{
+				$scope.mode = null;
 			}
 		};
 
 		$scope.historyBack = function(){
-				$window.history.back();
-		};
-
-		$scope.changeMode = function(mode){
-			if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
-
-			if((mode === null) && (typeof model.mode != 'undefined')){
-				$scope.historyBack();
-			} else{
-				$scope.mode = mode;
-			}
+			$window.history.back();
 		};
 
 		$scope.showModel = function(){

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
-	<symbol id="ic_view_list_create" viewBox="0 0 24 24">
+	<symbol id="ic_view_list_new" viewBox="0 0 24 24">
 		<use xlink:href="#ic_insert_drive_file" />
 	</symbol>
 	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th  ng-repeat="field in model.fields" ng-bind="field.name"></th>
+			<th  ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" ng-bind="field.name"></th>
 			<th>
 				<div layout="row" class="app-view-action-list">
 					<md-button ng-repeat="link in model.links" ng-hide="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
@@ -31,7 +31,7 @@
 	</thead>
 	<tbody>
 		<tr ng-repeat="item in model.items">
-			<td ng-repeat="field in model.fields">
+			<td ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" data-test="{{!field.show || field.show[mode]}} {{mode}}">
 				<label ng-bind="field.name" flex="40" class="app-view-list-altheader"></label>
 				<span ng-bind="item.data[field.name]" flex="60" class="app-view-list-value"></span>
 			</td>
@@ -45,3 +45,8 @@
 		</tr>
 	</tbody>
 </table>
+<!--
+<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+	<span style="margin-top: 0.25em;">Show Scope</span>
+</md-button>
+-->

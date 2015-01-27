@@ -10,9 +10,19 @@
 ?>
 <a href="_session_destroy.php">session destroy</a>
 <?php
+	echo "<h1>User</h1>";
 	echo "<pre>";
 	var_dump($_session->getUser());
 	echo "</pre>";
+	echo "<h1>GET</h1>";
+	echo "<pre>";
+	var_dump($_GET);
+	echo "</pre>";
+	echo "<h1>POST</h1>";
+	echo "<pre>";
+	var_dump($_POST);
+	echo "</pre>";
+	echo "<h1>SESSION</h1>";
 	echo "<pre>";
 	var_dump($_SESSION);
 	echo "</pre>";
