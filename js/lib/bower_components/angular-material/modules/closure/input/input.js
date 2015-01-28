@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-rc3-master-ec53d1a
+ * v0.7.0-master-e4397de
  */
 goog.provide('ng.material.components.input');
 goog.require('ng.material.core');
@@ -20,7 +20,8 @@ angular.module('material.components.input', [
   .directive('label', labelDirective)
   .directive('input', inputTextareaDirective)
   .directive('textarea', inputTextareaDirective)
-  .directive('mdMaxlength', mdMaxlengthDirective);
+  .directive('mdMaxlength', mdMaxlengthDirective)
+  .directive('placeholder', placeholderDirective);
 
 /**
  * @ngdoc directive
@@ -181,6 +182,7 @@ function inputTextareaDirective($mdUtil, $window, $compile, $animate) {
 
     var containerCtrl = ctrls[0];
     var ngModelCtrl = ctrls[1] || $mdUtil.fakeNgModel();
+    var isReadonly = angular.isDefined(attr.readonly);
 
     if ( !containerCtrl ) return;
     if (containerCtrl.input) {
@@ -214,15 +216,18 @@ function inputTextareaDirective($mdUtil, $window, $compile, $animate) {
     ngModelCtrl.$parsers.push(ngModelPipelineCheckValue);
     ngModelCtrl.$formatters.push(ngModelPipelineCheckValue);
 
-    element
-      .on('input', inputCheckValue)
-      .on('focus', function(ev) {
-        containerCtrl.setFocused(true);
-      })
-      .on('blur', function(ev) {
-        containerCtrl.setFocused(false);
-        inputCheckValue();
-      });
+    element.on('input', inputCheckValue);
+
+    if (!isReadonly) {
+      element
+        .on('focus', function(ev) {
+          containerCtrl.setFocused(true);
+        })
+        .on('blur', function(ev) {
+          containerCtrl.setFocused(false);
+          inputCheckValue();
+        });
+    }
 
     scope.$on('$destroy', function() {
       containerCtrl.setFocused(false);
@@ -324,5 +329,20 @@ function mdMaxlengthDirective($animate) {
   }
 }
 mdMaxlengthDirective.$inject = ["$animate"];
+
+function placeholderDirective() {
+  return {
+    restrict: 'A',
+    require: '^mdInputContainer',
+    link: postLink
+  };
+
+  function postLink(scope, element, attr, inputContainer) {
+    var placeholderText = attr.placeholder;
+    element.removeAttr('placeholder');
+
+    inputContainer.element.append('<div class="md-placeholder">' + placeholderText + '</div>');
+  }
+}
 
 })();

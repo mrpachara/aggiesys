@@ -6,7 +6,7 @@
 		$_session->create(session_id());
 
 		$json = array(
-			 'status' => "Login Success"
+			 'info' => "Login Success"
 			,'links' => array(
 				 array(
 					 'rel' => 'main'

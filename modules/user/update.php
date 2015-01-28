@@ -15,6 +15,7 @@
 		 'links' => array()
 	);
 
+	$json['info'] = "under construct";
 	$json['post'] = $_POST;
 /*
 	try{

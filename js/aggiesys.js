@@ -4,11 +4,7 @@ window.app = aggiesys;
 (function($, angular){
 	'use strict';
 
-	var modulesResover = function(){
-
-	};
-
-	var modelPromise = function($q, $route, $http, $mdToast){
+	var modelPromise = function($q, $route, $appHttp, $mdToast){
 		var defer = $q.defer();
 
 		var url = BASEPATH + 'modules/' + $route.current.params.module + '/' + $route.current.params.operation + '.php';
@@ -17,15 +13,10 @@ window.app = aggiesys;
 			url = url + '?id=' + encodeURIComponent($route.current.params.id);
 		}
 
-		$http.get(url)
+		$appHttp.get(url)
 			.then(function(response){
 				defer.resolve(response.data);
 			}, function(response){
-				$mdToast.show(
-					$mdToast.simple()
-						.content(response.statusText)
-				);
-
 				defer.reject(response.data, response.statusText);
 			})
 		;
@@ -33,31 +24,53 @@ window.app = aggiesys;
 		return defer.promise;
 	};
 
-	var requestAsUriEncode = function(data){
+	var headersGetter = function(name, headersObj){
+		name = name || '';
+		headersObj = headersObj || {};
+
+		name = name.toLowerCase();
+
+		var value = null;
+		angular.forEach(Object.getOwnPropertyNames(headersObj), function(prop){
+			if(name === prop.toLowerCase()) value = value || headersObj[prop];
+		});
+
+		return value;
+	};
+
+	var requestAsUriEncodeForPhp = function(data, headers){
+		if(
+			   (headersGetter('Content-Type', headers()) === null)
+			|| (headersGetter('Content-Type', headers()).split(';')[0].trim().toLowerCase() != 'application/x-www-form-urlencoded')
+		) return data;
+
 		var requestBodies = [];
 
 		var deepEncodeURIComponent = function(keyConverter, data){
 			if(angular.isArray(data)){
-				angular.forEach(data, function(value){
-					deepEncodeURIComponent(function(){
-						var index = 0;
+				angular.forEach(data, (function(){
+					var index = 0;
 
-						return keyConverter() + '[' + (index++) + ']';
-					}, value);
-				});
+					return function(value){
+						deepEncodeURIComponent(function(ckey){
+							return keyConverter('[' + (index++) + ']') + ckey;
+						}, value);
+					};
+				})());
 			} else if(angular.isObject(data)){
 				angular.forEach(data, function(value, key){
-					deepEncodeURIComponent(function(){
-						return keyConverter() + '[' + key + ']';
+					deepEncodeURIComponent(function(ckey){
+						return keyConverter('[' + key + ']') + ckey;
 					}, value);
 				});
 			} else{
-				requestBodies.push(keyConverter() + '=' + encodeURIComponent(data));
+				requestBodies.push(keyConverter('') + '=' + encodeURIComponent(data));
 			}
 		}
 
-		deepEncodeURIComponent(function(){
-			return '';
+		deepEncodeURIComponent(function(ckey){
+			ckey = ckey || '';
+			return ckey.replace(/(^\[|\]$)/g, '');
 		}, data);
 
 		return requestBodies.join('&');
@@ -82,8 +95,8 @@ window.app = aggiesys;
 				}
 				,'controller': 'AppViewController'
 				,'resolve': {
-					'model': function($q, $route, $http, $mdToast){
-						return modelPromise($q, $route, $http, $mdToast);
+					'model': function($q, $route, $appHttp, $mdToast){
+						return modelPromise($q, $route, $appHttp, $mdToast);
 					}
 				}
 			})
@@ -93,8 +106,8 @@ window.app = aggiesys;
 				}
 				,'controller': 'ListEntityController'
 				,'resolve': {
-					'model': function($q, $route, $http, $mdToast){
-						return modelPromise($q, $http, $mdToast, $route.current.params.module, 'list');
+					'model': function($q, $route, $appHttp, $mdToast){
+						return modelPromise($q, $appHttp, $mdToast, $route.current.params.module, 'list');
 					}
 				}
 			})
@@ -102,22 +115,11 @@ window.app = aggiesys;
 
 		$locationProvider.html5Mode(true);
 
-		$httpProvider.interceptors.push(function($q){
-			return {
-				 'request': function(config){
-					angular.forEach(config.headers, function(value, header){
-						if(
-							   (header.toLowerCase() === 'content-type')
-							&& (value.split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')
-						){
-							config.transformRequest = requestAsUriEncode;
-						}
-					});
+		$httpProvider.defaults.transformRequest = (function(transform, defaults) {
+			transform = angular.isArray(transform)? transform : [transform];
 
-					return config;
-				}
-			};
-		});
+			return transform.concat(defaults);
+		})(requestAsUriEncodeForPhp, $httpProvider.defaults.transformRequest);
 
 		$icSvgProvider
 			.url(BASEPATH + 'icons/material-design-icons/links.php')
@@ -150,13 +152,54 @@ window.app = aggiesys;
 		;
 	});
 
+	aggiesys.factory('$appHttp', function($q, $http, $mdToast){
+		var $appHttp;
+		angular.forEach(['', 'get', 'head', 'post','put', 'delete', 'jsonp', 'patch'], function(method){
+			var $httpFn = (method === '')? $http : $http[method];
+
+			var  $appHttpFn = function(){
+				var defer = $q.defer();
+
+				$httpFn.apply(void 0, arguments)
+					.then(function(response){
+						if(angular.isObject(response.data) && !angular.isUndefined(response.data.info)){
+							$mdToast.show(
+								$mdToast.simple()
+									.content(response.data.info)
+							);
+						}
+
+						defer.resolve.apply(void 0, arguments);
+					}, function(response){
+						$mdToast.show(
+							$mdToast.simple()
+								.content(response.statusText)
+						);
+
+						defer.reject.apply(void 0, arguments);
+					})
+				;
+
+				return defer.promise;
+			};
+
+			if(method === ''){
+				$appHttp = $appHttpFn;
+			} else{
+				$appHttp[method] = $appHttpFn;
+			}
+		});
+
+		return $appHttp;
+	});
+
 	aggiesys.controller('LayoutController', function($scope, $mdSidenav){
 		$scope.openSidenav = function(){
 			$mdSidenav('left').open();
 		}
 	});
 
-	aggiesys.controller('LoginController', function($scope, $http, $mdToast, $location){
+	aggiesys.controller('LoginController', function($scope, $appHttp, $mdToast, $location){
 		$scope.data = {
 			 'username': ''
 			,'password': ''
@@ -203,45 +246,14 @@ window.app = aggiesys;
 			ev.preventDefault();
 			var $form = $(ev.delegateTarget);
 
-			$http.post($form.attr('action'), $scope.data, {
+			$appHttp.post($form.attr('action'), $scope.data, {
 				 'headers': {'Content-Type': $form.prop('enctype')}
-				//,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
-				,'responseType': 'json'
-			})
-				.success(function(data){
-					$scope.errors = [];
-
-					angular.forEach(data.links, function(link){
-						if((link.rel === 'main') && (link.type === 'redirect')){
-							$location.path(link.href);
-
-							$mdToast.show(
-								$mdToast.simple()
-									.content('redirect to ' + link.rel)
-									//.position('top right')
-							);
-						}
-					});
-
-				})
-				.error(function(data){
-					//$scope.errors = data.errors;
-					$(data.errors).each(function(){
-						$scope.errors.push(this);
-					});
-
-					$mdToast.show(
-						$mdToast.simple()
-							.content(data.errors[0].message)
-							//.position('top right')
-					);
-				})
-			;
+			});
 		};
 	});
 
 	/* GLOBAL Controller */
-	app.controller('AppViewController', function($scope, $q, $http, $location, $route, $window, $mdToast, $mdDialog, model){
+	app.controller('AppViewController', function($scope, $q, $appHttp, $location, $route, $window, $mdToast, $mdDialog, model){
 		//console.log(model);
 		$scope.model = angular.copy(model);
 		$scope.mode = (typeof model.mode != 'undefined')? model.mode : null;
@@ -254,7 +266,9 @@ window.app = aggiesys;
 			} else if(link.type === 'view'){
 				$location.path(link.href);
 			} else{
-				var promise = $q.defer().resolve();
+				var promise = $q(function(resolve){
+					resolve();
+				});
 
 				if(typeof link.confirm != 'undefined'){
 					var confirm = $mdDialog.confirm()
@@ -269,21 +283,13 @@ window.app = aggiesys;
 				}
 
 				promise.then(function(){
-					$http[link.type](link.href, ($.inArray(link.type, ['post']))? {
+					$appHttp[link.type](link.href, (['post'].indexOf(link.type) > -1)? {
 						 'data': $scope.model
 					} : {})
 						.then(function(response){
-							$mdToast.show(
-								$mdToast.simple()
-									.content(response.data['message'])
-							);
-
-							$route.reload();
-						}, function(response){
-							$mdToast.show(
-								$mdToast.simple()
-									.content(response.statusText)
-							);
+							if(!angular.isUndefined(response.data) && (response.data.isChanged)){
+								$route.reload();
+							}
 						})
 					;
 				});
@@ -303,27 +309,11 @@ window.app = aggiesys;
 
 			var $form = $(ev.delegateTarget);
 
-			$http.post(link.href, $scope.model.data, {
+			$appHttp.post(link.href, $scope.model.data, {
 				 'headers': {'Content-Type': $form.prop('enctype')}
-				,'transformRequest': ($form.prop('enctype').split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded')? requestAsUriEncode : $http.defaults.transformResponse
-				,'responseType': 'json'
 			})
-				.then(function(response){
-					angular.forEach(response.data.links, function(link){
-						if((link.rel === 'main') && (link.type === 'redirect')){
-							$location.path(link.href);
-
-							$mdToast.show(
-								$mdToast.simple()
-									.content('redirect to ' + link.rel)
-							);
-						}
-					});
-				},function(response){
-					$mdToast.show(
-						$mdToast.simple()
-							.content(response.statusText)
-					);
+				.then(function(){
+					$scope.historyBack();
 				})
 			;
 		};
@@ -351,7 +341,7 @@ window.app = aggiesys;
 		};
 	});
 
-	app.controller('AppViewCheckboxDomainController', function($scope, $attrs, $http){
+	app.controller('AppViewCheckboxDomainController', function($scope, $attrs, $appHttp){
 		$scope.items = [];
 		$scope.isChecked = {};
 
@@ -360,13 +350,12 @@ window.app = aggiesys;
 			if(link.rel == 'domain') url = link.href;
 		});
 
-		$http.get(url)
+		$appHttp.get(url)
 			.then(function(response){
 				angular.forEach(response.data.items, function(item){
 					$scope.items.push(item);
 
 					var binded = $scope.$eval($attrs.ngModel);
-					//if(typeof binded === 'undefined') binded = $scope.$eval($attrs.ngModel + ' = []');
 
 					angular.forEach($scope.items, function(item){
 						$scope.isChecked[item.data] = (binded.indexOf(item.data) > -1);

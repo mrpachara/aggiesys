@@ -3,6 +3,8 @@
 
 	$_session->authozPage("ADMIN", "static::forbidden_json");
 
+	require_once "include/config.php";
+
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
 
@@ -27,8 +29,9 @@
 			$json['items'][] = $item;
 		}
 
-		$json['fields'] = array('id', 'expires', 'username');
+		$json['fields'] = $_fields;
 	} catch(PDOException $excp){
+		header("HTTP/1.1 {$excp->getCode()} {$excp->getMessage()}");
 		$json['errors'] = array(
 			 'code' => $excp->getCode()
 			,'message' => $excp->getMessage()
@@ -36,5 +39,5 @@
 	}
 
 	header("Content-Type: application/json; charset=utf-8");
-	echo json_encode($json);
+	exit(json_encode($json));
 ?>
