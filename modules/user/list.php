@@ -11,8 +11,11 @@
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
 
+	$_moduleUri = reflocation(__FILE__);
+
 	$json = array(
-		 'links' => array(
+		 'uri' => "{$_moduleName}/list"
+		,'links' => array(
 			 array(
 				 'rel' => 'new'
 				,'type' => 'view'
@@ -25,7 +28,8 @@
 	try{
 		foreach($userService->getAll() as $data){
 			$item = array(
-				 'links' => array()
+				 'uri' => "{$_moduleName}/self/{$data['id']}"
+				,'links' => array()
 				,'data' => $data
 			);
 

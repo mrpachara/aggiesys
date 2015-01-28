@@ -3,12 +3,14 @@
 
 	$_session->authozPage('ADMIN', '\sys\Sessions::forbidden_json');
 
-	header("Content-Type: application/json; charset=utf-8");
-
 	$json = array();
+
+	$_modulePath = reflocation(__DIR__);
+	$_moduleName = basename(__DIR__);
 
 	if(!empty($_GET['id'])){
 		if(!$_session->destroy($_GET['id'])){
+		//if(!true){
 			$json = array(
 				 'errors' => array(
 					 array(
@@ -19,7 +21,16 @@
 			);
 		} else{
 			$json['info'] = "Success to destroy session {$_GET['id']}";
-			$json['isChanged'] = true;
+			$json['statuses'] = array(
+				 array(
+					 'uri' => "{$_moduleName}/self/{$_GET['id']}"
+					,'status' => 'deleted'
+				)
+				,array(
+					'uri' => "{$_moduleName}/list"
+					,'status' => 'updated'
+				)
+			);
 		}
 	} else{
 		$json = array(
@@ -33,7 +44,7 @@
 	}
 
 	if(!empty($json['errors'])){
-		header("HTTP/1.1 {$json['errors']['code']} {$json['errors']['message']}");
+		header("HTTP/1.1 {$json['errors'][0]['code']} {$json['errors'][0]['message']}");
 	}
 
 	header("Content-Type: application/json; charset=utf-8");

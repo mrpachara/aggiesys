@@ -4,6 +4,14 @@
 	class UserService {
 		private $pdo;
 
+		static function encryptPassword(){
+			return "crypt(:password, gen_salt('bf'))";
+		}
+
+		static function decryptPassword(){
+			return "crypt(:password, "password")";
+		}
+
 		function __construct(){
 			$this->pdo = new PDO();
 		}
@@ -17,6 +25,7 @@
 
 			unset($user['password']);
 
+			// MUSE move to session
 			$roles = array_merge(
 				 (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array()
 				,(($user['username'] == $conf_authoz['superusername']) && !empty($conf_authoz['superuserrole']))? (array)$conf_authoz['superuserrole'] : array()
@@ -58,7 +67,7 @@
 			if(empty($username) || empty($password)) return null;
 
 			try{
-				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = crypt(:password, "password")));');
+				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = '. static::decryptPassword() .'));');
 				$stmt->execute(array(
 					 ':username' => $username
 					,':password' => $password

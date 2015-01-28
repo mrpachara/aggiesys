@@ -12,7 +12,8 @@
 	$_moduleName = basename(__DIR__);
 
 	$json = array(
-		 'links' => array()
+		 'uri' => "{$_moduleName}/self".((!empty($_GET['id']))? "/{$_GET['id']}" : '' )
+		,'links' => array()
 	);
 
 	try{
@@ -25,7 +26,7 @@
 		$json['links'][] =  array(
 			 'rel' => (empty($data['id']))? 'create' : 'update'
 			,'type' => 'submit'
-			,'href' => "{$_modulePath}/update.php"
+			,'href' => "{$_modulePath}/update.php".((empty($data['id']))? "?id={$data['id']}" : "")
 			,'classes' => array("md-primary")
 		);
 

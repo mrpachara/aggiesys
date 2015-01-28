@@ -258,6 +258,41 @@ window.app = aggiesys;
 		$scope.model = angular.copy(model);
 		$scope.mode = (typeof model.mode != 'undefined')? model.mode : null;
 
+		var responseHandler = function(response){
+			if(
+				   !angular.isUndefined(response.data)
+				&& angular.isArray(response.data.statuses)
+			){
+				var isServed = false;
+				angular.forEach(response.data.statuses, function(status){
+					if(isServed) return;
+
+					if(status.uri.indexOf(model.uri) === 0){
+						if(status.status === 'created'){
+							$location.path(status.uri).replace();
+							isServed = true;
+						} else if(model.uri == status.uri){
+							if(status.status === 'updated'){
+								$route.reload();
+								isServed = true;
+							} else if(status.status === 'deleted'){
+								$scope.historyBack();
+								isServed = true;
+							}
+						}
+					} else if(model.uri == status.uri){
+						if(status.status === 'updated'){
+							$route.reload();
+							isServed = true;
+						} else if(status.status === 'deleted'){
+							$scope.historyBack();
+							isServed = true;
+						}
+					}
+				});
+			}
+		};
+
 		$scope.execute = function(link){
 			if(link.type === 'submit'){
 				if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
@@ -286,11 +321,7 @@ window.app = aggiesys;
 					$appHttp[link.type](link.href, (['post'].indexOf(link.type) > -1)? {
 						 'data': $scope.model
 					} : {})
-						.then(function(response){
-							if(!angular.isUndefined(response.data) && (response.data.isChanged)){
-								$route.reload();
-							}
-						})
+						.then(responseHandler)
 					;
 				});
 			}
@@ -312,9 +343,7 @@ window.app = aggiesys;
 			$appHttp.post(link.href, $scope.model.data, {
 				 'headers': {'Content-Type': $form.prop('enctype')}
 			})
-				.then(function(){
-					$scope.historyBack();
-				})
+				.then(responseHandler)
 			;
 		};
 

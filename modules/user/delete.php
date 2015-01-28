@@ -15,34 +15,20 @@
 		 'links' => array()
 	);
 
-	if(!empty($_POST['id'])){
-		$json['statuses'] = array(
-			 array(
-				 'uri' => "{$_moduleName}/self/{$_POST['id']}"
-				,'status' => 'updated'
-			)
-			,array(
-				 'uri' => "{$_moduleName}/list"
-				,'status' => 'updated'
-			)
-		);
-	} else{
-		$json['statuses'] = array(
-			 array(
-				 'uri' => "{$_moduleName}/self/1"
-				,'status' => 'created'
-			)
-		);
-	}
-
-	$json['statuses'][] = array(
-		'uri' => "{$_moduleName}/list"
-		,'status' => 'updated'
+	$json['statuses'] = array(
+		 array(
+			 'uri' => "{$_moduleName}/self/{$_GET['id']}"
+			,'status' => 'deleted'
+		)
+		,array(
+			'uri' => "{$_moduleName}/list"
+			,'status' => 'updated'
+		)
 	);
 
-	$json['info'] = "{$_moduleName}/update under construct";
+	$json['info'] = "{$_moduleName}/delete under construct";
 	$json['post'] = $_POST;
-
+/*
 	try{
 		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
 
@@ -82,7 +68,7 @@
 			,'message' => $excp->getMessage()
 		);
 	}
-
+*/
 	header("Content-Type: application/json; charset=utf-8");
 	exit(json_encode($json));
 ?>

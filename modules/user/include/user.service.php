@@ -55,5 +55,54 @@
 
 			return $users;
 		}
+
+		function save($id, $data){
+			$this->pdo->beginTransaction();
+
+			try{
+				if($id === null){
+					$stmt = $this->pdo->prepare('
+						INSERT INTO "user" (
+							  "username"
+							, "fullname"
+						) VALUES(
+							  :username
+							, :fullname
+						)
+					;');
+					$stmt->execute(array(
+						  ':username' => $data['username']
+						, ':password' => $data['password']
+					));
+
+					$id = $this->pdo->lastInsertId();
+				} else{
+					$stmt = $this->pdo->prepare('
+						UPDATE "user" SET
+							  "username" = :username
+							, "fullname" = :fullname
+						WHERE
+							"id" = :id
+					;');
+					$stmt->execute(array(
+						  ':username' => $data['username']
+						, ':password' => $data['password']
+						, ':id' => $id
+					));
+				}
+
+				
+			} catch(\PDOException $excp){
+			} finally{
+				if(empty($excp)){
+					return $this->pdo->commit();
+				} else{
+					$this->pdo->rollBack();
+					throw $excp;
+				}
+			}
+
+			return false;
+		}
 	}
 ?>
