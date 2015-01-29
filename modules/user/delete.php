@@ -23,7 +23,7 @@
 		}
 
 		if(!$data['_deletable']){
-			throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be deleted", 505);
+			throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be deleted", 500);
 		}
 
 		if($userService->delete($data['id'])){
@@ -41,14 +41,12 @@
 			$json['info'] = "{$_moduleName}/self/{$data['id']} was deleted";
 		}
 	} catch(Exception $excp){
-		$message = strtok($excp->getMessage(), "\n");
-		header("HTTP/1.1 505 {$message}");
 		$json['errors'] = array(
-			  'code' => $excp->getCode()
-			, 'message' => $excp->getMessage()
+			  array(
+			  	'exception' => $excp
+			)
 		);
 	}
 
-	header("Content-Type: application/json; charset=utf-8");
-	exit(json_encode($json));
+	json_exit($json);
 ?>

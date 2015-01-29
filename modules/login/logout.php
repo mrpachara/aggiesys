@@ -1,6 +1,17 @@
 <?php
 	require_once "../../global.inc.php";
 
-	echo session_destroy();
-	//header("Location: {$conf['page']['login']}");
+	$_modulePath = reflocation(__DIR__);
+	$_moduleName = basename(__DIR__);
+
+	session_destroy();
+
+	json_exit(array(
+		  'statuses' => array(
+			  array(
+				  'uri' => "$_moduleName"
+				, 'status' => "logout"
+			)
+		)
+	));
 ?>

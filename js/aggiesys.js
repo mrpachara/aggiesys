@@ -150,9 +150,37 @@ window.app = aggiesys;
 				return svg;
 			})
 		;
-	});
+	})
+		.run(function($rootScope, $q, $timeout){
+			$rootScope.loading = 0;
 
-	aggiesys.factory('$appHttp', function($q, $http, $mdToast){
+			$rootScope.openSidenav = function(){
+				$mdSidenav('left').open();
+			};
+
+			$rootScope.progressLoad = function(promise){
+				if(angular.isUndefined(promise) || !angular.isFunction(promise.finally)) return;
+
+				$timeout(function(){
+					$rootScope.loading++;
+
+					promise.finally(function(){
+						$rootScope.loading--;
+					});
+				}, 300);
+			};
+
+			$rootScope.testProgressLoad = function(){
+				$rootScope.progressLoad($q(function(resolve, reject){
+					$timeout(function(){
+						resolve();
+					}, 3000);
+				}));
+			};
+		})
+	;
+
+	aggiesys.factory('$appHttp', function($rootScope, $q, $http, $mdToast){
 		var $appHttp;
 		angular.forEach(['', 'get', 'head', 'post','put', 'delete', 'jsonp', 'patch'], function(method){
 			var $httpFn = (method === '')? $http : $http[method];
@@ -195,7 +223,11 @@ window.app = aggiesys;
 					})
 				;
 
-				return defer.promise;
+				var promise = defer.promise;
+
+				$rootScope.progressLoad(promise);
+
+				return promise;
 			};
 
 			if(method === ''){
@@ -206,12 +238,6 @@ window.app = aggiesys;
 		});
 
 		return $appHttp;
-	});
-
-	aggiesys.controller('LayoutController', function($scope, $mdSidenav){
-		$scope.openSidenav = function(){
-			$mdSidenav('left').open();
-		}
 	});
 
 	aggiesys.controller('LoginController', function($scope, $appHttp, $mdToast, $location){

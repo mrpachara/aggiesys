@@ -35,13 +35,12 @@
 
 		$json['fields'] = $_fields;
 	} catch(PDOException $excp){
-		header("HTTP/1.1 {$excp->getCode()} {$excp->getMessage()}");
 		$json['errors'] = array(
-			 'code' => $excp->getCode()
-			,'message' => $excp->getMessage()
+			  array(
+			  	'exception' => $excp
+			)
 		);
 	}
 
-	header("Content-Type: application/json; charset=utf-8");
-	exit(json_encode($json));
+	json_exit($json);
 ?>

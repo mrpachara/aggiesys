@@ -16,7 +16,6 @@
 			)
 		);
 	} else{
-		header("HTTP/1.1 {$conf['authoz']['forbidden_code']} invalid username or password or insufficient privilege");
 		$json = array(
 			 'errors' => array(
 				 array(
@@ -28,8 +27,5 @@
 		session_destroy();
 	}
 
-	//$json['post'] = $_POST;
-
-	header("Content-Type: application/json; charset=utf-8");
-	echo json_encode($json);
+	json_exit($json);
 ?>

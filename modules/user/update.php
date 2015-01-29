@@ -41,14 +41,12 @@
 			$json['info'] = "{$_moduleName}/self/{$_POST['id']} was updated";
 		}
 	} catch(Exception $excp){
-		$message = strtok($excp->getMessage(), "\n");
-		header("HTTP/1.1 505 {$message}");
 		$json['errors'] = array(
-			  'code' => $excp->getCode()
-			, 'message' => $excp->getMessage()
+			  array(
+			  	'exception' => $excp
+			)
 		);
 	}
 
-	header("Content-Type: application/json; charset=utf-8");
-	exit(json_encode($json));
+	json_exit($json);
 ?>

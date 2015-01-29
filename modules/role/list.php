@@ -14,13 +14,13 @@
 
 	foreach($_session->getAllowedRoles() as $role){
 		$item =  array(
-			  'data' => $role
+			  'uri'=> "$_moduleName/self/{$role}"
+			, 'data' => $role
 		);
 
 		if(in_array($role, (array)$conf['authoz']['specialroles'])) $item['classes'] = array('md-warn');
 		$json['items'][] = $item;
 	}
 
-	header("Content-Type: application/json; charset=utf-8");
-	echo json_encode($json);
+	json_exit($json);
 ?>

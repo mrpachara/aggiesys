@@ -6,10 +6,10 @@
 
 	$conf = array();
 
+	$conf['debug'] = 1;
+
 	$conf['app'] = array();
 	$conf['app']['name'] = 'AggieSys';
-
-	$conf['debug'] = 1;
 
 	$conf['session'] = array();
 	$conf['session']['name'] = 'AGGIESYSSESSION';

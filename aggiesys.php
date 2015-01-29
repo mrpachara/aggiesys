@@ -34,6 +34,10 @@ body {
 	overflow: hidden;
 }
 
+#ly-header {
+	height: 0px;
+}
+
 #ly-header .md-toolbar-tools {
 	width: auto !important;
 }
@@ -140,7 +144,7 @@ form.app-view-self {
 	}
 }
 		</style>
-	<body layout="row" ng-controller="LayoutController">
+	<body layout="row">
 		<!-- md-whiteframe-z2 -->
 		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-md')">
 			<md-toolbar>
@@ -161,8 +165,8 @@ form.app-view-self {
 		</md-sidenav>
 		<div flex layout="column">
 			<!-- md-scroll-shrink -->
-			<md-toolbar>
-				<header id="ly-header" layout="row">
+			<md-toolbar layout="column">
+				<header id="ly-header" flex layout="row">
 					<div class="md-toolbar-tools" hide-gt-md>
 						<md-button ng-click="openSidenav()" aria-label="show side nav">
 							<ic-svg ic-href="#ic_menu"></ic-svg>
@@ -179,14 +183,8 @@ form.app-view-self {
 						<li>abcd</li>
 					</ul>
 				</header>
+				<md-progress-linear ng-show="loading > 0" md-mode="indeterminate" class="md-accent"></md-progress-linear>
 			</md-toolbar>
-<!--
-<div layout="row" layout-align="left center" style="height: 0px; padding-left: 4em; align-items: center;">
-	<md-button class="md-fab md-warn" aria-label="New document">
-		<ic-svg ic-href="#ic_view_list_create"></ic-svg>
-	</md-button>
-</div>
--->
 			<md-content layout="column" flex style="overflow-y: scroll;">
 				<main ng-view flex></main>
 			</md-content>

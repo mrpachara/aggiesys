@@ -14,7 +14,7 @@
 			$json = array(
 				 'errors' => array(
 					 array(
-						 'code' => 505
+						 'code' => 500
 						,'message' => "Cannot destroy session {$_GET['id']}!!!"
 					)
 				)
@@ -36,17 +36,12 @@
 		$json = array(
 			 'errors' => array(
 				 array(
-					 'code' => 505
+					 'code' => 500
 					,'message' => "Unknow session id!!!"
 				)
 			)
 		);
 	}
 
-	if(!empty($json['errors'])){
-		header("HTTP/1.1 {$json['errors'][0]['code']} {$json['errors'][0]['message']}");
-	}
-
-	header("Content-Type: application/json; charset=utf-8");
-	exit(json_encode($json));
+	json_exit($json);
 ?>
