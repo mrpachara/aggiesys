@@ -20,7 +20,7 @@
 					if(empty($error['message'])) $error['message'] = $message;
 				}
 
-				if($error['code'] <= 505) $code = $error['code'];
+				$code = ($error['code'] <= 505)? $error['code'] : 500;
 				$message = strtok($error['message'], "\n");
 			}
 
