@@ -14,24 +14,36 @@
 		public static function forbidden_html($code, $message){
 			global $conf;
 
-			$conf_page = $conf['page'];
-
 			header("Content-Type: text/html; charset=utf-8");
 
-			return $message."<br /><a href=\"{$conf_page['login']}\">Longin or Switch user</a>";
+			return $message."<br /><a href=\"{$conf['page']['login']}\">Longin or Switch user</a>";
 		}
 
 		public static function forbidden_json($code, $message){
 			header("Content-Type: application/json; charset=utf-8");
 
 			return json_encode(array(
-				 'errors' => array(
-					 array(
-						 'code' => $code
-						,'message' => $message
+				  'errors' => array(
+					  array(
+						  'code' => $code
+						, 'message' => $message
 					)
 				)
 			));
+		}
+
+		private static function extendSessoinRole(&$user){
+			global $conf;
+
+			if(empty($user)) return;
+
+			$user['roles'] = array_merge(
+				  (!empty($user['roles']))? (array)$user['roles'] : array()
+				, (!empty($conf['authoz']['default']))? (array)$conf['authoz']['default'] : array()
+				, (($user['username'] == $conf['authoz']['superusername']) && !empty($conf['authoz']['superuserrole']))? (array)$conf['authoz']['superuserrole'] : array()
+			);
+
+			$user['roles'] = array_unique($user['roles']);
 		}
 
 		function __construct($userService){
@@ -74,12 +86,13 @@
 			try{
 				$stmt = $this->pdo->prepare('SELECT * FROM "sessions" WHERE (("id" = :id) AND ("expires" > CURRENT_TIMESTAMP)) FOR UPDATE;');
 				$stmt->execute(array(
-					 ':id' => $session_id
+					  ':id' => $session_id
 				));
 				$session = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 				if(!empty($session['id_user'])){
 					$this->user = $this->userService->getUser($session['id_user']);
+					static::extendSessoinRole($this->user);
 				}
 
 				return (!empty($session))? $session['data'] : null;
@@ -98,10 +111,10 @@
 			try{
 				$stmt = $this->pdo->prepare('UPDATE "sessions" SET "expires" = (CURRENT_TIMESTAMP + :maxlifetime::interval), "data" = :data, "id_user" = :id_user  WHERE "id" = :id;');
 				$stmt->execute(array(
-					 ':id' => $session_id
-					,':maxlifetime' => ini_get('session.gc_maxlifetime').' second'
-					,':data' => $session_data
-					,':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
+					  ':id' => $session_id
+					, ':maxlifetime' => ini_get('session.gc_maxlifetime').' second'
+					, ':data' => $session_data
+					, ':id_user' => (!empty($this->user['id']))? $this->user['id'] : null
 				));
 
 				return ($stmt->rowCount() == 1);
@@ -120,7 +133,7 @@
 			try{
 				$stmt = $this->pdo->prepare('DELETE FROM "sessions" WHERE "id" = :id;');
 				$stmt->execute(array(
-					 ':id' => $session_id
+					  ':id' => $session_id
 				));
 
 				return ($stmt->rowCount() == 1);
@@ -181,12 +194,12 @@
 			try{
 				$stmt = $this->pdo->prepare('DELETE FROM "sessions" WHERE "id" = :id;');
 				$stmt->execute(array(
-					 ':id' => $session_id
+					  ':id' => $session_id
 				));
 
 				$stmt = $this->pdo->prepare('INSERT INTO "sessions" ("id") VALUES (:id);');
 				$stmt->execute(array(
-					 ':id' => $session_id
+					  ':id' => $session_id
 				));
 
 				return ($stmt->rowCount() == 1);
@@ -205,6 +218,7 @@
 			if(!empty($this->excp)) return false;
 
 			$this->user = $this->userService->getUserByUsernameAndPassword($username, $password);
+			static::extendSessoinRole($this->user);
 
 			return !empty($this->user);
 		}
@@ -212,12 +226,10 @@
 		public function authoz($roles = null){
 			global $conf;
 
-			$conf_authoz = $conf['authoz'];
-
-			if(($roles === null) && !empty($conf_authoz['default'])) $roles = (array)$conf_authoz['default'];
+			if(($roles === null) && !empty($conf['authoz']['default'])) $roles = (array)$conf['authoz']['default'];
 			$roles = (array)$roles;
 
-			if(!empty($conf_authoz['superuserrole'])) $roles = array_merge($roles, (array)$conf_authoz['superuserrole']);
+			if(!empty($conf['authoz']['superuserrole'])) $roles = array_merge($roles, (array)$conf['authoz']['superuserrole']);
 
 			$tmpintersect = null;
 			if(!empty($this->user)) $tmpintersect = array_intersect($roles, (array)$this->user['roles']);
@@ -228,13 +240,19 @@
 		function authozPage($roles = null, $message_func = null){
 			global $conf;
 
-			$conf_authoz = $conf['authoz'];
-			$conf_page = $conf['page'];
-
 			if(!$this->authoz($roles)){
-				header("HTTP/1.1 {$conf_authoz['forbidden_code']} {$conf_authoz['forbidden_message']}");
-				exit(call_user_func(($message_func === null)? 'static::forbidden_html' : $message_func, $conf_authoz['forbidden_code'], $conf_authoz['forbidden_message']));
+				header("HTTP/1.1 {$conf['authoz']['forbidden_code']} {$conf['authoz']['forbidden_message']}");
+				exit(call_user_func(($message_func === null)? 'static::forbidden_html' : $message_func, $conf['authoz']['forbidden_code'], $conf['authoz']['forbidden_message']));
 			}
+		}
+
+		function getAllowedRoles(){
+			global $conf;
+
+			return array_merge(
+				  (array)$conf['authoz']['allowedroles']
+				, ($this->authoz($conf['authoz']['superuserrole']))? (array)$conf['authoz']['specialroles'] : array()
+			);
 		}
 	}
 ?>

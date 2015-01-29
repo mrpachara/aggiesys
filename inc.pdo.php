@@ -2,6 +2,18 @@
 	namespace sys;
 
 	class PDO extends \PDO {
+		public static function prepareIn($key, $values, &$param = array()){
+			$keys = array();
+
+			for($i = 0; $i < count($values); $i++){
+				$i_key = $key.'_'.$i;
+				$keys[] = $i_key;
+				$param[$i_key] = $values[$i];
+			}
+
+			return implode(', ', $keys);
+		}
+
 		function __construct($dsn = null, $user = null, $password = null, $option = null){
 			global $conf;
 

@@ -12,14 +12,9 @@
 		 'items' => array()
 	);
 
-	$allowedroles = array_merge(
-		 (array)$conf['authoz']['allowedroles']
-		,($_session->authoz($conf['authoz']['superuserrole']))? (array)$conf['authoz']['specialroles'] : array()
-	);
-
-	foreach($allowedroles as $role){
+	foreach($_session->getAllowedRoles() as $role){
 		$item =  array(
-			 'data' => $role
+			  'data' => $role
 		);
 
 		if(in_array($role, (array)$conf['authoz']['specialroles'])) $item['classes'] = array('md-warn');

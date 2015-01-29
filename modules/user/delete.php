@@ -12,63 +12,43 @@
 	$_moduleName = basename(__DIR__);
 
 	$json = array(
-		 'links' => array()
+		  'links' => array()
 	);
 
-	$json['statuses'] = array(
-		 array(
-			 'uri' => "{$_moduleName}/self/{$_GET['id']}"
-			,'status' => 'deleted'
-		)
-		,array(
-			'uri' => "{$_moduleName}/list"
-			,'status' => 'updated'
-		)
-	);
-
-	$json['info'] = "{$_moduleName}/delete under construct";
-	$json['post'] = $_POST;
-/*
 	try{
 		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
 
 		if($data === false){
-			throw new Exception("{$_moduleName} whith id '{$_GET['id']}' not found", 404);
+			throw new Exception("{$_moduleName}/self/{$_GET['id']} not found", 404);
 		}
 
-		$json['links'][] =  array(
-			 'rel' => (empty($data['id']))? 'create' : 'update'
-			,'type' => 'submit'
-			,'href' => "{$_modulePath}/update.php"
-			,'classes' => array("md-primary")
-		);
+		if(!$data['_deletable']){
+			throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be deleted", 505);
+		}
 
-		if(!empty($data['id'])){
-			$json['links'][] =  array(
-				 'rel' => 'delete'
-				,'type' => 'get'
-				,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
-				,'classes' => array("md-warn")
-				,'confirm' => array(
-					 'title' => "Do you want to delete?"
-					,'content' => "Your action cannot be undo."
+		if($userService->delete($data['id'])){
+			$json['statuses'] = array(
+				  array(
+					  'uri' => "{$_moduleName}/self/{$data['id']}"
+					, 'status' => 'deleted'
+				)
+				, array(
+					  'uri' => "{$_moduleName}/list"
+					, 'status' => 'updated'
 				)
 			);
-		} else{
-			$json['mode'] = "create";
+
+			$json['info'] = "{$_moduleName}/self/{$data['id']} was deleted";
 		}
-
-		$json['data'] = $data;
-
-		$json['fields'] = $_fields;
 	} catch(Exception $excp){
-		header("HTTP/1.1 {$excp->getCode()} {$excp->getMessage()}");
+		$message = strtok($excp->getMessage(), "\n");
+		header("HTTP/1.1 505 {$message}");
 		$json['errors'] = array(
-			 'code' => $excp->getCode()
-			,'message' => $excp->getMessage()
+			  'code' => $excp->getCode()
+			, 'message' => $excp->getMessage()
 		);
 	}
-*/
+
 	header("Content-Type: application/json; charset=utf-8");
 	exit(json_encode($json));
 ?>

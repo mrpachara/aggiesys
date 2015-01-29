@@ -171,9 +171,24 @@ window.app = aggiesys;
 
 						defer.resolve.apply(void 0, arguments);
 					}, function(response){
+						var content = 'Unknown Error!!!';
+
+						if(response instanceof Error){
+							content = response.message;
+						} else if(
+							   !angular.isUndefined(response)
+							&& !angular.isUndefined(response.data)
+							&& angular.isArray(response.data.errors)
+							&& !angular.isUndefined(response.data.errors[0])
+						){
+							content = response.data.errors[0].message;
+						} else if(!angular.isUndefined(response.statusText)){
+							content = response.statusText;
+						}
+
 						$mdToast.show(
 							$mdToast.simple()
-								.content(response.statusText)
+								.content(content)
 						);
 
 						defer.reject.apply(void 0, arguments);

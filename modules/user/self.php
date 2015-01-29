@@ -23,14 +23,16 @@
 			throw new Exception("{$_moduleName} whith id '{$_GET['id']}' not found", 404);
 		}
 
-		$json['links'][] =  array(
-			 'rel' => (empty($data['id']))? 'create' : 'update'
-			,'type' => 'submit'
-			,'href' => "{$_modulePath}/update.php".((empty($data['id']))? "?id={$data['id']}" : "")
-			,'classes' => array("md-primary")
-		);
+		if($data['_updatable']){
+			$json['links'][] =  array(
+				 'rel' => (empty($data['id']))? 'create' : 'update'
+				,'type' => 'submit'
+				,'href' => "{$_modulePath}/update.php".((!empty($data['id']))? "?id={$data['id']}" : "")
+				,'classes' => array("md-primary")
+			);
+		}
 
-		if(!empty($data['id'])){
+		if(!empty($data['id']) && ($data['_deletable'])){
 			$json['links'][] =  array(
 				 'rel' => 'delete'
 				,'type' => 'get'
@@ -41,9 +43,9 @@
 					,'content' => "Your action cannot be undo."
 				)
 			);
-		} else{
-			$json['mode'] = "create";
 		}
+
+		if(empty($data['id'])) $json['mode'] = "create";
 
 		$json['data'] = $data;
 

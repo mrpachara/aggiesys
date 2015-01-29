@@ -4,12 +4,12 @@
 	class UserService {
 		private $pdo;
 
-		static function encryptPassword(){
-			return "crypt(:password, gen_salt('bf'))";
+		public static function encryptPassword($key){
+			return "crypt({$key}, gen_salt('bf'))";
 		}
 
-		static function decryptPassword(){
-			return "crypt(:password, "password")";
+		public static function decryptPassword($key){
+			return "crypt({$key}, \"password\")";
 		}
 
 		function __construct(){
@@ -25,12 +25,7 @@
 
 			unset($user['password']);
 
-			// MUSE move to session
-			$roles = array_merge(
-				 (!empty($conf_authoz['default']))? (array)$conf_authoz['default'] : array()
-				,(($user['username'] == $conf_authoz['superusername']) && !empty($conf_authoz['superuserrole']))? (array)$conf_authoz['superuserrole'] : array()
-			);
-
+			$roles = array();
 			if(!empty($user['id'])){
 				$stmt = $this->pdo->prepare('SELECT * FROM "userrole" WHERE "id_user" = :id_user;');
 				$stmt->execute(array(
@@ -40,7 +35,6 @@
 				while($role = $stmt->fetch(\PDO::FETCH_ASSOC)){
 					$roles[] = $role['role'];
 				}
-
 			}
 
 			$user['roles'] = array_unique($roles);
@@ -67,7 +61,7 @@
 			if(empty($username) || empty($password)) return null;
 
 			try{
-				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = '. static::decryptPassword() .'));');
+				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = '. static::decryptPassword(':password') .'));');
 				$stmt->execute(array(
 					 ':username' => $username
 					,':password' => $password
