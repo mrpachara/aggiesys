@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-master-e4397de
+ * v0.7.0
  */
 goog.provide('ng.material.components.sticky');
 goog.require('ng.material.components.content');
@@ -74,7 +74,7 @@ function MdSticky($document, $mdConstant, $compile, $$rAF, $mdUtil) {
 
     // Refresh elements is very expensive, so we use the debounced
     // version when possible.
-    var debouncedRefreshElements = $$rAF.throttle(refreshElements);
+    var debouncedRefreshElements = $$rAF.debounce(refreshElements);
 
     // setupAugmentedScrollEvents gives us `$scrollstart` and `$scroll`,
     // more reliable than `scroll` on android.
@@ -83,7 +83,6 @@ function MdSticky($document, $mdConstant, $compile, $$rAF, $mdUtil) {
     contentEl.on('$scroll', onScroll);
 
     var self;
-    var stickyBaseoffset = contentEl.prop('offsetTop');
     return self = {
       prev: null,
       current: null, //the currently stickied item
@@ -99,7 +98,6 @@ function MdSticky($document, $mdConstant, $compile, $$rAF, $mdUtil) {
     // Add an element and its sticky clone to this content's sticky collection
     function add(element, stickyClone) {
       stickyClone.addClass('md-sticky-clone');
-      stickyClone.css('top', stickyBaseoffset + 'px');
 
       var item = {
         element: element,

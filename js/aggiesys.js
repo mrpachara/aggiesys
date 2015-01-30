@@ -151,12 +151,9 @@ window.app = aggiesys;
 			})
 		;
 	})
-		.run(function($rootScope, $q, $timeout){
+		.run(function($rootScope, $q, $timeout, $mdSidenav){
 			$rootScope.loading = 0;
-
-			$rootScope.openSidenav = function(){
-				$mdSidenav('left').open();
-			};
+			$rootScope.$mdSidenav = $mdSidenav;
 
 			$rootScope.progressLoad = function(promise){
 				if(angular.isUndefined(promise) || !angular.isFunction(promise.finally)) return;
@@ -174,8 +171,22 @@ window.app = aggiesys;
 				$rootScope.progressLoad($q(function(resolve, reject){
 					$timeout(function(){
 						resolve();
-					}, 3000);
+					}, 30000);
 				}));
+			};
+
+			$rootScope.isActiveViewSearch = false;
+
+			$rootScope.activeViewSearch = function(ev){
+				if(!$rootScope.isActiveViewSearch){
+					ev.preventDefault();
+					$rootScope.isActiveViewSearch = true;
+				}
+			};
+
+			$rootScope.submitViewSearch = function(ev){
+				ev.preventDefault();
+				$rootScope.isActiveViewSearch = false;
 			};
 		})
 	;
@@ -244,41 +255,6 @@ window.app = aggiesys;
 		$scope.data = {
 			 'username': ''
 			,'password': ''
-			,'test1': ['123', '456']
-			,'test2': [
-				 {
-					 'a': 1
-					,'b': 2
-				}
-				,{
-					 'c': 3
-					,'d':4
-				}
-			]
-			,'test3': {
-				 'abc': 321
-				,'efg': 654
-			}
-			,'test4': {
-				 'i': ['aa', 'bb']
-				,'j': {
-					 'x1': 'x'
-					,'x2': 'xx'
-					,'x3': 'xxx'
-				}
-				,'k': [
-					 {
-						 'y1': 'y'
-						,'y2': 'yy'
-						,'y3': 'yyy'
-					}
-					,{
-						 'z1': 'z'
-						,'z2': 'zz'
-						,'z3': 'zzz'
-					}
-				]
-			}
 		};
 
 		$scope.errors = [];

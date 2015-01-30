@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-master-e4397de
+ * v0.7.0
  */
 goog.provide('ng.material.components.input');
 goog.require('ng.material.core');
@@ -20,8 +20,7 @@ angular.module('material.components.input', [
   .directive('label', labelDirective)
   .directive('input', inputTextareaDirective)
   .directive('textarea', inputTextareaDirective)
-  .directive('mdMaxlength', mdMaxlengthDirective)
-  .directive('placeholder', placeholderDirective);
+  .directive('mdMaxlength', mdMaxlengthDirective);
 
 /**
  * @ngdoc directive
@@ -181,8 +180,7 @@ function inputTextareaDirective($mdUtil, $window, $compile, $animate) {
   function postLink(scope, element, attr, ctrls) {
 
     var containerCtrl = ctrls[0];
-    var ngModelCtrl = ctrls[1] || $mdUtil.fakeNgModel();
-    var isReadonly = angular.isDefined(attr.readonly);
+    var ngModelCtrl = ctrls[1];
 
     if ( !containerCtrl ) return;
     if (containerCtrl.input) {
@@ -199,35 +197,39 @@ function inputTextareaDirective($mdUtil, $window, $compile, $animate) {
       setupTextarea();
     }
 
-    function ngModelPipelineCheckValue(arg) {
-      containerCtrl.setHasValue(!ngModelCtrl.$isEmpty(arg));
-      return arg;
-    }
-    function inputCheckValue() {
-      // An input's value counts if its length > 0,
-      // or if the input's validity state says it has bad input (eg string in a number input)
-      containerCtrl.setHasValue(element.val().length > 0 || (element[0].validity||{}).badInput);
-    }
+    var isEmpty = ngModelCtrl ? 
+      ngModelCtrl.$isEmpty : 
+      function() { return ('' + element.val()).length === 0; };
 
-    scope.$watch(function() {
-      return ngModelCtrl.$dirty && ngModelCtrl.$invalid;
-    }, containerCtrl.setInvalid);
+    // When the input value changes, check if it "has" a value, and
+    // set the appropriate class on the input group
+    if (ngModelCtrl) {
+      scope.$watch(function() {
+        return ngModelCtrl.$dirty && ngModelCtrl.$invalid;
+      }, containerCtrl.setInvalid);
       
-    ngModelCtrl.$parsers.push(ngModelPipelineCheckValue);
-    ngModelCtrl.$formatters.push(ngModelPipelineCheckValue);
-
-    element.on('input', inputCheckValue);
-
-    if (!isReadonly) {
-      element
-        .on('focus', function(ev) {
-          containerCtrl.setFocused(true);
-        })
-        .on('blur', function(ev) {
-          containerCtrl.setFocused(false);
-          inputCheckValue();
-        });
+      ngModelCtrl.$formatters.push(checkHasValue);
+      ngModelCtrl.$parsers.push(checkHasValue);
+    } else {
+      checkHasValue();
     }
+    element.on('input', checkHasValue);
+
+    function checkHasValue(value) {
+      containerCtrl.setHasValue(
+        !isEmpty(value) ||
+        (element[0].validity || {}).badInput // allow badInput to count as having a value.
+      );
+      return value;
+    }
+
+    element
+      .on('focus', function(ev) {
+        containerCtrl.setFocused(true);
+      })
+      .on('blur', function(ev) {
+        containerCtrl.setFocused(false);
+      });
 
     scope.$on('$destroy', function() {
       containerCtrl.setFocused(false);
@@ -329,20 +331,5 @@ function mdMaxlengthDirective($animate) {
   }
 }
 mdMaxlengthDirective.$inject = ["$animate"];
-
-function placeholderDirective() {
-  return {
-    restrict: 'A',
-    require: '^mdInputContainer',
-    link: postLink
-  };
-
-  function postLink(scope, element, attr, inputContainer) {
-    var placeholderText = attr.placeholder;
-    element.removeAttr('placeholder');
-
-    inputContainer.element.append('<div class="md-placeholder">' + placeholderText + '</div>');
-  }
-}
 
 })();

@@ -11,13 +11,14 @@
 		<base href="<?= htmlspecialchars(APPPATH) ?>" />
 
 		<link rel="stylesheet" href="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.css" />
+		<link rel="stylesheet" href="<?= BASEPATH ?>css/aggiesys.css" />
 
 		<script src="<?= BASEPATH ?>js/lib/bower_components/jquery/dist/jquery.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular/angular.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-aria/angular-aria.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-animate/angular-animate.js"></script>
-		<script src="<?= BASEPATH ?>js/lib/bower_components/hammerjs/hammer.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-route/angular-route.js"></script>
+		<script src="<?= BASEPATH ?>js/lib/bower_components/hammerjs/hammer.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
@@ -27,123 +28,6 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 		</script>
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 
-		<style>
-
-html,
-body {
-	overflow: hidden;
-}
-
-#ly-header {
-	height: 0px;
-}
-
-#ly-header .md-toolbar-tools {
-	width: auto !important;
-}
-
-#ly-header .md-toolbar-tools:last-child {
-	margin-left: auto;
-}
-
-md-sidenav.md-locked-open {
-	min-width: 15em;
-	width: 15em;
-
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
-
-ng-view,
-[ng-view] {
-	padding: 1em;
-}
-
-ic-svg,
-[ic-svg],
-[data-ic-svg] {
-	display: inline-block;
-	padding: 0px;
-	margin: 0px;
-
-	width: 24px;
-	height: 24px;
-
-	flex: 0 0 auto;
-}
-
-ic-svg>svg,
-[ic-svg]>svg,
-[data-ic-svg] {
-	width: 100%;
-	height: 100%;
-}
-
-table.app-view-list {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-table.app-view-list>*>tr {
-	height: 3em;
-	border-bottom: 1px solid gray;
-}
-
-table.app-view-list>thead>tr>th {
-	text-align: left;
-}
-
-table.app-view-list .app-view-action-list {
-	justify-content: space-around;
-}
-
-table.app-view-list .app-view-list-altheader{
-	display: none;
-
-	color: blue;
-	font-weight: bold;
-
-	width: 25%;
-	text-align: right;
-
-	padding-right: 1em;
-}
-
-table.app-view-list .app-view-list-altheader::after {
-	content: ':';
-}
-
-table.app-view-list .app-view-list-value {
-	display: inline-block;
-}
-
-form.app-view-self {
-}
-@media (max-width: 600px) {
-	table.app-view-list>*>tr {
-		padding-top: 1em;
-		padding-bottom: 1em;
-	}
-
-	table.app-view-list>thead>tr>th:not(:last-child){
-		display: none;
-	}
-
-	table.app-view-list>thead>tr>th:first-child{
-		display: block;
-
-		visibility: hidden;
-	}
-
-	table.app-view-list>tbody>tr>td:not(:last-child){
-		display: flex;
-	}
-
-	table.app-view-list .app-view-list-altheader{
-		display: inline-block;
-	}
-}
-		</style>
 	<body layout="row">
 		<!-- md-whiteframe-z2 -->
 		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$media('gt-md')">
@@ -156,37 +40,39 @@ form.app-view-self {
 				<div>
 					<div>abacd</div>
 					<div>abacd</div>
-					<div>abacd</div>
-					<div>abacd</div>
-					<div>abacd</div>
-					<div>abacd</div>
 				</div>
 			</md-content>
 		</md-sidenav>
 		<div flex layout="column">
 			<!-- md-scroll-shrink -->
-			<md-toolbar layout="column">
-				<header id="ly-header" flex layout="row">
-					<div class="md-toolbar-tools" hide-gt-md>
-						<md-button ng-click="openSidenav()" aria-label="show side nav">
+			<md-toolbar>
+				<header id="ly-header" class="md-toolbar-tools" flex>
+					<div layout-align="left center" layout="row">
+						<md-button id="app-cmd-view-cmd" ng-click="$mdSidenav('left').open()" hide-gt-md aria-label="show side nav">
 							<ic-svg ic-href="#ic_menu"></ic-svg>
 						</md-button>
 					</div>
-					<h2 class="md-toolbar-tools">
-						<span>xxx</span>
+					<h2 id="app-cp-title" ng-hide="isActiveViewSearch" layout="row">
+						<span>{{isActiveViewSearch}}</span>
 					</h2>
-					<ul class="md-toolbar-tools">
-						<li>abcd</li>
-						<li>abcd</li>
-						<li>abcd</li>
-						<li>abcd</li>
-						<li>abcd</li>
-					</ul>
+					<div ng-class="{'app-ly-opt-flex': isActiveViewSearch}" layout="row">
+						<form id="app-cp-view-search" ng-class="{'app-st-active': isActiveViewSearch}" ng-animate="'app-st-active'" ng-submit="submitViewSearch($event)" layout="row">
+							<md-button id="app-cmd-view-search" ng-click="activeViewSearch($event)" aria-label="search bar">
+								<ic-svg ic-href="#ic_search"></ic-svg>
+							</md-button>
+							<md-input-container class="app-cl-search-box" flex style="padding-bottom: 0px;">
+								<input type="text" name="term" required="true" style="border-color: rgba(0,0,0,0.12); border-width: 0 0 1px 0;" />
+							</md-input-container>
+						</form>
+						<md-button ng-click="testProgressLoad()" aria-label="more menu">
+							<ic-svg ic-href="#ic_more_vert"></ic-svg>
+						</md-button>
+					</div>
 				</header>
-				<md-progress-linear ng-show="loading > 0" md-mode="indeterminate" class="md-accent"></md-progress-linear>
+				<md-progress-linear id="app-cp-progress-loading" md-mode="indeterminate" ng-class="{'app-st-active': loading > 0}" class="md-accent"></md-progress-linear>
 			</md-toolbar>
-			<md-content layout="column" flex style="overflow-y: scroll;">
-				<main ng-view flex></main>
+			<md-content id="app-ly-container-content" layout="column" flex style="overflow-y: scroll;">
+				<main id="app-cp-content" ng-view flex></main>
 			</md-content>
 		</div>
 	</body>

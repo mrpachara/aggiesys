@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-master-e4397de
+ * v0.7.0
  */
 goog.provide('ng.material.components.toolbar');
 goog.require('ng.material.components.content');
@@ -90,7 +90,7 @@ function mdToolbarDirective($$rAF, $mdConstant, $mdUtil, $mdTheming) {
         var toolbarHeight;
         var contentElement;
 
-        var debouncedContentScroll = $$rAF.throttle(onContentScroll);
+        var debouncedContentScroll = $$rAF.debounce(onContentScroll);
         var debouncedUpdateHeight = $mdUtil.debounce(updateToolbarHeight, 5 * 1000);
 
         // Wait for $mdContentLoaded event from mdContent directive.

@@ -2,10 +2,11 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-master-e4397de
+ * v0.7.0
  */
 goog.provide('ng.material.components.toast');
 goog.require('ng.material.components.button');
+goog.require('ng.material.components.swipe');
 goog.require('ng.material.core');
 (function() {
 'use strict';
@@ -18,6 +19,7 @@ goog.require('ng.material.core');
  */
 angular.module('material.components.toast', [
   'material.core',
+  'material.components.swipe',
   'material.components.button'
 ])
   .directive('mdToast', MdToastDirective)
@@ -162,7 +164,7 @@ function MdToastDirective() {
 
 function MdToastProvider($$interimElementProvider) {
 
-  toastDefaultOptions.$inject = ["$timeout", "$animate", "$mdTheming", "$mdToast"];
+  toastDefaultOptions.$inject = ["$timeout", "$animate", "$mdSwipe", "$mdTheming", "$mdToast"];
   return $$interimElementProvider('$mdToast')
     .setDefaults({
       methods: ['position', 'hideDelay', 'capsule'],
@@ -176,7 +178,7 @@ function MdToastProvider($$interimElementProvider) {
           template: [
             '<md-toast ng-class="{\'md-capsule\': toast.capsule}">',
               '<span flex>{{ toast.content }}</span>',
-              '<md-button class="md-action" ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">',
+              '<md-button ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-action\': toast.highlightAction}">',
                 '{{ toast.action }}',
               '</md-button>',
             '</md-toast>'
@@ -193,7 +195,7 @@ function MdToastProvider($$interimElementProvider) {
     });
 
   /* @ngInject */
-  function toastDefaultOptions($timeout, $animate, $mdTheming, $mdToast) {
+  function toastDefaultOptions($timeout, $animate, $mdSwipe, $mdTheming, $mdToast) {
     return {
       onShow: onShow,
       onRemove: onRemove,
@@ -209,17 +211,18 @@ function MdToastProvider($$interimElementProvider) {
       }).join(' '));
       options.parent.addClass(toastOpenClass(options.position));
 
-      options.onSwipe = function(ev, gesture) {
+      var configureSwipe = $mdSwipe(scope, 'swipeleft swiperight');
+      options.detachSwipe = configureSwipe(element, function(ev) {
         //Add swipeleft/swiperight class to element so it can animate correctly
-        element.addClass('md-' + ev.type.replace('$md.',''));
+        element.addClass('md-' + ev.type);
         $timeout($mdToast.cancel);
-      };
-      element.on('$md.swipeleft $md.swiperight', options.onSwipe);
+      });
+
       return $animate.enter(element, options.parent);
     }
 
     function onRemove(scope, element, options) {
-      element.off('$md.swipeleft $md.swiperight', options.onSwipe);
+      options.detachSwipe();
       options.parent.removeClass(toastOpenClass(options.position));
       return $animate.leave(element);
     }
