@@ -11,36 +11,42 @@
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
 
-	$_moduleUri = reflocation(__FILE__);
-
 	$json = array(
 		 'uri' => "{$_moduleName}/list"
 		,'links' => array(
-			 array(
-				 'rel' => 'new'
-				,'type' => 'view'
-				,'href' => $_moduleName."/self"
+			  array(
+				  'rel' => 'new'
+				, 'type' => 'view'
+				, 'href' => $_moduleName."/self"
 			)
 		)
 		,'items' => array()
 	);
 
+	json_search($json);
+
 	try{
-		foreach($userService->getAll() as $data){
+		$termText = (!empty($_GET['term']))? $_GET['term'] : null;
+		$page = (!empty($_GET['page']))? $_GET['page'] : null;
+		foreach($userService->getAll($termText, $page) as $data){
 			$item = array(
-				 'uri' => "{$_moduleName}/self/{$data['id']}"
-				,'links' => array()
-				,'data' => $data
+				  'uri' => "{$_moduleName}/self/{$data['id']}"
+				, 'value' => $data['id']
+				, 'label' => $data['fullname']
+				, 'links' => array()
+				, 'data' => $data
 			);
 
 			$item['links'][] = array(
-				 'rel' => 'self'
-				,'type' => 'view'
-				,'href' => "{$_moduleName}/self/{$data['id']}"
+				  'rel' => 'self'
+				, 'type' => 'view'
+				, 'href' => "{$_moduleName}/self/{$data['id']}"
 			);
 
 			$json['items'][] = $item;
 		}
+
+		json_page($json, $page);
 
 		$json['fields'] = $_fields;
 	} catch(Exception $excp){

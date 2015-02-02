@@ -16,20 +16,10 @@
 	);
 
 	try{
-		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
-
-		if($data === false){
-			throw new Exception("{$_moduleName}/self/{$_GET['id']} not found", 404);
-		}
-
-		if(!$data['_deletable']){
-			throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be deleted", 500);
-		}
-
-		if($userService->delete($data['id'])){
+		if($userService->delete((!empty($_GET['id']))? $_GET['id'] : null)){
 			$json['statuses'] = array(
 				  array(
-					  'uri' => "{$_moduleName}/self/{$data['id']}"
+					  'uri' => "{$_moduleName}/self/{$_GET['id']}"
 					, 'status' => 'deleted'
 				)
 				, array(
@@ -38,7 +28,7 @@
 				)
 			);
 
-			$json['info'] = "{$_moduleName}/self/{$data['id']} was deleted";
+			$json['info'] = "{$_moduleName}/self/{$_GET['id']} was deleted";
 		}
 	} catch(Exception $excp){
 		$json['errors'] = array(

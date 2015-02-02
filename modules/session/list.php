@@ -8,26 +8,30 @@
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
 
-	$_moduleUri = reflocation(__FILE__);
-
 	$json = array(
 		 'uri' => "{$_moduleName}/list"
 		,'links' => array()
 		,'items' => array()
 	);
-
+/*
+	$json['links'][] = array(
+		  'rel' => 'search'
+	);
+*/
 	try{
 		foreach($_session->getAll() as $data){
 			$item = array(
-				 'uri' => "{$_moduleName}/self/{$data['id']}"
-				,'links' => array()
-				,'data' => $data
+				  'uri' => "{$_moduleName}/self/{$data['id']}"
+				, 'value' => $data['id']
+				, 'label' => $data['id']
+				, 'links' => array()
+				, 'data' => $data
 			);
 
 			$item['links'][] = array(
-				 'rel' => 'delete'
-				,'type' => 'get'
-				,'href' => (session_id() == $data['id'])? null : $_modulePath."/delete.php?id={$data['id']}"
+				  'rel' => 'delete'
+				, 'type' => 'get'
+				, 'href' => (session_id() == $data['id'])? null : $_modulePath."/delete.php?id={$data['id']}"
 			);
 
 			$json['items'][] = $item;
@@ -37,7 +41,7 @@
 	} catch(PDOException $excp){
 		$json['errors'] = array(
 			  array(
-			  	'exception' => $excp
+				  'exception' => $excp
 			)
 		);
 	}

@@ -46,7 +46,7 @@
 	$conf['pagestage']['maxpageid'] = 20;
 
 	$conf['pagination'] = array();
-	$conf['pagination']['numofitem'] = 20;
+	$conf['pagination']['numofitem'] = 3;
 	$conf['pagination']['numofshowedpage'] = 5;
 	$conf['pagination']['previoustext'] = "ก่อนหน้า";
 	$conf['pagination']['nexttext'] = "ถัดไป";

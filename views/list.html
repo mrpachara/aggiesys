@@ -14,7 +14,7 @@
 </svg>
 <table class="app-view-list">
 	<colgroup>
-		<col  ng-repeat="field in model.fields" />
+		<col  ng-repeat="field in model.fields" style="width: {{field.width}};" />
 		<col style="width: 5em;" />
 	</colgroup>
 	<thead>
@@ -22,7 +22,7 @@
 			<th  ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" ng-bind="field.name"></th>
 			<th>
 				<div layout="row" class="app-view-action-list">
-					<md-button ng-repeat="link in model.links" ng-hide="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+					<md-button ng-repeat="link in model.links" ng-hide="(link.href || null) === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>
@@ -45,6 +45,21 @@
 		</tr>
 	</tbody>
 </table>
+<div layout="row" layout-align="end center" layout-padding>
+	<div ng-repeat="link in model.links">
+		<span ng-if="link.rel == 'page_current'">
+			<span style="font-weight: bold;">Page: </span>
+			<span ng-bind="link.state.page"></span>
+			<span ng-if="link.total != null">/</span>
+			<span ng-if="link.total != null" ng-bind="link.total"></span>
+		</span>
+		<md-button ng-if="(link.rel == 'page_previous') || (link.rel == 'page_next')" ng-disabled="link.state === null" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} entity">
+			<ic-svg ng-if="link.rel == 'page_previous'" ic-href="#ic_navigate_before"></ic-svg>
+			<span ng-bind="link.rel.split('_')[1]"></span>
+			<ic-svg ng-if="link.rel == 'page_next'" ic-href="#ic_navigate_next"></ic-svg>
+		</md-button>
+	</div>
+</div>
 <!--
 <md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 	<span style="margin-top: 0.25em;">Show Scope</span>

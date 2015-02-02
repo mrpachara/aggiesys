@@ -16,21 +16,13 @@
 	);
 
 	try{
-		$data = $userService->get((!empty($_GET['id']))? $_GET['id'] : null);
-
-		if($data === false){
-			throw new Exception("{$_moduleName}/self/{$_GET['id']} not found", 404);
-		}
-
-		if(!$data['_updatable']){
-			throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be updated", 505);
-		}
-
-		if($userService->save($data['id'], $_POST)){
+		if($userService->save((!empty($_GET['id']))? $_GET['id'] : null, $_POST)){
+			$selfStatus = (empty($_GET['id']))? 'created' : 'updated';
+			
 			$json['statuses'] = array(
 				  array(
 					  'uri' => "{$_moduleName}/self/{$_POST['id']}"
-					, 'status' => (empty($data['id']))? 'created' : 'updated'
+					, 'status' => $selfStatus
 				)
 				, array(
 					  'uri' => "{$_moduleName}/list"
@@ -38,7 +30,7 @@
 				)
 			);
 
-			$json['info'] = "{$_moduleName}/self/{$_POST['id']} was updated";
+			$json['info'] = "{$_moduleName}/self/{$_POST['id']} {$selfStatus}";
 		}
 	} catch(Exception $excp){
 		$json['errors'] = array(

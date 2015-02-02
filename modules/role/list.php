@@ -9,18 +9,25 @@
 	$_moduleName = basename(__DIR__);
 
 	$json = array(
-		 'items' => array()
+		  'uri' => "{$_moduleName}/list"
+		, 'items' => array()
 	);
 
 	foreach($_session->getAllowedRoles() as $role){
 		$item =  array(
 			  'uri'=> "$_moduleName/self/{$role}"
-			, 'data' => $role
+			, 'value' => $role
+			, 'label' => $role
+			, 'data' => array(
+				  'role' => $role
+			)
 		);
 
 		if(in_array($role, (array)$conf['authoz']['specialroles'])) $item['classes'] = array('md-warn');
 		$json['items'][] = $item;
 	}
+
+	$json['fields'] = $_fields;
 
 	json_exit($json);
 ?>

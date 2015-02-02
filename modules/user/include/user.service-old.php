@@ -1,24 +1,26 @@
 <?php
 	namespace app;
 
-	class UserService extends \sys\DataService {
-		protected static function getWhere(){
+	class UserService {
+		private $pdo;
+
+		private static function getWhere(){
 			global $conf;
 
 			$where = array(
 				  'sqls' => array()
-				, 'params' => array()
+				, 'param' => array()
 			);
 
 			if(!empty($conf['authoz']['superusername'])){
 				$where['sqls'][] = '("username" <> :superuser)';
-				$where['params'][':superuser'] = $conf['authoz']['superusername'];
+				$where['param'][':superuser'] = $conf['authoz']['superusername'];
 			}
 
 			return $where;
 		}
 
-		protected static function extendAction(&$data){
+		private static function extendAction(&$data){
 			global $conf;
 
 			if(empty($data)) return;
@@ -53,11 +55,11 @@
 		}
 
 		function __construct(){
-			parent::__construct();
+			$this->pdo = new \sys\PDO();
 		}
 
 		private function getRoles($id_user){
-			$stmt = $this->getPdo()->prepare('SELECT "role" FROM "userrole" WHERE "id_user" = :id_user ORDER BY "role" ASC;');
+			$stmt = $this->pdo->prepare('SELECT "role" FROM "userrole" WHERE "id_user" = :id_user ORDER BY "role" ASC;');
 			$stmt->execute(array(
 				  ':id_user' => $id_user
 			));
@@ -77,7 +79,7 @@
 			} else{
 				$where = static::getWhere();
 
-				$stmt = $this->getPdo()->prepare('
+				$stmt = $this->pdo->prepare('
 					SELECT
 						  "id"
 						, "username"
@@ -89,7 +91,7 @@
 					  array(
 						 ':id' => $id
 					)
-					, $where['params']
+					, $where['param']
 				));
 
 				$user = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -104,73 +106,21 @@
 			return $user;
 		}
 
-		public function getAll($termText = null, &$page = null){
-			$pageData = array(
-				  'current' => null
-				, 'previous' => null
-				, 'next' => null
-				, 'total' => null
-			);
-
+		public function getAll(){
 			$where = static::getWhere();
 
-			$whereSearchTerm = static::getWhereSearchTerm(
-				  array(
-					  'username'
-					, 'fullname'
-					, 'userrole.role'
-				)
-				, static::getSearchTerm($termText)
-			);
-
-
-			$sqls = array_merge(
-				  $where['sqls']
-				, $whereSearchTerm['sqls']
-			);
-
-			$params = array_merge(
-				  $where['params']
-				, $whereSearchTerm['params']
-			);
-
-			$itemLimit = null;
-			$limit = static::getLimit($page, $itemLimit);
-
-			$sqlPattern = '
-				SELECT DISTINCT
-					  "user"."id" AS "id"
-					, "user"."username" AS "username"
-					, "user"."fullname" AS "fullname"
-				FROM "user" LEFT JOIN "userrole" ON("user"."id" = "userrole"."id_user")
-				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $sqls) : '').'
-				%s
-			';
-
-			if(!empty($page)){
-				$stmt = $this->getPdo()->prepare(sprintf('
-					SELECT count("_realdata".*) AS "numrows" FROM (%s) AS "_realdata";
-				', sprintf($sqlPattern, '')));
-				$stmt->execute($params);
-				$pageData['total'] = ceil($stmt->fetchColumn() / $itemLimit);
-			}
-
-			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "username" ASC '.$limit));
-			$stmt->execute($params);
+			$stmt = $this->pdo->prepare('
+				SELECT
+					  "id"
+					, "username"
+					, "fullname"
+				FROM "user"
+				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+				ORDER BY "username" ASC
+			;');
+			$stmt->execute($where['param']);
 
 			$users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-			if(!empty($page)){
-				$pageData['current'] = $page;
-			}
-
-			if(!empty($page) && ($page > 1)){
-				$pageData['previous'] = $page - 1;
-			}
-
-			if(!empty($page) && ($page < $pageData['total'])){
-				$pageData['next'] = $page + 1;
-			}
 
 			foreach($users as &$user){
 				if(!empty($user['id'])){
@@ -179,8 +129,6 @@
 					static::extendAction($user);
 				}
 			}
-
-			if(!empty($page)) $page = $pageData;
 
 			return $users;
 		}
@@ -200,11 +148,11 @@
 
 			$id = $existedData['id'];
 
-			$this->getPdo()->beginTransaction();
+			$this->pdo->beginTransaction();
 
 			try{
 				if($id === null){
-					$stmt = $this->getPdo()->prepare('
+					$stmt = $this->pdo->prepare('
 						INSERT INTO "user" (
 							  "username"
 							, "fullname"
@@ -221,9 +169,9 @@
 						, ':password' => ''
 					));
 
-					$id = $data['id'] = $this->getPdo()->lastInsertId('user_id_seq');
+					$id = $data['id'] = $this->pdo->lastInsertId('user_id_seq');
 				} else{
-					$stmt = $this->getPdo()->prepare('
+					$stmt = $this->pdo->prepare('
 						UPDATE "user" SET
 							  "username" = :username
 							, "fullname" = :fullname
@@ -240,7 +188,7 @@
 				}
 
 				if(!empty($data['password'])){
-					$stmt = $this->getPdo()->prepare('
+					$stmt = $this->pdo->prepare('
 						UPDATE "user" SET
 							  "password" = '.\sys\UserService::encryptPassword(':password').'
 						WHERE
@@ -255,7 +203,7 @@
 				$allowedRoles = $GLOBALS['_session']->getAllowedRoles();
 
 				$paramIn = array();
-				$stmt = $this->getPdo()->prepare('
+				$stmt = $this->pdo->prepare('
 					DELETE FROM "userrole"
 					WHERE ("id_user" = :id_user) AND ("role" IN ('.\sys\PDO::prepareIn(':role', $allowedRoles, $paramIn).'))
 				;');
@@ -268,7 +216,7 @@
 
 				if(!empty($data['roles'])){
 					$data['roles'] = array_intersect($data['roles'], $allowedRoles);
-					$stmt = $this->getPdo()->prepare('
+					$stmt = $this->pdo->prepare('
 						INSERT INTO "userrole" (
 							  "id_user"
 							, "role"
@@ -286,11 +234,11 @@
 					}
 				}
 			} catch(\PDOException $excp){
-				$this->getPdo()->rollBack();
+				$this->pdo->rollBack();
 				throw $excp;
 			}
 
-			return ($this->getPdo()->commit())? $id : false;
+			return ($this->pdo->commit())? $id : false;
 		}
 
 		public function delete($id){
@@ -308,10 +256,10 @@
 
 			$id = $existedData['id'];
 
-			$this->getPdo()->beginTransaction();
+			$this->pdo->beginTransaction();
 
 			try{
-				$stmt = $this->getPdo()->prepare('
+				$stmt = $this->pdo->prepare('
 					DELETE FROM "user"
 					WHERE "id" = :id
 				;');
@@ -319,11 +267,11 @@
 					  ':id' => $id
 				));
 			} catch(\PDOException $excp){
-				$this->getPdo()->rollBack();
+				$this->pdo->rollBack();
 				throw $excp;
 			}
 
-			return ($this->getPdo()->commit())? $id : false;
+			return ($this->pdo->commit())? $id : false;
 		}
 	}
 ?>

@@ -3,6 +3,7 @@
 
 	require_once "inc.pdo.php";
 	require_once "inc.user.php";
+	require_once "inc.dataservice.php";
 	require_once "inc.sessions.php";
 	require_once "inc.jsonhelper.php";
 	//require_once "inc.authen.php";

@@ -1,43 +1,46 @@
 <?php
 	$_fields = array(
 		array(
-			 'name' => "username"
-			,'required' => array(
-				 'create' => true
+			  'name' => "username"
+			, 'width' => "25%"
+			, 'required' => array(
+				  'create' => true
 			)
-			,'readonly' => array(
-				 'update' => true
-			)
-		)
-		,array(
-			 'name' => "fullname"
-			,'required' => array(
-				 'create' => true
-				,'update' => true
+			, 'readonly' => array(
+				  'update' => true
 			)
 		)
 		,array(
-			 'name' => "roles"
-			,'display' => array(
-				 'create' => "checkbox.domain"
-				,'update' => "checkbox.domain"
+			  'name' => "fullname"
+			, 'width' => "25%"
+			, 'required' => array(
+				  'create' => true
+				, 'update' => true
 			)
-			,'links' => array(
-				array(
-					 'rel' => "domain"
-					,'type' => "get"
-					,'href' => BASEPATH."modules/role/list.php"
+		)
+		,array(
+			  'name' => "roles"
+			, 'width' => "50%"
+			, 'display' => array(
+				  'create' => "checkbox.domain"
+				, 'update' => "checkbox.domain"
+			)
+			, 'links' => array(
+				  array(
+					  'rel' => "domain"
+					, 'type' => "get"
+					, 'href' => BASEPATH."modules/role/list.php"
 				)
 			)
 		)
-		,array(
-			 'name' => "password"
-			,'show' => array(
-				 'create' => true
-				,'update' => true
+		, array(
+			  'name' => "password"
+			, 'show' => array(
+				  'create' => true
+				, 'update' => true
 			)
-			,'required' => array(
-				 'create' => true
+			, 'required' => array(
+				  'create' => true
 			)
 		)
 	);

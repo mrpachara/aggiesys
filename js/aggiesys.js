@@ -4,26 +4,6 @@ window.app = aggiesys;
 (function($, angular){
 	'use strict';
 
-	var modelPromise = function($q, $route, $appHttp, $mdToast){
-		var defer = $q.defer();
-
-		var url = BASEPATH + 'modules/' + $route.current.params.module + '/' + $route.current.params.operation + '.php';
-
-		if(typeof $route.current.params.id != 'undefined'){
-			url = url + '?id=' + encodeURIComponent($route.current.params.id);
-		}
-
-		$appHttp.get(url)
-			.then(function(response){
-				defer.resolve(response.data);
-			}, function(response){
-				defer.reject(response.data, response.statusText);
-			})
-		;
-
-		return defer.promise;
-	};
-
 	var headersGetter = function(name, headersObj){
 		name = name || '';
 		headersObj = headersObj || {};
@@ -38,12 +18,7 @@ window.app = aggiesys;
 		return value;
 	};
 
-	var requestAsUriEncodeForPhp = function(data, headers){
-		if(
-			   (headersGetter('Content-Type', headers()) === null)
-			|| (headersGetter('Content-Type', headers()).split(';')[0].trim().toLowerCase() != 'application/x-www-form-urlencoded')
-		) return data;
-
+	var requestAsUriEncodeForPhp = function(data){
 		var requestBodies = [];
 
 		var deepEncodeURIComponent = function(keyConverter, data){
@@ -76,6 +51,38 @@ window.app = aggiesys;
 		return requestBodies.join('&');
 	};
 
+	var modelPromise = function($q, $route, $location, $appHttp, $mdToast){
+		var defer = $q.defer();
+
+		var url = BASEPATH + 'modules/' + $route.current.params.module + '/' + $route.current.params.operation + '.php';
+
+		var params = {};
+		if(!angular.isUndefined($route.current.params.id)){
+			angular.extend(params, {
+				'id': $route.current.params.id
+			})
+		}
+		angular.extend(params, $location.search(), $location.state());
+
+		if(angular.isUndefined(params['page'])) params['page'] = 1;
+
+		var query = requestAsUriEncodeForPhp(params);
+
+		if(query != ''){
+			url = url + '?' + query;
+		}
+
+		$appHttp.get(url)
+			.then(function(response){
+				defer.resolve(response.data);
+			}, function(response){
+				defer.reject(response.data, response.statusText);
+			})
+		;
+
+		return defer.promise;
+	};
+
 	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider){
 		$routeProvider
 			.when('/', {
@@ -95,19 +102,8 @@ window.app = aggiesys;
 				}
 				,'controller': 'AppViewController'
 				,'resolve': {
-					'model': function($q, $route, $appHttp, $mdToast){
-						return modelPromise($q, $route, $appHttp, $mdToast);
-					}
-				}
-			})
-			.when('/:module/xxx', {
-				 'templateUrl': function(params){
-					return BASEPATH + 'views/list.html'
-				}
-				,'controller': 'ListEntityController'
-				,'resolve': {
-					'model': function($q, $route, $appHttp, $mdToast){
-						return modelPromise($q, $appHttp, $mdToast, $route.current.params.module, 'list');
+					'model': function($q, $route, $location, $appHttp, $mdToast){
+						return modelPromise($q, $route, $location, $appHttp, $mdToast);
 					}
 				}
 			})
@@ -119,7 +115,14 @@ window.app = aggiesys;
 			transform = angular.isArray(transform)? transform : [transform];
 
 			return transform.concat(defaults);
-		})(requestAsUriEncodeForPhp, $httpProvider.defaults.transformRequest);
+		})(function(data, headers){
+			if(
+				   (headersGetter('Content-Type', headers()) === null)
+				|| (headersGetter('Content-Type', headers()).split(';')[0].trim().toLowerCase() != 'application/x-www-form-urlencoded')
+			) return data;
+
+			return requestAsUriEncodeForPhp(data);
+		}, $httpProvider.defaults.transformRequest);
 
 		$icSvgProvider
 			.url(BASEPATH + 'icons/material-design-icons/links.php')
@@ -151,11 +154,13 @@ window.app = aggiesys;
 			})
 		;
 	})
-		.run(function($rootScope, $q, $timeout, $mdSidenav){
+		.run(function($rootScope, $q, $timeout, $location, $mdSidenav, $document){
+			$rootScope.appViewTitle = '';
+
 			$rootScope.loading = 0;
 			$rootScope.$mdSidenav = $mdSidenav;
 
-			$rootScope.progressLoad = function(promise){
+			$rootScope.appProgressLoad = function(promise){
 				if(angular.isUndefined(promise) || !angular.isFunction(promise.finally)) return;
 
 				$timeout(function(){
@@ -167,28 +172,64 @@ window.app = aggiesys;
 				}, 300);
 			};
 
-			$rootScope.testProgressLoad = function(){
-				$rootScope.progressLoad($q(function(resolve, reject){
+			$rootScope.appTestProgressLoad = function(){
+				$rootScope.appProgressLoad($q(function(resolve, reject){
 					$timeout(function(){
 						resolve();
-					}, 30000);
+					}, 3000);
 				}));
 			};
 
-			$rootScope.isActiveViewSearch = false;
+			$rootScope.appIsHasViewSearch = false;
+			$rootScope.appIsActiveViewSearch = false;
+			$rootScope.appViewSearchText = '';
+			$rootScope.appViewSearchTerm = '';
 
-			$rootScope.activeViewSearch = function(ev){
-				if(!$rootScope.isActiveViewSearch){
-					ev.preventDefault();
-					$rootScope.isActiveViewSearch = true;
+			$rootScope.appActiveViewSearch = function(ev, searchText){
+				if(!$rootScope.appIsActiveViewSearch){
+					if(!angular.isUndefined(ev)) ev.preventDefault();
+
+					$rootScope.appIsActiveViewSearch = true;
+
+					$timeout(function(){
+						angular.element('#app-cp-view-search .app-cl-search-box>input').focus();
+					}, 200);
+				}
+
+				if(!angular.isUndefined(searchText)) $rootScope.appViewSearchText = searchText;
+			};
+
+			$rootScope.appDeactiveViewSearch = function(ev){
+				if(($rootScope.appViewSearchText === '') && ($rootScope.appViewSearchTerm === '')){
+					$rootScope.appIsActiveViewSearch = false;
 				}
 			};
 
-			$rootScope.submitViewSearch = function(ev){
+			$rootScope.appSubmitViewSearch = function(ev, searchText){
 				ev.preventDefault();
-				$rootScope.isActiveViewSearch = false;
+
+				$rootScope.appViewSearchTerm = $rootScope.appViewSearchText;
+
+				$location
+					.search(($rootScope.appViewSearchTerm != '')? {'term': $rootScope.appViewSearchTerm} : {})
+					.replace()
+				;
+
+				$rootScope.appDeactiveViewSearch();
 			};
-		})
+
+			$rootScope.$on('$locationChangeSuccess', function(ev, oldUrl, newUrl){
+				var search = $location.search();
+
+				if(!angular.isUndefined(search.term)){
+					$rootScope.appViewSearchText = $rootScope.appViewSearchTerm = search.term;
+				} else{
+					$rootScope.appViewSearchText = $rootScope.appViewSearchTerm = '';
+				}
+
+				if($rootScope.appViewSearchTerm != '') $rootScope.appIsActiveViewSearch = true;
+			});
+		});
 	;
 
 	aggiesys.factory('$appHttp', function($rootScope, $q, $http, $mdToast){
@@ -236,7 +277,7 @@ window.app = aggiesys;
 
 				var promise = defer.promise;
 
-				$rootScope.progressLoad(promise);
+				$rootScope.appProgressLoad(promise);
 
 				return promise;
 			};
@@ -270,10 +311,19 @@ window.app = aggiesys;
 	});
 
 	/* GLOBAL Controller */
-	app.controller('AppViewController', function($scope, $q, $appHttp, $location, $route, $window, $mdToast, $mdDialog, model){
+	app.controller('AppViewController', function($scope, $rootScope, $q, $appHttp, $location, $route, $window, $mdToast, $mdDialog, model){
 		//console.log(model);
 		$scope.model = angular.copy(model);
 		$scope.mode = (typeof model.mode != 'undefined')? model.mode : null;
+
+		if(angular.isString(model.uri)) $rootScope.appViewTitle = model.uri.replace(/\//g, ' > ');
+
+		var isHasViewSearch = false;
+		angular.forEach(model.links, function(link){
+			if(link.rel == 'search') isHasViewSearch = true;
+		});
+		$rootScope.appIsHasViewSearch = isHasViewSearch;
+
 
 		var responseHandler = function(response){
 			if(
@@ -286,7 +336,7 @@ window.app = aggiesys;
 
 					if(status.uri.indexOf(model.uri) === 0){
 						if(status.status === 'created'){
-							$location.path(status.uri).replace();
+							$location.url(status.uri).replace();
 							isServed = true;
 						} else if(model.uri == status.uri){
 							if(status.status === 'updated'){
@@ -315,8 +365,22 @@ window.app = aggiesys;
 				if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
 
 				$scope.mode = link.rel;
+			} else if((link.type === 'search') && !angular.isUndefined(link.query)){
+				/*
+				angular.forEach(link.query, function(value, key){
+					$location.search(key, value);
+				});
+				$location.replace();
+				*/
+			} else if((link.type === 'state') && !angular.isUndefined(link.state)){
+				var state = $location.state() || {};
+
+				angular.extend(state, link.state);
+				$location.state(state);
+
+				$route.reload();
 			} else if(link.type === 'view'){
-				$location.path(link.href);
+				$location.url(link.href);
 			} else{
 				var promise = $q(function(resolve){
 					resolve();
@@ -404,7 +468,7 @@ window.app = aggiesys;
 					var binded = $scope.$eval($attrs.ngModel);
 
 					angular.forEach($scope.items, function(item){
-						$scope.isChecked[item.data] = (binded.indexOf(item.data) > -1);
+						$scope.isChecked[item.value] = (binded.indexOf(item.value) > -1);
 					});
 				});
 
@@ -416,13 +480,6 @@ window.app = aggiesys;
 						if(value) binded.push(key);
 					});
 				});
-			}, function(response){
-				$mdToast.show(
-					$mdToast.simple()
-						.content(response.statusText)
-				);
-
-				defer.reject(response.data, response.statusText);
 			})
 		;
 	});
