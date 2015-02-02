@@ -95,8 +95,104 @@
 			return $this->pdo;
 		}
 
-		abstract public function get($id = null);
+		abstract protected function getEntity($id, $where);
+
+		public function get($id = null){
+			$where = static::getWhere();
+
+			$where['sqls'][] = '("id" = :id)';
+			$where['params'][':id'] = $id;
+
+			$data = $this->getEntity($id, $where);
+
+			static::extendAction($data);
+
+			return $data;
+		}
+
 		abstract public function getAll($termText = null, &$page = null);
+
+		public function getAll($termText = null, &$page = null){
+			$pageData = array(
+				  'current' => null
+				, 'previous' => null
+				, 'next' => null
+				, 'total' => null
+			);
+
+			$where = static::getWhere();
+
+			$whereSearchTerm = static::getWhereSearchTerm(
+				  array(
+					  'username'
+					, 'fullname'
+					, 'userrole.role'
+				)
+				, static::getSearchTerm($termText)
+			);
+
+
+			$sqls = array_merge(
+				  $where['sqls']
+				, $whereSearchTerm['sqls']
+			);
+
+			$params = array_merge(
+				  $where['params']
+				, $whereSearchTerm['params']
+			);
+
+			$itemLimit = null;
+			$limit = static::getLimit($page, $itemLimit);
+
+			$sqlPattern = '
+				SELECT DISTINCT
+					  "user"."id" AS "id"
+					, "user"."username" AS "username"
+					, "user"."fullname" AS "fullname"
+				FROM "user" LEFT JOIN "userrole" ON("user"."id" = "userrole"."id_user")
+				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $sqls) : '').'
+				%s
+			';
+
+			if(!empty($page)){
+				$stmt = $this->getPdo()->prepare(sprintf('
+					SELECT count("_realdata".*) AS "numrows" FROM (%s) AS "_realdata";
+				', sprintf($sqlPattern, '')));
+				$stmt->execute($params);
+				$pageData['total'] = ceil($stmt->fetchColumn() / $itemLimit);
+			}
+
+			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "username" ASC '.$limit));
+			$stmt->execute($params);
+
+			$users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+			if(!empty($page)){
+				$pageData['current'] = $page;
+			}
+
+			if(!empty($page) && ($page > 1)){
+				$pageData['previous'] = $page - 1;
+			}
+
+			if(!empty($page) && ($page < $pageData['total'])){
+				$pageData['next'] = $page + 1;
+			}
+
+			foreach($users as &$user){
+				if(!empty($user['id'])){
+					$user['roles'] = $this->getRoles($user['id']);
+
+					static::extendAction($user);
+				}
+			}
+
+			if(!empty($page)) $page = $pageData;
+
+			return $users;
+		}
+
 		abstract public function save($id, &$data);
 		abstract public function delete($id);
 	}

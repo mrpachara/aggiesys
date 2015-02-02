@@ -15,6 +15,8 @@
 				$where['params'][':superuser'] = $conf['authoz']['superusername'];
 			}
 
+			$where['sqls'][] = '(NOT "isterminated")';
+
 			return $where;
 		}
 
@@ -65,43 +67,34 @@
 			return $stmt->fetchAll(\PDO::FETCH_COLUMN);
 		}
 
-		public function get($id = null){
-			$user = null;
+		protected function getEntity($id, $where){
+			$data = false;
 			if($id === null) {
-				$user = array(
+				$data = array(
 					  "id" => null
 					, "username" => null
 					, "fullname" => null
 					, "roles" => array()
 				);
 			} else{
-				$where = static::getWhere();
-
 				$stmt = $this->getPdo()->prepare('
 					SELECT
 						  "id"
 						, "username"
 						, "fullname"
 					FROM "user"
-					WHERE ("id" = :id) AND '.((!empty($where))? implode(' AND ', $where['sqls']) : 'TRUE').'
+					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : 'TRUE').'
 				;');
-				$stmt->execute(array_merge(
-					  array(
-						 ':id' => $id
-					)
-					, $where['params']
-				));
+				$stmt->execute($where['params']);
 
-				$user = $stmt->fetch(\PDO::FETCH_ASSOC);
+				$data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-				if(!empty($user['id'])){
-					$user['roles'] = $this->getRoles($user['id']);
+				if(!empty($data['id'])){
+					$data['roles'] = $this->getRoles($data['id']);
 				}
 			}
 
-			static::extendAction($user);
-
-			return $user;
+			return $data;
 		}
 
 		public function getAll($termText = null, &$page = null){
