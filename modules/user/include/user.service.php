@@ -2,6 +2,14 @@
 	namespace app;
 
 	class UserService extends \sys\DataService {
+		protected static function getSearchableFields(){
+			return array(
+				  'username'
+				, 'fullname'
+				, 'userrole.role'
+			);
+		}
+
 		protected static function getWhere(){
 			global $conf;
 
@@ -10,7 +18,7 @@
 				, 'params' => array()
 			);
 
-			if(!empty($conf['authoz']['superusername'])){
+			if(!empty($conf['authoz']['superusername']) && ($GLOBALS['_session']->getUser()['username'] != $conf['authoz']['superusername'])){
 				$where['sqls'][] = '("username" <> :superuser)';
 				$where['params'][':superuser'] = $conf['authoz']['superusername'];
 			}
@@ -83,7 +91,7 @@
 						, "username"
 						, "fullname"
 					FROM "user"
-					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : 'TRUE').'
+					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -97,226 +105,150 @@
 			return $data;
 		}
 
-		public function getAll($termText = null, &$page = null){
-			$pageData = array(
-				  'current' => null
-				, 'previous' => null
-				, 'next' => null
-				, 'total' => null
-			);
-
-			$where = static::getWhere();
-
-			$whereSearchTerm = static::getWhereSearchTerm(
-				  array(
-					  'username'
-					, 'fullname'
-					, 'userrole.role'
-				)
-				, static::getSearchTerm($termText)
-			);
-
-
-			$sqls = array_merge(
-				  $where['sqls']
-				, $whereSearchTerm['sqls']
-			);
-
-			$params = array_merge(
-				  $where['params']
-				, $whereSearchTerm['params']
-			);
-
-			$itemLimit = null;
-			$limit = static::getLimit($page, $itemLimit);
-
+		public function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT DISTINCT
 					  "user"."id" AS "id"
 					, "user"."username" AS "username"
 					, "user"."fullname" AS "fullname"
 				FROM "user" LEFT JOIN "userrole" ON("user"."id" = "userrole"."id_user")
-				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $sqls) : '').'
+				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
 			';
 
-			if(!empty($page)){
+			if(!empty($pageData['current'])){
 				$stmt = $this->getPdo()->prepare(sprintf('
 					SELECT count("_realdata".*) AS "numrows" FROM (%s) AS "_realdata";
 				', sprintf($sqlPattern, '')));
-				$stmt->execute($params);
-				$pageData['total'] = ceil($stmt->fetchColumn() / $itemLimit);
+				$stmt->execute($where['params']);
+				$pageData['total'] = ceil($stmt->fetchColumn() / $pageData['limit']);
 			}
 
 			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "username" ASC '.$limit));
-			$stmt->execute($params);
+			$stmt->execute($where['params']);
 
-			$users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			$datas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-			if(!empty($page)){
-				$pageData['current'] = $page;
+			if(!empty($pageData['current'])){
+				if($pageData['current'] > 1){
+					$pageData['previous'] = $pageData['current'] - 1;
+				}
+
+				if($pageData['current'] < $pageData['total']){
+					$pageData['next'] = $pageData['current'] + 1;
+				}
 			}
 
-			if(!empty($page) && ($page > 1)){
-				$pageData['previous'] = $page - 1;
-			}
+			foreach($datas as &$data){
+				if(!empty($data['id'])){
+					$data['roles'] = $this->getRoles($data['id']);
 
-			if(!empty($page) && ($page < $pageData['total'])){
-				$pageData['next'] = $page + 1;
-			}
-
-			foreach($users as &$user){
-				if(!empty($user['id'])){
-					$user['roles'] = $this->getRoles($user['id']);
-
-					static::extendAction($user);
+					static::extendAction($data);
 				}
 			}
 
 			if(!empty($page)) $page = $pageData;
 
-			return $users;
+			return $datas;
 		}
 
-		public function save($id, &$data){
-			if(empty($data)) return false;
-
-			$existedData = $this->get($id);
-
-			if($existedData === false){
-				throw new Exception("{$_moduleName}/self/{$_GET['id']} not found", 404);
-			}
-
-			if(!$existedData['_updatable']){
-				throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be updated", 500);
-			}
-
-			$id = $existedData['id'];
-
-			$this->getPdo()->beginTransaction();
-
-			try{
-				if($id === null){
-					$stmt = $this->getPdo()->prepare('
-						INSERT INTO "user" (
-							  "username"
-							, "fullname"
-							, "password"
-						) VALUES (
-							  :username
-							, :fullname
-							, :password
-						)
-					;');
-					$stmt->execute(array(
-						  ':username' => $data['username']
-						, ':fullname' => $data['fullname']
-						, ':password' => ''
-					));
-
-					$id = $data['id'] = $this->getPdo()->lastInsertId('user_id_seq');
-				} else{
-					$stmt = $this->getPdo()->prepare('
-						UPDATE "user" SET
-							  "username" = :username
-							, "fullname" = :fullname
-						WHERE
-							"id" = :id
-					;');
-					$stmt->execute(array(
-						  ':username' => $data['username']
-						, ':fullname' => $data['fullname']
-						, ':id' => $id
-					));
-
-					$data['id'] = $id;
-				}
-
-				if(!empty($data['password'])){
-					$stmt = $this->getPdo()->prepare('
-						UPDATE "user" SET
-							  "password" = '.\sys\UserService::encryptPassword(':password').'
-						WHERE
-							"id" = :id
-					;');
-					$stmt->execute(array(
-						  ':password' => $data['password']
-						, ':id' => $id
-					));
-				}
-
-				$allowedRoles = $GLOBALS['_session']->getAllowedRoles();
-
-				$paramIn = array();
+		public function saveEntity($id, &$data){
+			if($id === null){
 				$stmt = $this->getPdo()->prepare('
-					DELETE FROM "userrole"
-					WHERE ("id_user" = :id_user) AND ("role" IN ('.\sys\PDO::prepareIn(':role', $allowedRoles, $paramIn).'))
-				;');
-				$stmt->execute(array_merge(
-					  array(
-						  ':id_user' => $id
+					INSERT INTO "user" (
+						  "username"
+						, "fullname"
+						, "password"
+					) VALUES (
+						  :username
+						, :fullname
+						, :password
 					)
-					, $paramIn
-				));
-
-				if(!empty($data['roles'])){
-					$data['roles'] = array_intersect($data['roles'], $allowedRoles);
-					$stmt = $this->getPdo()->prepare('
-						INSERT INTO "userrole" (
-							  "id_user"
-							, "role"
-						) VALUES (
-							  :id_user
-							, :role
-						)
-					;');
-
-					foreach($data['roles'] as $role){
-						$stmt->execute(array(
-							  ':id_user' => $id
-							, ':role' => $role
-						));
-					}
-				}
-			} catch(\PDOException $excp){
-				$this->getPdo()->rollBack();
-				throw $excp;
-			}
-
-			return ($this->getPdo()->commit())? $id : false;
-		}
-
-		public function delete($id){
-			if(empty($id)) return false;
-
-			$existedData = $this->get($id);
-
-			if($existedData === false){
-				throw new Exception("{$_moduleName}/self/{$_GET['id']} not found", 404);
-			}
-
-			if(!$existedData['_updatable']){
-				throw new Exception("{$_moduleName}/self/{$_GET['id']} cannot be deleted", 500);
-			}
-
-			$id = $existedData['id'];
-
-			$this->getPdo()->beginTransaction();
-
-			try{
-				$stmt = $this->getPdo()->prepare('
-					DELETE FROM "user"
-					WHERE "id" = :id
 				;');
 				$stmt->execute(array(
-					  ':id' => $id
+					  ':username' => $data['username']
+					, ':fullname' => $data['fullname']
+					, ':password' => ''
 				));
-			} catch(\PDOException $excp){
-				$this->getPdo()->rollBack();
-				throw $excp;
+
+				$id = $data['id'] = $this->getPdo()->lastInsertId('user_id_seq');
+			} else{
+				$stmt = $this->getPdo()->prepare('
+					UPDATE "user" SET
+						  "username" = :username
+						, "fullname" = :fullname
+					WHERE
+						"id" = :id
+				;');
+				$stmt->execute(array(
+					  ':username' => $data['username']
+					, ':fullname' => $data['fullname']
+					, ':id' => $id
+				));
+
+				$data['id'] = $id;
 			}
 
-			return ($this->getPdo()->commit())? $id : false;
+			if(!empty($data['password'])){
+				$stmt = $this->getPdo()->prepare('
+					UPDATE "user" SET
+						  "password" = '.\sys\UserService::encryptPassword(':password').'
+					WHERE
+						"id" = :id
+				;');
+				$stmt->execute(array(
+					  ':password' => $data['password']
+					, ':id' => $id
+				));
+			}
+
+			$allowedRoles = $GLOBALS['_session']->getAllowedRoles();
+
+			$paramIn = array();
+			$stmt = $this->getPdo()->prepare('
+				DELETE FROM "userrole"
+				WHERE ("id_user" = :id_user) AND ("role" IN ('.\sys\PDO::prepareIn(':role', $allowedRoles, $paramIn).'))
+			;');
+			$stmt->execute(array_merge(
+				  array(
+					  ':id_user' => $id
+				)
+				, $paramIn
+			));
+
+			if(!empty($data['roles'])){
+				$data['roles'] = array_intersect($data['roles'], $allowedRoles);
+				$stmt = $this->getPdo()->prepare('
+					INSERT INTO "userrole" (
+						  "id_user"
+						, "role"
+					) VALUES (
+						  :id_user
+						, :role
+					)
+				;');
+
+				foreach($data['roles'] as $role){
+					$stmt->execute(array(
+						  ':id_user' => $id
+						, ':role' => $role
+					));
+				}
+			}
+
+			return $id;
+		}
+
+		public function deleteEntity($id){
+			$stmt = $this->getPdo()->prepare('
+				DELETE FROM "user"
+				WHERE "id" = :id
+			;');
+			$stmt->execute(array(
+				  ':id' => $id
+			));
+
+			return $id;
 		}
 	}
 ?>

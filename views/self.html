@@ -20,6 +20,13 @@
 				<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.value}}">{{item.label}}</md-checkbox>
 			</div>
 		</div>
+		<md-input-container flex ng-switch-when="textarea">
+			<label ng-bind="field.name"></label>
+			<textarea name="{{field.name}}" columns="1" rows="3" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]"></textarea>
+			<div ng-messages="selfForm[field.name].$error">
+				<div ng-message="required">This is required.</div>
+			</div>
+		</md-input-container>
 		<md-input-container flex ng-switch-default>
 			<label ng-bind="field.name"></label>
 			<input type="text" name="{{field.name}}" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]" />

@@ -14,6 +14,9 @@
 		<link rel="stylesheet" href="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.css" />
 		<link rel="stylesheet" href="<?= BASEPATH ?>css/aggiesys.css" />
 
+		<script>
+var BASEPATH = <?= json_encode(BASEPATH) ?>;
+		</script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/jquery/dist/jquery.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular/angular.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-aria/angular-aria.js"></script>
@@ -24,9 +27,6 @@
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 
-		<script>
-var BASEPATH = <?= json_encode(BASEPATH) ?>;
-		</script>
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 
 	<body layout="row">
@@ -39,6 +39,15 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 			</md-toolbar>
 			<md-content flex class="md-padding" layout="column">
 				<div ng-click="$mdSidenav('left').close()">
+					<div>
+						<a href="vegetable/list">Vegetable</a>
+					</div>
+					<div>
+						<a href="farm/list">Farm</a>
+					</div>
+					<div>
+						<a href="customer/list">Customer</a>
+					</div>
 					<div>
 						<a href="user/list">User</a>
 					</div>

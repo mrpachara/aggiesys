@@ -361,8 +361,11 @@ window.app = aggiesys;
 		};
 
 		$scope.execute = function(link){
+			if(angular.isUndefined(link)) return;
+
 			if(link.type === 'submit'){
-				if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
+				!angular.isUndefined($scope.model.data)
+				if(!angular.isUndefined($scope.model.data)) $scope.model.data = angular.copy(model.data);
 
 				$scope.mode = link.rel;
 			} else if((link.type === 'search') && !angular.isUndefined(link.query)){
@@ -372,13 +375,15 @@ window.app = aggiesys;
 				});
 				$location.replace();
 				*/
-			} else if((link.type === 'state') && !angular.isUndefined(link.state)){
-				var state = $location.state() || {};
+			} else if((link.type === 'state') && (link.state != null)){
+				/*
+					IMPORTANT:
+					state must be created from new Object unless state doesn't store in history.state.
+					may be angular $location cache state object and will replace/pushState when new state not equal with old onec
+				*/
+				var state = angular.extend({}, ($location.state() != null)? $location.state() : {}, link.state);
 
-				angular.extend(state, link.state);
-				$location.state(state);
-
-				$route.reload();
+				$location.state(state).replace();
 			} else if(link.type === 'view'){
 				$location.url(link.href);
 			} else{

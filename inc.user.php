@@ -45,7 +45,7 @@
 			if(empty($id)) return null;
 
 			try{
-				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE "id" = :id;');
+				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE ("id" = :id) AND (NOT "isterminated");');
 				$stmt->execute(array(
 					 ':id' => $id
 				));
@@ -61,7 +61,13 @@
 			if(empty($username) || empty($password)) return null;
 
 			try{
-				$stmt = $this->pdo->prepare('SELECT * FROM "user" WHERE (("username" = :username) AND ("password" = '. static::decryptPassword(':password') .'));');
+				$stmt = $this->pdo->prepare('
+					SELECT * FROM "user"
+					WHERE
+						    (("username" = :username)
+						AND ("password" = '. static::decryptPassword(':password') .'))
+						AND (NOT "isterminated")
+				;');
 				$stmt->execute(array(
 					 ':username' => $username
 					,':password' => $password

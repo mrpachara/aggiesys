@@ -1,9 +1,16 @@
 <?php
 	namespace sys;
 
+	class DataServiceException extends \Exception {
+
+	}
+
 	abstract class DataService {
 		const SEARCH_DELIMITER = "_:::_";
-		private $pdo;
+
+		protected static function getSearchableFields(){
+			return array();
+		}
 
 		protected static function getSearchTerm($termText){
 			$searchTerm = array(
@@ -37,19 +44,30 @@
 			return $where;
 		}
 
-		protected static function getWhereSearchTerm($allowedFields, $searchTerm){
+		protected static function getWhereSearchSpecial(&$searchTerm){
 			$where = array(
 				  'sqls' => array()
 				, 'params' => array()
 			);
 
-			if(empty($allowedFields) || empty($searchTerm['terms'])) return $where;
+			return $where;
+		}
 
-			foreach($allowedFields as &$allowedField){
+		protected static function getWhereSearchTerm(&$searchTerm){
+			$where = array(
+				  'sqls' => array()
+				, 'params' => array()
+			);
+
+			$searchableFields = static::getSearchableFields();
+
+			if(empty($searchableFields) || empty($searchTerm['terms'])) return $where;
+
+			foreach($searchableFields as &$allowedField){
 				$allowedField = '"'.str_replace('.', '"."', $allowedField).'"';
 			}
 
-			$concatFn = "concat_ws('".static::SEARCH_DELIMITER."', ".implode(', ', $allowedFields).")";
+			$concatFn = "concat_ws('".static::SEARCH_DELIMITER."', ".implode(', ', $searchableFields).")";
 
 			for($i = 0; $i < count($searchTerm['terms']); $i++){
 				$term = $searchTerm['terms'][$i];
@@ -87,6 +105,8 @@
 			$data['_deletable'] = true;
 		}
 
+		private $pdo;
+
 		function __construct(){
 			$this->pdo = new \sys\PDO();
 		}
@@ -100,8 +120,12 @@
 		public function get($id = null){
 			$where = static::getWhere();
 
-			$where['sqls'][] = '("id" = :id)';
-			$where['params'][':id'] = $id;
+			$where = array_merge_recursive(
+				  array(
+					  'sqls' => array('("id" = :_id)')
+					, 'params' => array(':_id' => $id)
+				), $where
+			);
 
 			$data = $this->getEntity($id, $where);
 
@@ -110,90 +134,92 @@
 			return $data;
 		}
 
-		abstract public function getAll($termText = null, &$page = null);
+		abstract public function getAllEntity($where, $limit, &$pageData);
 
 		public function getAll($termText = null, &$page = null){
 			$pageData = array(
-				  'current' => null
+				  'current' => $page
 				, 'previous' => null
 				, 'next' => null
 				, 'total' => null
+				, 'limit' => null
 			);
 
 			$where = static::getWhere();
 
-			$whereSearchTerm = static::getWhereSearchTerm(
-				  array(
-					  'username'
-					, 'fullname'
-					, 'userrole.role'
-				)
-				, static::getSearchTerm($termText)
-			);
+			$searchTerm = static::getSearchTerm($termText);
+			$whereSearchSpecial = static::getWhereSearchSpecial($searchTerm);
+			$whereSearchTerm = static::getWhereSearchTerm($searchTerm);
 
+			$where = array_merge_recursive($where, $whereSearchSpecial, $whereSearchTerm);
 
-			$sqls = array_merge(
-				  $where['sqls']
-				, $whereSearchTerm['sqls']
-			);
+			$datas = $this->getAllEntity($where, static::getLimit($pageData['current'], $pageData['limit']), $pageData);
 
-			$params = array_merge(
-				  $where['params']
-				, $whereSearchTerm['params']
-			);
+			if(!empty($pageData['current'])) $page = $pageData;
 
-			$itemLimit = null;
-			$limit = static::getLimit($page, $itemLimit);
-
-			$sqlPattern = '
-				SELECT DISTINCT
-					  "user"."id" AS "id"
-					, "user"."username" AS "username"
-					, "user"."fullname" AS "fullname"
-				FROM "user" LEFT JOIN "userrole" ON("user"."id" = "userrole"."id_user")
-				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $sqls) : '').'
-				%s
-			';
-
-			if(!empty($page)){
-				$stmt = $this->getPdo()->prepare(sprintf('
-					SELECT count("_realdata".*) AS "numrows" FROM (%s) AS "_realdata";
-				', sprintf($sqlPattern, '')));
-				$stmt->execute($params);
-				$pageData['total'] = ceil($stmt->fetchColumn() / $itemLimit);
-			}
-
-			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "username" ASC '.$limit));
-			$stmt->execute($params);
-
-			$users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-			if(!empty($page)){
-				$pageData['current'] = $page;
-			}
-
-			if(!empty($page) && ($page > 1)){
-				$pageData['previous'] = $page - 1;
-			}
-
-			if(!empty($page) && ($page < $pageData['total'])){
-				$pageData['next'] = $page + 1;
-			}
-
-			foreach($users as &$user){
-				if(!empty($user['id'])){
-					$user['roles'] = $this->getRoles($user['id']);
-
-					static::extendAction($user);
-				}
-			}
-
-			if(!empty($page)) $page = $pageData;
-
-			return $users;
+			return $datas;
 		}
 
-		abstract public function save($id, &$data);
-		abstract public function delete($id);
+		abstract public function saveEntity($id, &$data);
+
+		public function save($id, &$data){
+			if(empty($data)){
+				throw new \sys\DataServiceException("update %s{$id} without data", 400);
+			}
+
+			$existedData = $this->get($id);
+
+			if($existedData === false){
+				throw new \sys\DataServiceException("%s{$id} not found", 404);
+			}
+
+			if(!$existedData['_updatable']){
+				throw new \sys\DataServiceException("%s{$id} cannot be updated", 500);
+			}
+
+			$id = $existedData['id'];
+
+			$this->getPdo()->beginTransaction();
+
+			try{
+				$id = $this->saveEntity($id, $data);
+			} catch(\PDOException $excp){
+				$this->getPdo()->rollBack();
+				throw $excp;
+			}
+
+			return ($this->getPdo()->commit())? $id : false;
+		}
+
+		abstract public function deleteEntity($id);
+
+		public function delete($id){
+			if(empty($id)){
+				throw new \sys\DataServiceException("unknown id to delete %s", 400);
+			}
+
+			$existedData = $this->get($id);
+
+			if($existedData === false){
+				throw new \sys\DataServiceException("%s{$id} not found", 404);
+			}
+
+			if(!$existedData['_deletable']){
+				throw new \sys\DataServiceException("%s{$id} cannot be deleted", 500);
+			}
+
+			$id = $existedData['id'];
+
+			$this->getPdo()->beginTransaction();
+
+			try{
+				$id = $this->deleteEntity($id);
+			} catch(\PDOException $excp){
+				$this->getPdo()->rollBack();
+				throw $excp;
+			}
+
+			return ($this->getPdo()->commit())? $id : false;
+		}
 	}
 ?>

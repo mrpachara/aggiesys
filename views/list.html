@@ -12,7 +12,7 @@
 		<use xlink:href="#ic_delete" />
 	</symbol>
 </svg>
-<table class="app-view-list">
+<table class="app-view-list"  md-swipe-left="execute((model.links | filter:{'rel': 'page_next'}:true)[0])"  md-swipe-right="execute((model.links | filter:{'rel': 'page_previous'}:true)[0])">
 	<colgroup>
 		<col  ng-repeat="field in model.fields" style="width: {{field.width}};" />
 		<col style="width: 5em;" />

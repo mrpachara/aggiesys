@@ -46,4 +46,11 @@
 	$b->hello()."<br />";
 	$a->hello2()."<br />";
 	$b->hello2()."<br />";
+
+
+	class TestException extends Exception{
+
+	}
+
+	throw new TestException("test exception", -1);
 ?>

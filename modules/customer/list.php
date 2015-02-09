@@ -1,12 +1,12 @@
 <?php
 	require_once "../../global.inc.php";
 
-	$_session->authozPage(array("ADMIN", "MANAGER"), "static::forbidden_json");
+	$_session->authozPage("STAFF", "static::forbidden_json");
 
 	require_once "include/config.php";
-	require_once "include/user.service.php";
+	require_once "include/customer.service.php";
 
-	$entityService = new \app\UserService();
+	$entityService = new \app\CustomerService();
 
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
@@ -32,7 +32,7 @@
 			$item = array(
 				  'uri' => "{$_moduleName}/self/{$data['id']}"
 				, 'value' => $data['id']
-				, 'label' => $data['fullname']
+				, 'label' => $data['code'].'-'.$data['name']
 				, 'links' => array()
 				, 'data' => $data
 			);
