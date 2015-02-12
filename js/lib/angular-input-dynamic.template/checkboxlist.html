@@ -1,4 +1,4 @@
-<input-dynamic-checkboxlist flex>
+<div ng-controller="inputDynamicCheckboxlist" flex>
 	<label ng-bind="meta.name"></label>
 	<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-class="item.classes" aria-label="{{meta.name + ' ' + item.value}}">{{item.label}}</md-checkbox>
-</input-dynamic-checkboxlist>
+</div>

@@ -83,7 +83,7 @@ window.app = aggiesys;
 		return defer.promise;
 	};
 
-	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider){
+	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider, $inputDynamicProvider){
 		$routeProvider
 			.when('/', {
 				 redirectTo:'/login'
@@ -152,6 +152,10 @@ window.app = aggiesys;
 
 				return svg;
 			})
+		;
+
+		$inputDynamicProvider
+			.basePath(BASEPATH + 'js/lib/')
 		;
 	})
 		.run(function($rootScope, $q, $timeout, $location, $mdSidenav, $document){

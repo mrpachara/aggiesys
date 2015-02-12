@@ -1,0 +1,14 @@
+<md-grid-list md-gutter="8px" ng-controller="inputDynamicDatalist">
+	<md-grid-tile>
+		<md-button type="button" ng-click="addItem()" aria-lable="add item">Add Item</md-button>
+	</md-grid-tile>
+	<md-grid-tile>
+		<md-grid-list md-cols="2" md-gutter="8px" ng-repeat="item in data">
+			<md-grid-title ng-repeat="field in meta.fields" ng-if="!field.show || field.show[mode]">
+				<md-grid-title>
+					<input-dynamic input-model="item[field.name]" input-mode="mode" input-meta="field" input-form="form"></input-dynamic>
+				</md-grid-title>
+			</md-grid-title>
+		</md-grid-list>
+	</md-grid-tile>
+</md-grid-list>

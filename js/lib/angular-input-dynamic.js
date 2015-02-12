@@ -1,13 +1,28 @@
 (function(angular){
 	'use strict';
 
-	var inputDynamicPath = '/aggiesys/js/lib';
+	var inputDynamicPath = '';
 
 	var templateCache = {};
 
 	angular.module('inputDynamic', ['ng'])
-		.config(function(){
+		.config(function($provide){
+			$provide.provider('$inputDynamic', function(){
+				return {
+					 'basePath': function(basePath){
+						inputDynamicPath = basePath;
 
+						return this;
+					}
+					,'$get': function(){
+						return {
+							 'getBasePath': function(){
+								return inputDynamicPath;
+							}
+						};
+					}
+				};
+			});
 		})
 		.run(function(){
 
@@ -38,14 +53,14 @@
 						){
 							types = meta.display[mode].split('.');
 						}
-console.log('iii', types[1], meta.links);
+
 						if(!angular.isUndefined(types[1]) && angular.isArray(meta.links)){
 							angular.forEach(meta.links, function(link){
 								if(link.rel == types[1]) $scope.link = link;
 							});
 						}
-console.log('xxx', types, $scope.data);
-						var templateUrl = inputDynamicPath + '/angular-input-dynamic.template/' + types[0] + '.html';
+
+						var templateUrl = inputDynamicPath + 'angular-input-dynamic.template/' + types[0] + '.html';
 						if(angular.isUndefined(templateCache[templateUrl])){
 							$http.get(templateUrl)
 								.then(function(response){
@@ -66,35 +81,41 @@ console.log('xxx', types, $scope.data);
 				}
 			};
 		})
-		.directive('inputDynamicCheckboxlist', function($http){
-			return {
-				 'strict': 'E'
-				,'link': function($scope, $element, $attrs){
-					$scope.items = [];
-					$scope.isChecked = {};
+		.controller('inputDynamicCheckboxlist', function($scope, $http, $compile){
+			angular.forEach($scope.$parent, function(value, key){
+				if(key.indexOf('$') != 0) $scope[key] = value;
+			});
+			$scope.items = [];
+			$scope.isChecked = {};
 
-					$http[$scope.link.type]($scope.link.href)
-						.then(function(response){
-							console.log('get domain success', $scope.data.toString());
-							angular.forEach(response.data.items, function(item){
-								$scope.items.push(item);
+			$http[$scope.link.type]($scope.link.href)
+				.then(function(response){
+					angular.forEach(response.data.items, function(item){
+						$scope.items.push(item);
 
-								angular.forEach($scope.items, function(item){
-									$scope.isChecked[item.value] = ($scope.data.indexOf(item.value) > -1);
-								});
-							});
+						angular.forEach($scope.items, function(item){
+							$scope.isChecked[item.value] = ($scope.data.indexOf(item.value) > -1);
+						});
+					});
 
-							$scope.$watchCollection('isChecked', function(values){
-								var binded = $scope.data;
-								binded.splice(0, binded.length);
+					$scope.$watchCollection('isChecked', function(values){
+						$scope.data.splice(0, $scope.data.length);
 
-								angular.forEach(values, function(value, key){
-									if(value) binded.push(key);
-								});
-							});
-						})
-					;
-				}
+						angular.forEach(values, function(value, key){
+							if(value) $scope.data.push(key);
+						});
+					});
+
+				})
+			;
+		})
+		.controller('inputDynamicDatalist', function($scope, $http, $compile){
+			angular.forEach($scope.$parent, function(value, key){
+				if(key.indexOf('$') != 0) $scope[key] = value;
+			});
+
+			$scope.addItem = function(){
+				$scope.data.push({});
 			};
 		})
 	;

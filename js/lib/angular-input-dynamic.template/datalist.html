@@ -1,0 +1,16 @@
+<table class="app-view-list" ng-controller="inputDynamicDatalist">
+	<thead>
+		<tr>
+			<th>
+				<md-button type="button" ng-click="addItem()" aria-lable="add item">Add Item</md-button>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="item in data">
+			<td ng-repeat="field in meta.fields" ng-show="!field.show || field.show[mode]" data-test="{{!field.show || field.show[mode]}} {{mode}}">
+				<input-dynamic input-model="item[field.name]" input-mode="mode" input-meta="field" input-form="form" style="width: 100%;"></input-dynamic>
+			</td>
+		</tr>
+	</tbody>
+</table>

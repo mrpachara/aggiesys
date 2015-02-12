@@ -24,14 +24,24 @@
 				, 'self' => true
 			)
 			, 'display' => array(
-				  'create' => "specific.input"
-				, 'update' => "specific.input"
-				, 'self' => "specific.view"
+				  'create' => "datagrid"
+				, 'update' => "datagrid"
+				, 'self' => "datagrid"
 			)
-			, 'links' => array(
+			, 'fields' => array(
 				  array(
-					  'rel' => 'input'
-					, 'href' => BASEPATH."modules/etc/view/input.html"
+					  'name' => "code"
+					, 'required' => array(
+						  'create' => true
+						, 'update' => true
+					)
+				)
+				, array(
+					  'name' => "value"
+					, 'required' => array(
+						  'create' => true
+						, 'update' => true
+					)
 				)
 			)
 		)
