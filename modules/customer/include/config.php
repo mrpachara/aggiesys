@@ -22,6 +22,7 @@
 			, 'display' => array(
 				  'create' => 'textarea'
 				, 'update' => 'textarea'
+				, 'self' => 'textarea'
 			)
 			, 'required' => array(
 				  'create' => true

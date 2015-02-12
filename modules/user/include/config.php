@@ -22,8 +22,8 @@
 			  'name' => "roles"
 			, 'width' => "50%"
 			, 'display' => array(
-				  'create' => "checkbox.domain"
-				, 'update' => "checkbox.domain"
+				  'create' => "checkboxlist.domain"
+				, 'update' => "checkboxlist.domain"
 			)
 			, 'links' => array(
 				  array(

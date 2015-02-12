@@ -147,8 +147,6 @@
 				}
 			}
 
-			if(!empty($page)) $page = $pageData;
-
 			return $datas;
 		}
 
@@ -230,7 +228,7 @@
 
 				foreach($data['roles'] as $role){
 					$stmt->execute(array(
-						  ':id_user' => $id
+						  ':id_user' => $data['id']
 						, ':role' => $role
 					));
 				}

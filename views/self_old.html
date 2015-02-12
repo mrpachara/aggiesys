@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
+	<symbol id="ic_view_list_create" viewBox="0 0 24 24">
+		<use xlink:href="#ic_insert_drive_file" />
+	</symbol>
+	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
+		<use xlink:href="#ic_pageview" />
+	</symbol>
+	<symbol id="ic_view_list_update" viewBox="0 0 24 24">
+		<use xlink:href="#ic_edit" />
+	</symbol>
+	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
+		<use xlink:href="#ic_delete" />
+	</symbol>
+</svg>
+<form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column">
+	<div ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode] || ((mode === null) && (field.show['self']))" ng-switch on="(field.display || {})[(mode || '')]">
+		<div ng-switch-when="checkbox.domain">
+			<div flex ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxDomainController">
+				<label ng-bind="field.name"></label>
+				<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.value}}">{{item.label}}</md-checkbox>
+			</div>
+		</div>
+		<md-input-container flex ng-switch-when="textarea">
+			<label ng-bind="field.name"></label>
+			<textarea name="{{field.name}}" columns="1" rows="3" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]"></textarea>
+			<div ng-messages="selfForm[field.name].$error">
+				<div ng-message="required">This is required.</div>
+			</div>
+		</md-input-container>
+		<md-input-container flex ng-switch-default>
+			<label ng-bind="field.name"></label>
+			<input type="text" name="{{field.name}}" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]" />
+			<div ng-messages="selfForm[field.name].$error">
+				<div ng-message="required">This is required.</div>
+			</div>
+		</md-input-container>
+	</div>
+	<div layout ng-hide="mode === null" layout-align="start center" style="padding: 0.5em 0px;">
+		<md-button type="submit" ng-repeat="link in model.links" ng-if="(link.href != null) && (mode == link.rel)" ng-click="setLink(link)" ng-class="link.classes" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+			<span>{{link.rel}}</span>
+		</md-button>
+		<md-button type="button" ng-click="exitMode()" layout layout-align="center center" aria-label="cancel entity" class="md-accent" style="padding: 0.50em 1.00em; margin: 0px 0.5em; margin-left: auto;">
+			<ic-svg ic-href="#ic_cancel"></ic-svg>
+			<span>Cancel</span>
+		</md-button>
+	</div>
+	<div layout ng-show="mode === null" layout-align="start center" style="padding: 0.5em 0px; flex-wrap: wrap; justify-content: space-between;">
+		<md-button type="button" ng-repeat="link in model.links" ng-if="link.href != null" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em;">
+			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+			<span>{{link.rel}}</span>
+		</md-button>
+		<md-button type="button" ng-click="historyBack()" layout layout-align="center center" aria-label="navigate back" class="md-accent" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em; margin-left: auto;">
+			<ic-svg ic-href="#ic_navigate_before"></ic-svg>
+			<span>Back</span>
+		</md-button>
+	</div>
+	<!--
+	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
+		<span style="margin-top: 0.25em;">Show Scope</span>
+	</md-button>
+	-->
+</form>

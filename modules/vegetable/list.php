@@ -5,8 +5,9 @@
 
 	require_once "include/config.php";
 	require_once "include/vegetable.service.php";
+	require_once "../generator/include/generator.service.php";
 
-	$entityService = new \app\VegetableService();
+	$entityService = new \app\VegetableService("\\app\\GeneratorService");
 
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);

@@ -13,6 +13,14 @@
 	</symbol>
 </svg>
 <table class="app-view-list"  md-swipe-left="execute((model.links | filter:{'rel': 'page_next'}:true)[0])"  md-swipe-right="execute((model.links | filter:{'rel': 'page_previous'}:true)[0])">
+	<caption style="text-align: right; font-size: small;">
+		<span ng-if="(model.links | filter:{'rel': 'page_current'}:true).length == 1">
+			<span>Page: </span>
+			<span ng-bind="(model.links | filter:{'rel': 'page_current'}:true)[0].state.page"></span>
+			<span ng-if="(model.links | filter:{'rel': 'page_current'}:true)[0].total != null">/</span>
+			<span ng-if="(model.links | filter:{'rel': 'page_current'}:true)[0].total != null" ng-bind="(model.links | filter:{'rel': 'page_current'}:true)[0].total"></span>
+		</span>
+	</caption>
 	<colgroup>
 		<col  ng-repeat="field in model.fields" style="width: {{field.width}};" />
 		<col style="width: 5em;" />
@@ -53,7 +61,7 @@
 			<span ng-if="link.total != null">/</span>
 			<span ng-if="link.total != null" ng-bind="link.total"></span>
 		</span>
-		<md-button ng-if="(link.rel == 'page_previous') || (link.rel == 'page_next')" ng-disabled="link.state === null" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} entity">
+		<md-button ng-if="(link.rel == 'page_previous') || (link.rel == 'page_next')" ng-disabled="link.state === null" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} entity" style="font-size: 0.90em;">
 			<ic-svg ng-if="link.rel == 'page_previous'" ic-href="#ic_navigate_before"></ic-svg>
 			<span ng-bind="link.rel.split('_')[1]"></span>
 			<ic-svg ng-if="link.rel == 'page_next'" ic-href="#ic_navigate_next"></ic-svg>

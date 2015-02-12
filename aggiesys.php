@@ -22,10 +22,13 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-aria/angular-aria.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-animate/angular-animate.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-route/angular-route.js"></script>
+		<!--
 		<script src="<?= BASEPATH ?>js/lib/bower_components/hammerjs/hammer.js"></script>
+		-->
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
+		<script src="<?= BASEPATH ?>js/lib/angular-input-dynamic.js"></script>
 
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 
@@ -53,6 +56,9 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 					</div>
 					<div>
 						<a href="session/list">Session</a>
+					</div>
+					<div>
+						<a href="etc/list">Etc</a>
 					</div>
 				</div>
 			</md-content>

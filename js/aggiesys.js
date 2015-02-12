@@ -1,4 +1,4 @@
-var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg']);
+var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg', 'inputDynamic']);
 window.app = aggiesys;
 
 (function($, angular){
@@ -436,7 +436,7 @@ window.app = aggiesys;
 		$scope.exitMode = function(){
 			if(typeof $scope.model.data != 'undefined') $scope.model.data = angular.copy(model.data);
 
-			if(typeof model.mode != 'undefined'){
+			if(!angular.isUndefined(model.mode)){
 				$scope.historyBack();
 			} else{
 				$scope.mode = null;

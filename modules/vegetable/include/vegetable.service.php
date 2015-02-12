@@ -1,8 +1,6 @@
 <?php
 	namespace app;
 
-	require_once "../generator/include/generator.service.php";
-
 	class VegetableService extends \sys\DataService {
 		protected static function getSearchableFields(){
 			return array(
@@ -11,8 +9,12 @@
 			);
 		}
 
-		function __construct(){
+		private $generatorClass;
+
+		function __construct($generatorClass){
 			parent::__construct();
+
+			$this->generatorClass = $generatorClass;
 		}
 
 		protected function getEntity($id, $where){
@@ -74,14 +76,12 @@
 				}
 			}
 
-			if(!empty($page)) $page = $pageData;
-
 			return $datas;
 		}
 
 		public function saveEntity($id, &$data){
 			if($id === null){
-				$rn = new GeneratorService('81');
+				$generator = new $this->generatorClass();
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "vegetable" (
 						  "code"
@@ -92,12 +92,11 @@
 					)
 				;');
 				$stmt->execute(array(
-					  ':code' => $rn->getRn()
+					  ':code' => $generator->getRn('81')
 					, ':name' => $data['name']
 				));
 
 				$id = $data['id'] = $this->getPdo()->lastInsertId('vegetable_id_seq');
-				$rn->complete();
 			} else{
 				$stmt = $this->getPdo()->prepare('
 					UPDATE "vegetable" SET

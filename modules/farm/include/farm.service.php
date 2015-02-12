@@ -76,8 +76,6 @@
 				}
 			}
 
-			if(!empty($page)) $page = $pageData;
-
 			return $datas;
 		}
 

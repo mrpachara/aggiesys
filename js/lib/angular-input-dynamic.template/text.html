@@ -1,0 +1,7 @@
+<md-input-container>
+	<label ng-bind="meta.name"></label>
+	<input type="text" name="{{meta.name}}" ng-required="(meta.required || {})[(mode || '')]" ng-readonly="(mode == null) || (meta.readonly || {})[(mode || '')]" ng-model="data" />
+	<div ng-messages="form[meta.name].$error">
+		<div ng-message="required">This is required.</div>
+	</div>
+</md-input-container>

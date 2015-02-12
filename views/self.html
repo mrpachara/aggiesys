@@ -13,27 +13,8 @@
 	</symbol>
 </svg>
 <form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column">
-	<div ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" ng-switch on="(field.display || {})[(mode || '')]">
-		<div ng-switch-when="checkbox.domain">
-			<div flex ng-model="model.data[field.name]" ng-links="field.links" ng-controller="AppViewCheckboxDomainController">
-				<label ng-bind="field.name"></label>
-				<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-class="item.classes" aria-label="{{field.name + ' ' + item.value}}">{{item.label}}</md-checkbox>
-			</div>
-		</div>
-		<md-input-container flex ng-switch-when="textarea">
-			<label ng-bind="field.name"></label>
-			<textarea name="{{field.name}}" columns="1" rows="3" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]"></textarea>
-			<div ng-messages="selfForm[field.name].$error">
-				<div ng-message="required">This is required.</div>
-			</div>
-		</md-input-container>
-		<md-input-container flex ng-switch-default>
-			<label ng-bind="field.name"></label>
-			<input type="text" name="{{field.name}}" ng-required="(field.required || {})[(mode || '')]" ng-readonly="(mode == null) || (field.readonly || {})[(mode || '')]" ng-model="model.data[field.name]" />
-			<div ng-messages="selfForm[field.name].$error">
-				<div ng-message="required">This is required.</div>
-			</div>
-		</md-input-container>
+	<div ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['self']))">
+		<input-dynamic flex input-model="model.data[field.name]" input-mode="mode" input-meta="field" input-form="selfForm"></input-dynamic>
 	</div>
 	<div layout ng-hide="mode === null" layout-align="start center" style="padding: 0.5em 0px;">
 		<md-button type="submit" ng-repeat="link in model.links" ng-if="(link.href != null) && (mode == link.rel)" ng-click="setLink(link)" ng-class="link.classes" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
@@ -55,9 +36,7 @@
 			<span>Back</span>
 		</md-button>
 	</div>
-	<!--
 	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 		<span style="margin-top: 0.25em;">Show Scope</span>
 	</md-button>
-	-->
 </form>

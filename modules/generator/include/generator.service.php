@@ -3,10 +3,12 @@
 
 	class GeneratorService {
 		private $pdo;
-		private $rn;
 
-		function __construct($code){
+		function __construct(){
 			$this->pdo = new \sys\PDO();
+		}
+
+		public function getRn($code){
 			$this->pdo->beginTransaction();
 
 			$code_renew = "to_char(current_date, 'YYMMDD')";
@@ -18,7 +20,7 @@
 				SELECT
 					  "id" AS "id"
 					, (CASE WHEN "code_reuse" = '.$code_renew.'
-						THEN concat("code", "code_reuse", lpad("num"::character, "length", \'0\'))
+						THEN concat("code", "code_reuse", lpad("num"::character varying, "length", \'0\'))
 						ELSE concat("code", '.$code_renew.', lpad(\'1\', "length", \'0\'))
 					END) AS "rn"
 					, (CASE WHEN "code_reuse" = '.$code_renew.' THEN "code_reuse" ELSE '.$code_renew.' END) AS "code_reuse"
@@ -31,16 +33,10 @@
 				  ':code' => $code
 			));
 
-			if(!($this->rn = $stmt->fetch(\PDO::FETCH_ASSOC))){
+			if(!($rn = $stmt->fetch(\PDO::FETCH_ASSOC))){
 				throw new Exception("Unknown '{$code}' generator!!!", 500);
 			}
-		}
 
-		public function getRn(){
-			return $this->rn['rn'];
-		}
-
-		public function complete(){
 			$stmt = $this->pdo->prepare('
 				UPDATE "generator" SET
 					  "code_reuse" = :code_reuse
@@ -48,21 +44,19 @@
 				WHERE "id" = :id
 			;');
 			$stmt->execute(array(
-				  ':code_reuse' => $this->rn['code_reuse']
-				, ':num' => $this->rn['num']
-				, ':id' => $this->rn['id']
+				  ':code_reuse' => $rn['code_reuse']
+				, ':num' => $rn['num']
+				, ':id' => $rn['id']
 			));
 
 			if($stmt->rowCount() == 1){
 				$this->pdo->commit();
 			} else{
 				$this->pdo->rollBack();
+				throw new Exception("Cannot update '{$code}' generator!!!", 500);
 			}
-		}
 
-		public function reject(){
-			$this->pdo->rollBack();
+			return $rn['rn'];
 		}
 	}
-
 ?>

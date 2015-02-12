@@ -6,7 +6,7 @@
 	var promise = null;
 
 	angular.module('icSvg', ['ng'])
-		.config(function($provide, $compileProvider) {
+		.config(function($provide) {
 			$provide.provider('$icSvg', function(){
 				return {
 					 'url': function(url){
