@@ -1,11 +1,11 @@
 <?php
 	require_once "config.inc.php";
 
-	require_once "inc.pdo.php";
-	require_once "inc.user.php";
-	require_once "inc.dataservice.php";
-	require_once "inc.sessions.php";
-	require_once "inc.jsonhelper.php";
+	require_once "include/pdo.php";
+	require_once "include/user.php";
+	require_once "include/dataservice.php";
+	require_once "include/sessions.php";
+	require_once "include/jsonhelper.php";
 	//require_once "inc.authen.php";
 	//require_once "inc.authoz.php";
 	//require_once "inc.pagestage.php";

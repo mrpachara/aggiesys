@@ -2,7 +2,7 @@
 	$_fields = array(
 		array(
 			  'name' => "code"
-			, 'width' => "25%"
+			, 'width' => "10em"
 			, 'readonly' => array(
 				  'create' => true
 				, 'update' => true
@@ -10,7 +10,6 @@
 		)
 		,array(
 			  'name' => "name"
-			, 'width' => "75%"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true

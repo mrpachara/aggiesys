@@ -22,18 +22,9 @@ window.app = aggiesys;
 		var requestBodies = [];
 
 		var deepEncodeURIComponent = function(keyConverter, data){
-			if(angular.isArray(data)){
-				angular.forEach(data, (function(){
-					var index = 0;
-
-					return function(value){
-						deepEncodeURIComponent(function(ckey){
-							return keyConverter('[' + (index++) + ']') + ckey;
-						}, value);
-					};
-				})());
-			} else if(angular.isObject(data)){
+			if(angular.isObject(data)){
 				angular.forEach(data, function(value, key){
+					if(angular.isString(key) && (key.indexOf('$') == 0)) return;
 					deepEncodeURIComponent(function(ckey){
 						return keyConverter('[' + key + ']') + ckey;
 					}, value);
@@ -86,10 +77,7 @@ window.app = aggiesys;
 	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider, $inputDynamicProvider){
 		$routeProvider
 			.when('/', {
-				 redirectTo:'/login'
-			})
-			.when('/login', {
-				'templateUrl': BASEPATH + 'modules/login/view/index.php'
+				 redirectTo:'/delivery'
 			})
 			.when('/:module', {
 				 'redirectTo': function(params){
@@ -235,6 +223,16 @@ window.app = aggiesys;
 			});
 		});
 	;
+
+	aggiesys.filter('model', function($parse){
+		return function(input, mode, meta){
+			if((mode === null) && !angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression.label)){
+				return $parse(meta.expression.label)(input);
+			} else{
+				return input;
+			}
+		};
+	});
 
 	aggiesys.factory('$appHttp', function($rootScope, $q, $http, $mdToast){
 		var $appHttp;

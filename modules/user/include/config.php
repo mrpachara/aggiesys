@@ -2,7 +2,7 @@
 	$_fields = array(
 		array(
 			  'name' => "username"
-			, 'width' => "25%"
+			, 'width' => "10em"
 			, 'required' => array(
 				  'create' => true
 			)
@@ -12,7 +12,7 @@
 		)
 		,array(
 			  'name' => "fullname"
-			, 'width' => "25%"
+			, 'width' => "15em"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -20,8 +20,7 @@
 		)
 		,array(
 			  'name' => "roles"
-			, 'width' => "50%"
-			, 'display' => array(
+			, 'template' => array(
 				  'create' => "checkboxlist.domain"
 				, 'update' => "checkboxlist.domain"
 			)

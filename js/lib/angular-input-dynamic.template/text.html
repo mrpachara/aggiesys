@@ -1,6 +1,23 @@
-<md-input-container>
+<div ng-if="mode != null" ng-switch on="(link || {}).accept">
+	<md-input-container ng-switch-when="number">
+		<label ng-bind="meta.name"></label>
+		<input type="number" name="{{meta.name}}" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" ng-model="data[meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
+		<div ng-messages="form[meta.name].$error">
+			<div ng-message="required">This is required.</div>
+			<div ng-message="number">Invalid number value.</div>
+		</div>
+	</md-input-container>
+	<md-input-container ng-switch-default>
+		<label ng-bind="meta.name"></label>
+		<input type="text" name="{{meta.name}}" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" ng-model="data[meta.name]" />
+		<div ng-messages="form[meta.name].$error">
+			<div ng-message="required">This is required.</div>
+		</div>
+	</md-input-container>
+</div>
+<md-input-container ng-if="mode === null">
 	<label ng-bind="meta.name"></label>
-	<input type="text" name="{{meta.name}}" ng-required="(meta.required || {})[(mode || '')]" ng-readonly="(mode == null) || (meta.readonly || {})[(mode || '')]" ng-model="data" />
+	<input type="text" readonly="readonly" ng-model="_label" />
 	<div ng-messages="form[meta.name].$error">
 		<div ng-message="required">This is required.</div>
 	</div>

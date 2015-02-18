@@ -134,6 +134,23 @@
 			return $data;
 		}
 
+		public function getByCode($code = null){
+			$where = static::getWhere();
+
+			$where = array_merge_recursive(
+				  array(
+					  'sqls' => array('("code" = :_code)')
+					, 'params' => array(':_code' => $code)
+				), $where
+			);
+
+			$data = $this->getEntity(0, $where);
+
+			static::extendAction($data);
+
+			return $data;
+		}
+
 		abstract public function getAllEntity($where, $limit, &$pageData);
 
 		public function getAll($termText = null, &$page = null){

@@ -2,7 +2,7 @@
 	$_fields = array(
 		array(
 			  'name' => "code"
-			, 'width' => "25%"
+			, 'width' => "10em"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -10,7 +10,7 @@
 		)
 		,array(
 			  'name' => "name"
-			, 'width' => "25%"
+			, 'width' => "15em"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -18,8 +18,7 @@
 		)
 		,array(
 			  'name' => "address"
-			, 'width' => "50%"
-			, 'display' => array(
+			, 'template' => array(
 				  'create' => 'textarea'
 				, 'update' => 'textarea'
 				, 'self' => 'textarea'

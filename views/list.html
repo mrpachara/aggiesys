@@ -22,13 +22,13 @@
 		</span>
 	</caption>
 	<colgroup>
-		<col  ng-repeat="field in model.fields" style="width: {{field.width}};" />
+		<col  ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))" ng-style="{'width': field.width}" class="app-view-list-col-realign" />
 		<col style="width: 5em;" />
 	</colgroup>
 	<thead>
 		<tr>
-			<th  ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" ng-bind="field.name"></th>
-			<th>
+			<th  ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))" ng-bind="field.name"></th>
+			<th class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
 					<md-button ng-repeat="link in model.links" ng-hide="(link.href || null) === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
@@ -39,11 +39,11 @@
 	</thead>
 	<tbody>
 		<tr ng-repeat="item in model.items">
-			<td ng-repeat="field in model.fields" ng-show="!field.show || field.show[mode]" data-test="{{!field.show || field.show[mode]}} {{mode}}">
+			<td ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))">
 				<label ng-bind="field.name" flex="40" class="app-view-list-altheader"></label>
-				<span ng-bind="item.data[field.name]" flex="60" class="app-view-list-value"></span>
+				<span ng-bind="item.data[field.name] | model:mode:field" flex="60" class="app-view-list-value"></span>
 			</td>
-			<td>
+			<td class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
 					<md-button ng-repeat="link in item.links" ng-disabled="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>

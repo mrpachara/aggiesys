@@ -2,7 +2,7 @@
 	$_fields = array(
 		array(
 			  'name' => "code"
-			, 'width' => "25%"
+			, 'width' => "10em"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -10,7 +10,6 @@
 		)
 		,array(
 			  'name' => "name"
-			, 'width' => "75%"
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -23,14 +22,10 @@
 				, 'update' => true
 				, 'self' => true
 			)
-			, 'display' => array(
-				  'create' => "datagrid"
-				, 'update' => "datagrid"
-				, 'self' => "datagrid"
-			)
 			, 'fields' => array(
 				  array(
 					  'name' => "code"
+					, 'width' => '10em'
 					, 'required' => array(
 						  'create' => true
 						, 'update' => true
@@ -43,6 +38,11 @@
 						, 'update' => true
 					)
 				)
+			)
+			, 'template' => array(
+				  'create' => "datalist"
+				, 'update' => "datalist"
+				, 'self' => "datalist"
 			)
 		)
 	);

@@ -14,7 +14,7 @@
 </svg>
 <form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column">
 	<div ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['self']))">
-		<input-dynamic flex input-model="model.data[field.name]" input-mode="mode" input-meta="field" input-form="selfForm"></input-dynamic>
+		<input-dynamic flex ng-model="model.data" input-mode="mode" input-meta="field" input-form="selfForm"></input-dynamic>
 	</div>
 	<div layout ng-hide="mode === null" layout-align="start center" style="padding: 0.5em 0px;">
 		<md-button type="submit" ng-repeat="link in model.links" ng-if="(link.href != null) && (mode == link.rel)" ng-click="setLink(link)" ng-class="link.classes" layout layout-align="center center" aria-label="{{link.rel}} entity" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
@@ -36,9 +36,9 @@
 			<span>Back</span>
 		</md-button>
 	</div>
-	<!--
+<!--
 	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 		<span style="margin-top: 0.25em;">Show Scope</span>
 	</md-button>
-	-->
+-->
 </form>

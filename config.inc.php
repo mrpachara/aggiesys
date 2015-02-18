@@ -38,9 +38,9 @@
 	$conf['authoz']['specialroles'] = array("ADMIN");
 
 	$conf['page'] = array();
-	$conf['page']['login'] = BASEPATH.'login.php';
+	$conf['page']['login'] = BASEPATH.'aggiesyslogin.php';
 	$conf['page']['logout'] = BASEPATH.'logout.php';
-	$conf['page']['main'] = BASEPATH.'main.php';
+	$conf['page']['main'] = BASEPATH.'aggiesys.php';
 
 	$conf['pagestage'] = array();
 	$conf['pagestage']['maxpageid'] = 20;
