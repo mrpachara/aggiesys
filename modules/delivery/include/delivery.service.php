@@ -45,7 +45,7 @@
 				$data = array(
 					  "id" => null
 					, "code" => '<Auto>'
-					, "date" => '<Auto>'
+					, "date" => date("Y-m-d H:i:s".".123")
 					, "id_farm" => null
 					, "fullname" => null
 					, "address" => null

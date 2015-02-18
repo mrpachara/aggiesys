@@ -3,6 +3,9 @@
 		array(
 			  'name' => "code"
 			, 'width' => "10em"
+			, 'readonly' => array(
+				  '*' => true
+			)
 			, 'required' => array(
 				  'create' => true
 				, 'update' => true
@@ -11,8 +14,18 @@
 		,array(
 			  'name' => "date"
 			, 'width' => "15em"
+			, 'template' => array(
+					  'create' => 'text.domain'
+					, 'update' => 'text.domain'
+			)
 			, 'required' => array(
 				  '*' => true
+			)
+			, 'links' => array(
+				  array(
+					  'rel' => 'domain'
+					, 'accept' => 'datetime-local'
+				)
 			)
 		)
 		,array(
@@ -35,6 +48,7 @@
 			)
 			, 'expression' => array(
 				  'label' => "code"
+				, 'display' => "(id)? code + '-' + name : ''"
 			)
 			, 'links' => array(
 				  array(
@@ -76,7 +90,7 @@
 				)
 				, array(
 					  'name' => "qty"
-					, 'width' => '5em'
+					, 'width' => '3em'
 					, 'template' => array(
 						  'create' => 'text.domain'
 						, 'update' => 'text.domain'
@@ -94,7 +108,7 @@
 				)
 				, array(
 					  'name' => "price"
-					, 'width' => '5em'
+					, 'width' => '3em'
 					, 'template' => array(
 						  'create' => 'text.domain'
 						, 'update' => 'text.domain'

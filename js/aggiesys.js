@@ -226,8 +226,8 @@ window.app = aggiesys;
 
 	aggiesys.filter('model', function($parse){
 		return function(input, mode, meta){
-			if((mode === null) && !angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression.label)){
-				return $parse(meta.expression.label)(input);
+			if((mode === null) && !angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression.display)){
+				return $parse(meta.expression.display)(input);
 			} else{
 				return input;
 			}

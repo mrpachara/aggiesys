@@ -114,6 +114,19 @@
 				}
 			};
 		})
+		.controller('inputDynamicDatetime', function($scope){
+			angular.forEach($scope.$parent, function(value, key){
+				if(key.indexOf('$') != 0) $scope[key] = value;
+			});
+
+			$scope.datetime = ($scope.data[$scope.meta.name])? new Date($scope.data[$scope.meta.name]) : null;
+
+			$scope.$watch('datetime', function(value){
+				if(value){
+					$scope.data[$scope.meta.name] = value.toJSON();
+				}
+			});
+		})
 		.controller('inputDynamicCheckboxlist', function($scope, $http){
 			angular.forEach($scope.$parent, function(value, key){
 				if(key.indexOf('$') != 0) $scope[key] = value;
