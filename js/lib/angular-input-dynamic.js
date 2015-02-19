@@ -71,26 +71,33 @@
 							}
 						});
 
-						var types = ['text'];
+						var template;
 						if(!angular.isUndefined($scope.template)){
-							types = $scope.template.split('.');
+							template = $scope.template;
 						} else if(!angular.isUndefined(meta.template)){
 							if(!angular.isUndefined(meta.template[mode])){
-								types = meta.template[mode].split('.');
+								template = meta.template[mode];
 							} else if(!angular.isUndefined(meta.template['*'])){
-								types = meta.template['*'].split('.');
+								template = meta.template['*'];
 							}
 						}
 
+						if(template === null){
+							$element.empty();
+							return;
+						}
+
+						var types = (template)? template.split('.') : ['text'];
+
 						var templateUrl = inputDynamicPath + 'angular-input-dynamic.template/' + types[0] + '.html';
 						var templateType = 'get';
-						if(!angular.isUndefined(types[1]) && angular.isArray(meta.links)){
+						if(angular.isArray(meta.links)){
 							angular.forEach(meta.links, function(link){
 								if(link.rel == types[0]){
 									templateUrl = link.href;
 									templateType = link.type;
 								}
-								if(link.rel == types[1]) $scope.link = link;
+								if(!angular.isUndefined(types[1]) && (link.rel == types[1])) $scope.link = link;
 							});
 						}
 
@@ -107,9 +114,12 @@
 					};
 
 					$scope.$watch('mode', function(newValue, oldValue){
+						console.log('watch mode');
 						if(newValue != oldValue) update();
 					});
-
+$scope.$on('$destroy', function(){
+	console.log('destroy');
+});
 					update();
 				}
 			};
@@ -177,7 +187,7 @@
 				})
 			;
 		})
-		.controller('inputDynamicSelect', function($scope, $http, $parse){
+		.controller('inputDynamicSelect', function($scope, $http, $parse, $timeout, $element){
 			angular.forEach($scope.$parent, function(value, key){
 				if(key.indexOf('$') != 0) $scope[key] = value;
 			});
@@ -209,6 +219,17 @@
 				} else{
 					$scope.searchText = value.label;
 				}
+			});
+
+			$element.on('blur.inputDynamicSelect', 'input', function(ev){
+				$timeout(function(){
+					if(!angular.isUndefined(expression['label'])){
+						$scope.searchText = expression['label']($scope.data[$scope.meta.name]);
+					} else{
+						$scope.searchText = '';
+					}
+					$scope.$apply();
+				}, 500);
 			});
 
 		})

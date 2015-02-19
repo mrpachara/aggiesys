@@ -2,7 +2,6 @@
 	<label ng-bind="meta.name"></label>
 	<md-autocomplete
 		name="{{meta.name}}"
-		ng-required="(meta.required || {})[(mode || '')]"
 		md-selected-item="selectedItem"
 		md-search-text="searchText"
 		md-items="item in itemSearch(searchText)"
@@ -10,7 +9,7 @@
 		ng-readonly="crtl.readonly"
 		ng-required="crtl.required"
 		md-item-text="display"
-		class="md-input">
+		class="md-input" style="box-shadow: none; border-bottom: 1px solid gray;">
 		<span md-highlight-text="searchText">{{item.label}}</span>
 	</md-autocomplete>
 	<div ng-messages="form[meta.name].$error">

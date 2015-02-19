@@ -1,34 +1,43 @@
 <?php
 	$_fields = array(
-		array(
+		  array(
 			  'name' => "code"
 			, 'width' => "10em"
 			, 'readonly' => array(
 				  '*' => true
 			)
 			, 'required' => array(
-				  'create' => true
-				, 'update' => true
-			)
-		)
-		,array(
-			  'name' => "date"
-			, 'width' => "15em"
-			, 'template' => array(
-					  'create' => 'text.domain'
-					, 'update' => 'text.domain'
-			)
-			, 'required' => array(
 				  '*' => true
 			)
-			, 'links' => array(
+			, 'template' => array(
+				  '*' => 'headcodedate'
+			)
+			, 'fields' => array(
 				  array(
-					  'rel' => 'domain'
-					, 'accept' => 'datetime-local'
+					  'name' => "date"
+					, 'template' => array(
+						  '*' => 'text.domain'
+					)
+					, 'required' => array(
+						  '*' => true
+					)
+					, 'links' => array(
+						  array(
+							  'rel' => 'domain'
+							, 'accept' => 'datetime-local'
+						)
+					)
 				)
 			)
 		)
-		,array(
+		, array(
+			  'name' => "date"
+			, 'width' => "15em"
+			, 'template' => array(
+					  '*' => null
+			)
+		)
+		, array(
 			  'name' => "farm"
 			, 'fields' => array(
 				  array(
@@ -42,9 +51,7 @@
 				)
 			)
 			, 'template' => array(
-				  'create' => "template.domain"
-				, 'update' => "template.domain"
-				, 'self' => "template.domain"
+				  '*' => "headowner.domain"
 			)
 			, 'expression' => array(
 				  'label' => "code"
@@ -56,19 +63,14 @@
 					, 'type' => 'get'
 					, 'href' => BASEPATH."modules/farm/list.php"
 				)
-				, array(
-					  'rel' => 'template'
-					, 'type' => 'get'
-					, 'href' => BASEPATH."modules/delivery/template/farm.html"
-				)
 			)
 		)
-		,array(
+		, array(
 			  'name' => "details"
 			, 'show' => array(
-				  'create' => true
+				  'self' => true
+				, 'create' => true
 				, 'update' => true
-				, 'self' => true
 			)
 			, 'fields' => array(
 				  array(
@@ -90,14 +92,12 @@
 				)
 				, array(
 					  'name' => "qty"
-					, 'width' => '3em'
+					, 'width' => '10em'
 					, 'template' => array(
-						  'create' => 'text.domain'
-						, 'update' => 'text.domain'
+						  '*' => 'text.domain'
 					)
 					, 'required' => array(
-						  'create' => true
-						, 'update' => true
+						  '*' => true
 					)
 					, 'links' => array(
 						  array(
@@ -108,10 +108,9 @@
 				)
 				, array(
 					  'name' => "price"
-					, 'width' => '3em'
+					, 'width' => '10em'
 					, 'template' => array(
-						  'create' => 'text.domain'
-						, 'update' => 'text.domain'
+						  '*' => 'text.domain'
 					)
 					, 'required' => array(
 						  'create' => true
@@ -126,9 +125,7 @@
 				)
 			)
 			, 'template' => array(
-				  'create' => "datalist"
-				, 'update' => "datalist"
-				, 'self' => "datalist"
+				  '*' => 'datalist'
 			)
 		)
 	);
