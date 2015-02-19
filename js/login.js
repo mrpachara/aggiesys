@@ -166,10 +166,7 @@ window.app = aggiesys;
 	});
 
 	aggiesys.controller('LoginController', function($scope, $appHttp, $mdToast, $timeout, $window){
-		$scope.data = {
-			 'username': ''
-			,'password': ''
-		};
+		$scope.data = {};
 
 		$scope.errors = [];
 

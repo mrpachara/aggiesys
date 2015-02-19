@@ -294,24 +294,6 @@ window.app = aggiesys;
 		return $appHttp;
 	});
 
-	aggiesys.controller('LoginController', function($scope, $appHttp, $mdToast, $location){
-		$scope.data = {
-			 'username': ''
-			,'password': ''
-		};
-
-		$scope.errors = [];
-
-		$scope.submit = function(ev){
-			ev.preventDefault();
-			var $form = $(ev.delegateTarget);
-
-			$appHttp.post($form.attr('action'), $scope.data, {
-				 'headers': {'Content-Type': $form.prop('enctype')}
-			});
-		};
-	});
-
 	/* GLOBAL Controller */
 	app.controller('AppViewController', function($scope, $rootScope, $q, $appHttp, $location, $route, $window, $mdToast, $mdDialog, model){
 		//console.log(model);

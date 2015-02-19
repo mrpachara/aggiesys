@@ -46,7 +46,16 @@
 					,'form': '=inputForm'
 				}
 				,'link': function($scope, $element, $attrs){
-					var update = function(){
+					var $directiveScope = $scope.new();
+
+					var newDirectiveScope = function(){
+						var newScope = $scope.new();
+
+
+						return newScope;
+					};
+
+					var update = function($scope){
 						$scope.ctrl = {};
 						var meta = ($scope.meta)? $scope.meta : {};
 
@@ -83,6 +92,7 @@
 						}
 
 						if(template === null){
+							console.log('zzz', $scope);
 							$element.empty();
 							return;
 						}
@@ -115,12 +125,12 @@
 
 					$scope.$watch('mode', function(newValue, oldValue){
 						console.log('watch mode');
-						if(newValue != oldValue) update();
+						if(newValue != oldValue) update($directiveScope);
 					});
 $scope.$on('$destroy', function(){
-	console.log('destroy');
+	console.log('destroy', $scope);
 });
-					update();
+					update($directiveScope);
 				}
 			};
 		})
