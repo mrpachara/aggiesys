@@ -10,6 +10,6 @@
 	}
 }
 	</style>
-	<input-dynamic ng-model="data" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" input-mode="mode" input-meta="meta" input-template="'text'" input-form="form" flex></input-dynamic>
-	<input-dynamic ng-model="data" input-mode="mode" input-meta="(meta.fields | filter:{'name': 'date'}:true)[0]" input-form="form" class="input-dynamic-cl-head-code-date"></input-dynamic>
+	<input-dynamic ng-model="$model" ng-disabled="$disabled" ng-readonly="$readonly" ng-required="$required" input-mode="$mode" input-meta="$meta" input-template="'text'" input-form="$form" flex></input-dynamic>
+	<input-dynamic ng-model="$model" input-mode="$mode" input-meta="($meta.fields | filter:{'name': 'date'}:true)[0]" input-form="$form" class="input-dynamic-cl-head-code-date"></input-dynamic>
 </div>

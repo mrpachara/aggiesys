@@ -1,18 +1,18 @@
 <md-input-container ng-controller="inputDynamicSelect" style="z-index: 999;">
-	<label ng-bind="$meta.name"></label>
+	<label ng-bind="meta.name"></label>
 	<md-autocomplete
-		name="{{$meta.name}}"
+		name="{{meta.name}}"
 		md-selected-item="selectedItem"
 		md-search-text="searchText"
 		md-items="item in itemSearch(searchText)"
-		ng-disabled="$disabled"
-		ng-readonly="$readonly"
-		ng-required="$required"
+		ng-disabled="crtl.disabled"
+		ng-readonly="crtl.readonly"
+		ng-required="crtl.required"
 		md-item-text="display"
 		class="md-input" style="box-shadow: none; border-bottom: 1px solid gray;">
 		<span md-highlight-text="searchText">{{item.label}}</span>
 	</md-autocomplete>
-	<div ng-messages="$form[$meta.name].$error">
+	<div ng-messages="form[meta.name].$error">
 		<div ng-message="required">This is required.</div>
 	</div>
 </md-input-container>

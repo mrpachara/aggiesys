@@ -1,0 +1,15 @@
+<div layout="row" layout-sm="column" layout-align-gt-sm="start end" class="input-dynamic-cl-head-code">
+	<style type="text/css" scoped>
+.input-dynamic-cl-head-code .input-dynamic-cl-head-code-date {
+	width: 17em;
+}
+
+@media (max-width: 600px) {
+	.input-dynamic-cl-head-code .input-dynamic-cl-head-code-date {
+		width: auto;
+	}
+}
+	</style>
+	<input-dynamic ng-model="data" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" input-mode="mode" input-meta="meta" input-template="'text'" input-form="form" flex></input-dynamic>
+	<input-dynamic ng-model="data" input-mode="mode" input-meta="(meta.fields | filter:{'name': 'date'}:true)[0]" input-form="form" class="input-dynamic-cl-head-code-date"></input-dynamic>
+</div>

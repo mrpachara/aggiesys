@@ -1,33 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
-	<symbol id="ic_item_new" viewBox="0 0 24 24">
-		<use xlink:href="#ic_add_circle_outline" />
-	</symbol>
-	<symbol id="ic_item_delete" viewBox="0 0 24 24">
-		<use xlink:href="#ic_remove_circle_outline" />
-	</symbol>
-</svg>
 <table class="app-view-list input-dynamic-cl-datalist" ng-controller="inputDynamicDatalist">
 	<style type="text/css" scoped>
 table.input-dynamic-cl-datalist>tbody>tr>td {
 	vertical-align: bottom;
 }
 	</style>
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
+		<symbol id="ic_item_new" viewBox="0 0 24 24">
+			<use xlink:href="#ic_add_circle_outline" />
+		</symbol>
+		<symbol id="ic_item_delete" viewBox="0 0 24 24">
+			<use xlink:href="#ic_remove_circle_outline" />
+		</symbol>
+	</svg>
 	<caption layout="row" layout-align="start center">
-		<label ng-bind="meta.name" class="app-cp-component-label"></label>
+		<label ng-bind="$meta.name" class="app-cp-component-label"></label>
 	</caption>
 	<colgroup>
-		<col ng-if="mode != null" style="width: 32px;" />
-		<col ng-repeat="field in meta.fields" ng-if="!field.show || field.show[mode]" ng-style="{'width': field.width}" class="app-view-list-col-realign" />
+		<col ng-if="$mode != null" style="width: 32px;" />
+		<col ng-repeat="field in $meta.fields" ng-if="!field.show || field.show[$mode]" ng-style="{'width': field.width}" class="app-view-list-col-realign" />
 	</colgroup>
 	<tbody>
-		<tr ng-repeat="item in data[meta.name]" ng-form="form">
-			<th ng-if="mode != null" class="app-view-list-toolsbar" style="vertical-align: middle;">
+		<tr ng-repeat="item in $model[$meta.name]" ng-form="$form">
+			<th ng-if="$mode != null" class="app-view-list-toolsbar" style="vertical-align: middle;">
 				<md-button type="button" ng-click="delItem($index)" aria-label="del item">
 					<ic-svg ic-href="#ic_item_delete"></ic-svg>
 				</md-button>
 			</th>
-			<td ng-repeat="field in meta.fields" ng-if="!field.show || field.show[mode]">
-				<input-dynamic ng-model="item" input-mode="mode" input-meta="field" input-form="form" style="width: 100%;"></input-dynamic>
+			<td ng-repeat="field in $meta.fields" ng-if="!field.show || field.show[$mode]">
+				<input-dynamic ng-model="item" input-mode="$mode" input-meta="field" input-form="$form" style="width: 100%;"></input-dynamic>
 			</td>
 		</tr>
 	</tbody>

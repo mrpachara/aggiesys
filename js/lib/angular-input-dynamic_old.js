@@ -44,76 +44,105 @@
 				,'form': '=inputForm'
 			};
 
-			var inputProps = ['template', 'disabled', 'readonly', 'required'];
+			var inputProps = ['disabled', 'readonly', 'required'];
 
 			return {
 				 'strict': 'E'
 				,'scope': isolateProps
-				,'template': '<ng-include src="\'http://localhost/aggiesys/js/lib/angular-input-dynamic.template/text.html\'"></ng-include>'
 				,'link': function($scope, $element, $attrs){
-					$scope._label = (
-						   !angular.isUndefined($scope.$meta)
-						&& !angular.isUndefined($scope.$meta.expression)
-						&& !angular.isUndefined($scope.$meta.expression.label)
-					)?
-						$parse($scope.$meta.expression.label)($scope.$model[meta.name]) : $scope.$model[$scope.$meta.name]
-					;
+					var newDirectiveScope = function(){
+						var newScope = $scope.$new();
 
-					angular.forEach(isolateProps, function(){
-						
-					});
+						angular.forEach(isolateProps, function(attr, prop){
+							var attrName = attr.replace(/^./g, '');
+							var newProp = '$' + prop;
 
-					$scope.$url = {
-						 'href': inputDynamicPath + 'angular-input-dynamic.template/text.html'
-						,'link': {}
-					};
+							var meta = ($scope.meta)? $scope.meta : {};
+							var mode = ($scope.mode)? $scope.mode : 'self';
 
-					$scope.$watch('$template', function(value){
-						if(value === null){
-							$scope.$url = {
-								 'url': null
-								,'link': {}
-							};
-						} else{
-							var meta = ($scope.$meta)? $scope.$meta : {};
-							var template = (angular.isUndefined(value))? 'text' : value;
-
-							var templates = template.split('.');
-							var url = {
-								 'href': inputDynamicPath + 'angular-input-dynamic.template/' + templates[0] + '.html'
-								,'link': null
-							};
-
-							if(angular.isArray(meta.links)){
-								angular.forEach(meta.links, function(link){
-									if(link.rel == templates[0]){
-										url.href = link.href;
-									}
-									if(!angular.isUndefined(templates[1]) && (link.rel == templates[1])) url.link = link;
-								});
-							}
-
-							$scope.$url = url;
-						}
-					});
-
-					$scope.$watch('$mode', function(value){
-						angular.forEach(inputProps, function(prop){
-							var scopePropName = '$' + prop;
-							var meta = ($scope.$meta)? $scope.$meta : {};
-							var mode = (value === null)? 'self' : value;
-
-							if(angular.isUndefined($attrs[isolateProps[scopePropName]])){
-								if(!angular.isUndefined(meta[prop])){
-									if(!angular.isUndefined(meta[prop][mode])){
-										$scope[scopePropName] = meta[prop][mode];
-									} else if(!angular.isUndefined(meta[prop]['*'])){
-										$scope[scopePropName] = meta[prop]['*'];
+							if(angular.isUndefined($attrs[attrName])){
+								if(inputProps.indexOf(prop) >= 0){
+									if(!angular.isUndefined(meta[prop])){
+										if(!angular.isUndefined(meta[prop][mode])){
+											newScope[newProp] = meta[prop][mode];
+										} else if(!angular.isUndefined(meta[prop]['*'])){
+											newScope[newProp] = meta[prop]['*'];
+										}
 									}
 								}
+							} else{
+								newScope[newProp] = $scope[prop]
 							}
 						});
+
+						return newScope;
+					};
+
+					var update = function($scope){
+						var meta = ($scope.$meta)? $scope.$meta : {};
+						var mode = ($scope.mode)? $scope.mode : 'self';
+
+						$scope._label = (!angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression.label))?
+							$parse(meta.expression.label)($scope.$model[meta.name]) : $scope.$model[meta.name]
+						;
+
+						var template;
+						if(!angular.isUndefined($scope.$template)){
+							template = $scope.$template;
+						} else if(!angular.isUndefined(meta.template)){
+							if(!angular.isUndefined(meta.template[mode])){
+								template = meta.template[mode];
+							} else if(!angular.isUndefined(meta.template['*'])){
+								template = meta.template['*'];
+							}
+						}
+
+						if(template === null) return;
+
+						var types = (template)? template.split('.') : ['text'];
+
+						var templateUrl = inputDynamicPath + 'angular-input-dynamic.template/' + types[0] + '.html';
+						var templateType = 'get';
+						if(angular.isArray(meta.links)){
+							angular.forEach(meta.links, function(link){
+								if(link.rel == types[0]){
+									templateUrl = link.href;
+									templateType = link.type;
+								}
+								if(!angular.isUndefined(types[1]) && (link.rel == types[1])) $scope.$link = link;
+							});
+						}
+
+						if(angular.isUndefined(templateCache[templateUrl])){
+							$http[templateType](templateUrl)
+								.then(function(response){
+									templateCache[templateUrl] = response.data;
+									applyTemplate($scope, $element, response.data);
+								})
+							;
+						} else{
+							applyTemplate($scope, $element, templateCache[templateUrl]);
+						}
+					};
+
+					var directiveScope = $scope.$new();
+
+					$scope.$watch('mode', function(){
+						//console.log('watch mode');
+						directiveScope.$destroy();
+						$element.empty();
+
+						directiveScope = newDirectiveScope();
+						update(directiveScope);
 					});
+/*
+					angular.forEach(inputProps, function(inputProp){
+						$scope.$watch(inputProp, function(value, old){
+							console.log(inputProp, value, old);
+							if(value != old) directiveScope['$' + inputProp] = value;
+						})
+					});
+*/
 				}
 			};
 		})

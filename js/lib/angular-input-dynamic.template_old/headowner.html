@@ -1,0 +1,20 @@
+<div layout="column" class="input-dynamic-cl-head-owner">
+	<style type="text/css" scoped>
+.input-dynamic-cl-head-owner .input-dynamic-cl-head-owner-code {
+	width: 10em;
+}
+
+@media (max-width: 600px) {
+	.input-dynamic-cl-head-owner .input-dynamic-cl-head-owner-code {
+		width: auto;
+	}
+}
+	</style>
+	<div layout="row" layout-sm="column" layout-align-gt-sm="start end">
+		<input-dynamic ng-model="data" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" input-mode="mode" input-meta="meta" input-template="(mode === null)? 'text' : 'select.domain'" input-form="form" class="input-dynamic-cl-head-owner-code"></input-dynamic>
+		<input-dynamic flex ng-disabled="disabled" ng-readonly="ctrl.readonly || data[meta.name]['id']" ng-model="data[meta.name]" input-mode="mode" input-template="'text'" input-meta="(meta.fields | filter:{'name': 'name'}:true)[0]" input-form="form"></input-dynamic>
+	</div>
+	<div layout="row">
+		<input-dynamic flex ng-disabled="disabled" ng-readonly="ctrl.readonly || data[meta.name]['id']" ng-model="data[meta.name]" input-mode="mode" input-template="'textarea'" input-meta="(meta.fields | filter:{'name': 'address'}:true)[0]" input-form="form"></input-dynamic>
+	</div>
+</div>
