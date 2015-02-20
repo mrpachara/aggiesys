@@ -34,14 +34,14 @@
 			};
 
 			var isolateProps = {
-				 'model': '=ngModel'
-				,'disabled': '=ngDisabled'
-				,'readonly': '=ngReadonly'
-				,'required': '=ngRequired'
-				,'template': '=inputTemplate'
-				,'mode': '=inputMode'
-				,'meta': '=inputMeta'
-				,'form': '=inputForm'
+				 '$model': '=ngModel'
+				,'$disabled': '=ngDisabled'
+				,'$readonly': '=ngReadonly'
+				,'$required': '=ngRequired'
+				,'$template': '=inputTemplate'
+				,'$mode': '=inputMode'
+				,'$meta': '=inputMeta'
+				,'$form': '=inputForm'
 			};
 
 			var inputProps = ['template', 'disabled', 'readonly', 'required'];
@@ -49,7 +49,7 @@
 			return {
 				 'strict': 'E'
 				,'scope': isolateProps
-				,'template': '<ng-include src="\'http://localhost/aggiesys/js/lib/angular-input-dynamic.template/text.html\'"></ng-include>'
+				,'template': '<ng-include src="$url.href"></ng-include>'
 				,'link': function($scope, $element, $attrs){
 					$scope._label = (
 						   !angular.isUndefined($scope.$meta)
@@ -59,16 +59,21 @@
 						$parse($scope.$meta.expression.label)($scope.$model[meta.name]) : $scope.$model[$scope.$meta.name]
 					;
 
-					angular.forEach(isolateProps, function(){
-						
-					});
-
 					$scope.$url = {
-						 'href': inputDynamicPath + 'angular-input-dynamic.template/text.html'
+						 'href': null
 						,'link': {}
 					};
 
-					$scope.$watch('$template', function(value){
+					$scope.$input = {};
+
+					angular.forEach(inputProps, function(prop){
+						var scopePropName = '$' + prop;
+						$scope.$watch(scopePropName, function(value){
+							$scope.$input[prop] = value;
+						});
+					});
+
+					$scope.$watch('$input.template', function(value){
 						if(value === null){
 							$scope.$url = {
 								 'url': null
@@ -80,7 +85,7 @@
 
 							var templates = template.split('.');
 							var url = {
-								 'href': inputDynamicPath + 'angular-input-dynamic.template/' + templates[0] + '.html'
+								 'href': inputDynamicPath + templates[0] + '.html'
 								,'link': null
 							};
 
@@ -106,9 +111,9 @@
 							if(angular.isUndefined($attrs[isolateProps[scopePropName]])){
 								if(!angular.isUndefined(meta[prop])){
 									if(!angular.isUndefined(meta[prop][mode])){
-										$scope[scopePropName] = meta[prop][mode];
+										$scope.$input[prop] = meta[prop][mode];
 									} else if(!angular.isUndefined(meta[prop]['*'])){
-										$scope[scopePropName] = meta[prop]['*'];
+										$scope.$input[prop] = meta[prop]['*'];
 									}
 								}
 							}
@@ -118,44 +123,36 @@
 			};
 		})
 		.controller('inputDynamicDatetime', function($scope){
-			angular.forEach($scope.$parent, function(value, key){
-				if(key.indexOf('$') != 0) $scope[key] = value;
-			});
+			$scope.$model = {};
+			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? new Date($scope.$parent.$model[$scope.$parent.$meta.name]) : null;
 
-			$scope.datetime = ($scope.$model[$scope.$meta.name])? new Date($scope.$model[$scope.$meta.name]) : null;
-
-			$scope.$watch('datetime', function(value){
-				if(value){
-					$scope.$model[$scope.$meta.name] = value.toJSON();
-				}
+			$scope.$watch('$model[$meta.name]', function(value){
+				$scope.$parent.$model[$scope.$parent.$meta.name] = (value)? value.toJSON() : null;
 			});
 		})
 		.controller('inputDynamicCheckboxlist', function($scope, $http){
-			angular.forEach($scope.$parent, function(value, key){
-				if(key.indexOf('$') != 0) $scope[key] = value;
-			});
 			$scope.items = [];
 			$scope.isChecked = {};
 
-			if(!angular.isArray($scope.$model[$scope.$meta.name])){
-				$scope.$model[$scope.$meta.name] = $scope.$parent.$model[$scope.$meta.name] = [];
+			if(!angular.isArray($scope.$parent.$model[$scope.$parent.$meta.name])){
+				$scope.$parent.$model[$scope.$parent.$meta.name] = [];
 			}
 
-			$http[$scope.$link.type]($scope.$link.href)
+			$http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href)
 				.then(function(response){
 					angular.forEach(response.data.items, function(item){
 						$scope.items.push(item);
 
 						angular.forEach($scope.items, function(item){
-							$scope.isChecked[item.value] = ($scope.$model[$scope.$meta.name].indexOf(item.value) > -1);
+							$scope.isChecked[item.value] = ($scope.$parent.$model[$scope.$parent.$meta.name].indexOf(item.value) > -1);
 						});
 					});
 
 					$scope.$watchCollection('isChecked', function(values){
-						$scope.$model[$scope.$meta.name].splice(0, $scope.$model[$scope.$meta.name].length);
+						$scope.$parent.$model[$scope.$parent.$meta.name] = [];
 
 						angular.forEach(values, function(value, key){
-							if(value) $scope.$model[$scope.$meta.name].push(key);
+							if(value) $scope.$parent.$model[$scope.$parent.$meta.name].push(key);
 						});
 					});
 
@@ -163,16 +160,13 @@
 			;
 		})
 		.controller('inputDynamicRadiogroup', function($scope, $http){
-			angular.forEach($scope.$parent, function(value, key){
-				if(key.indexOf('$') != 0) $scope[key] = value;
-			});
 			$scope.items = [];
 
-			$scope.$watch('data', function(value){
+			$scope.$watch('$model[$meta.name]', function(value){
 				$scope.$parent.$model = value;
 			});
 
-			$http[$scope.$link.type]($scope.$link.href)
+			$http[$scope.$parent.$ur.link.type]($scope.$parent.$url.link.href)
 				.then(function(response){
 					angular.forEach(response.data.items, function(item){
 						$scope.items.push(item);
@@ -181,44 +175,42 @@
 			;
 		})
 		.controller('inputDynamicSelect', function($scope, $http, $parse, $timeout, $element){
-			angular.forEach($scope.$parent, function(value, key){
-				if(key.indexOf('$') != 0) $scope[key] = value;
-			});
-
 			var expression = {};
 			angular.forEach($scope.$meta.expression, function(value, key){
 				expression[key] = $parse(value);
 			});
 
-			$scope.selectedItem = {
-				 'data': $scope.$model[$scope.$meta.name]
+			$scope.$select = {}
+
+			$scope.$select.selectedItem = {
+				 'data': $scope.$parent.$model[$scope.$parent.$meta.name]
 			};
 
-			$scope.searchText = '';
+			$scope.$select.searchText = '';
 
 			$scope.itemSearch = function(searchText){
-				return (searchText)? $http[$scope.$link.type]($scope.$link.href + '?term=' + encodeURIComponent(searchText))
+				return (searchText)? $http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href + '?term=' + encodeURIComponent(searchText))
 					.then(function(response){
 						return response.data.items;
 					})
 				: [];
 			};
 
-			$scope.$watch('selectedItem', function(value){
-				$scope.$model[$scope.$meta.name] = (!angular.isUndefined(value))? value.data : {};
+			$scope.$watch('$select.selectedItem', function(value){
+				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : {};
 console.log('selectedItem', value);
 				if(!angular.isUndefined(expression['label'])){
-					$scope.searchText = expression['label']($scope.$model[$scope.$meta.name]);
+					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
 				} else{
-					$scope.searchText = value.label;
+					$scope.$select.searchText = value.label;
 				}
 			});
 
 			$element.on('blur.inputDynamicSelect', 'input', function(ev){
 				if(!angular.isUndefined(expression['label'])){
-					$scope.searchText = expression['label']($scope.$model[$scope.$meta.name]);
+					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
 				} else{
-					$scope.searchText = '';
+					$scope.$select.searchText = '';
 				}
 				$timeout(function(){
 					$scope.$apply();
@@ -227,16 +219,16 @@ console.log('selectedItem', value);
 
 		})
 		.controller('inputDynamicDatalist', function($scope){
-			angular.forEach($scope.$parent, function(value, key){
-				if(key.indexOf('$') != 0) $scope[key] = value;
-			});
+			if(!angular.isArray($scope.$parent.$model[$scope.$parent.$meta.name])){
+				$scope.$parent.$model[$scope.$parent.$meta.name] = [];
+			}
 
 			$scope.addItem = function(){
-				$scope.$model[$scope.$meta.name].push({});
+				$scope.$parent.$model[$scope.$parent.$meta.name].push({});
 			};
 
 			$scope.delItem = function(index){
-				$scope.$model[$scope.$meta.name].splice(index, 1);
+				$scope.$parent.$model[$scope.$parent.$meta.name].splice(index, 1);
 			};
 		})
 	;

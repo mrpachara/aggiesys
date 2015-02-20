@@ -1,6 +1,6 @@
 <md-input-container ng-if="$mode != null">
 	<label ng-bind="$meta.name"></label>
-	<textarea name="{{$meta.name}}" columns="40" rows="3" ng-disabled="$disabled" ng-readonly="$readonly" ng-required="$required" ng-model="$model[$meta.name]" />
+	<textarea name="{{$meta.name}}" columns="40" rows="3" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" />
 	<div ng-messages="$form[$meta.name].$error">
 		<div ng-message="required">This is required.</div>
 	</div>

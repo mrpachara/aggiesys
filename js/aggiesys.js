@@ -143,7 +143,7 @@ window.app = aggiesys;
 		;
 
 		$inputDynamicProvider
-			.basePath(BASEPATH + 'js/lib/')
+			.basePath(BASEPATH + 'template/angular-input-dynamic.template/')
 		;
 	})
 		.run(function($rootScope, $q, $timeout, $location, $mdSidenav, $document){
