@@ -9,7 +9,7 @@
 	</md-input-container>
 	<md-input-container ng-switch-when="datetime-local" ng-controller="inputDynamicDatetime">
 		<label ng-bind="$meta.name"></label>
-		<input type="datetime-local" step="1" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="datetime" style="font-family: monospace; font-size: 1.25em;" />
+		<input type="datetime-local" step="1" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em;" />
 		<div ng-messages="$form[$meta.name].$error">
 			<div ng-message="required">This is required.</div>
 			<div ng-message="datetimeLocal">Invalid datetime value.</div>
@@ -26,7 +26,7 @@
 <div ng-if="$mode === null" ng-switch on="($url.link || {}).accept">
 	<md-input-container ng-switch-when="datetime-local" ng-controller="inputDynamicDatetime">
 		<label ng-bind="$meta.name"></label>
-		<input type="datetime-local" step="1" readonly="readonly" ng-model="datetime" style="font-family: monospace; font-size: 1.25em;" />
+		<input type="datetime-local" step="1" readonly="readonly" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em;" />
 		<div ng-messages="form[meta.name].$error">
 			<div ng-message="required">This is required.</div>
 			<div ng-message="datetimeLocal">Invalid datetime value.</div>

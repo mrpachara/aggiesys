@@ -56,7 +56,7 @@
 						&& !angular.isUndefined($scope.$meta.expression)
 						&& !angular.isUndefined($scope.$meta.expression.label)
 					)?
-						$parse($scope.$meta.expression.label)($scope.$model[meta.name]) : $scope.$model[$scope.$meta.name]
+						$parse($scope.$meta.expression.label)($scope.$model[$scope.$meta.name]) : $scope.$model[$scope.$meta.name]
 					;
 
 					$scope.$url = {
@@ -68,9 +68,12 @@
 
 					angular.forEach(inputProps, function(prop){
 						var scopePropName = '$' + prop;
-						$scope.$watch(scopePropName, function(value){
-							$scope.$input[prop] = value;
-						});
+
+						if(!angular.isUndefined($attrs[isolateProps[scopePropName].replace(/^./,'')])){
+							$scope.$watch(scopePropName, function(value){
+								$scope.$input[prop] = value;
+							});
+						}
 					});
 
 					$scope.$watch('$input.template', function(value){
@@ -108,7 +111,7 @@
 							var meta = ($scope.$meta)? $scope.$meta : {};
 							var mode = (value === null)? 'self' : value;
 
-							if(angular.isUndefined($attrs[isolateProps[scopePropName]])){
+							if(angular.isUndefined($attrs[isolateProps[scopePropName].replace(/^./,'')])){
 								if(!angular.isUndefined(meta[prop])){
 									if(!angular.isUndefined(meta[prop][mode])){
 										$scope.$input[prop] = meta[prop][mode];
@@ -162,11 +165,7 @@
 		.controller('inputDynamicRadiogroup', function($scope, $http){
 			$scope.items = [];
 
-			$scope.$watch('$model[$meta.name]', function(value){
-				$scope.$parent.$model = value;
-			});
-
-			$http[$scope.$parent.$ur.link.type]($scope.$parent.$url.link.href)
+			$http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href)
 				.then(function(response){
 					angular.forEach(response.data.items, function(item){
 						$scope.items.push(item);
@@ -186,7 +185,7 @@
 				 'data': $scope.$parent.$model[$scope.$parent.$meta.name]
 			};
 
-			$scope.$select.searchText = '';
+			$scope.$select.searchText = null;
 
 			$scope.itemSearch = function(searchText){
 				return (searchText)? $http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href + '?term=' + encodeURIComponent(searchText))
@@ -198,7 +197,7 @@
 
 			$scope.$watch('$select.selectedItem', function(value){
 				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : {};
-console.log('selectedItem', value);
+
 				if(!angular.isUndefined(expression['label'])){
 					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
 				} else{
@@ -210,7 +209,7 @@ console.log('selectedItem', value);
 				if(!angular.isUndefined(expression['label'])){
 					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
 				} else{
-					$scope.$select.searchText = '';
+					$scope.$select.searchText = $scope.$select.selectedItem.label;
 				}
 				$timeout(function(){
 					$scope.$apply();

@@ -48,6 +48,9 @@
 				)
 				, array(
 					  'name' => 'address'
+					, 'template' => array(
+						  '*' => 'textarea'
+					)
 				)
 			)
 			, 'template' => array(
@@ -81,6 +84,9 @@
 					)
 					, 'required' => array(
 						  '*' => true
+					)
+					, 'expression' => array(
+						  'label' => "(id)? code + '-' + name : ''"
 					)
 					, 'links' => array(
 						  array(
