@@ -125,6 +125,14 @@
 				}
 			};
 		})
+		.controller('inputDynamicNumber', function($scope){
+			$scope.$model = {};
+			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? Number($scope.$parent.$model[$scope.$parent.$meta.name]) : null;
+
+			$scope.$watch('$model[$meta.name]', function(value){
+				$scope.$parent.$model[$scope.$parent.$meta.name] = value;
+			});
+		})
 		.controller('inputDynamicDatetime', function($scope){
 			$scope.$model = {};
 			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? new Date($scope.$parent.$model[$scope.$parent.$meta.name]) : null;

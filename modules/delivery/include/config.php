@@ -39,6 +39,9 @@
 		)
 		, array(
 			  'name' => "farm"
+			, 'required' => array(
+				'*' => true
+			)
 			, 'fields' => array(
 				  array(
 					  'name' => 'name'

@@ -36,7 +36,26 @@
 				  ':id_head' => $id_head
 			));
 
-			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			$details = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+			foreach($details as &$detail){
+				$stmt = $this->getPdo()->prepare('
+					SELECT
+						  "id"
+						, "code"
+						, "name"
+					FROM "vegetable"
+					WHERE "id" = :id
+				;');
+
+				$stmt->execute(array(
+					  ':id' => $detail['id_vegetable']
+				));
+
+				$detail['vegetable'] = $stmt->fetch(\PDO::FETCH_ASSOC);
+			}
+
+			return $details;
 		}
 
 		protected function getEntity($id, $where){

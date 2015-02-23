@@ -136,6 +136,7 @@ window.app = aggiesys;
 
 				var newSvgElem = svg.createElementNS('http://www.w3.org/2000/svg', 'svg');
 				newSvgElem.appendChild(svgFragment);
+
 				svg.replaceChild(newSvgElem, svg.documentElement);
 
 				return svg;

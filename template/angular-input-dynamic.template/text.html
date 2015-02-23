@@ -1,5 +1,5 @@
 <div ng-if="$mode != null" ng-switch on="($url.link || {}).accept">
-	<md-input-container ng-switch-when="number">
+	<md-input-container ng-switch-when="number" ng-controller="inputDynamicNumber">
 		<label ng-bind="$meta.name"></label>
 		<input type="number" name="{{meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
 		<div ng-messages="$form[$meta.name].$error">
@@ -24,19 +24,16 @@
 	</md-input-container>
 </div>
 <div ng-if="$mode === null" ng-switch on="($url.link || {}).accept">
+	<md-input-container ng-switch-when="number" ng-controller="inputDynamicNumber">
+		<label ng-bind="$meta.name"></label>
+		<input type="number" readonly="readonly" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
+	</md-input-container>
 	<md-input-container ng-switch-when="datetime-local" ng-controller="inputDynamicDatetime">
 		<label ng-bind="$meta.name"></label>
 		<input type="datetime-local" step="1" readonly="readonly" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em;" />
-		<div ng-messages="form[meta.name].$error">
-			<div ng-message="required">This is required.</div>
-			<div ng-message="datetimeLocal">Invalid datetime value.</div>
-		</div>
 	</md-input-container>
 	<md-input-container ng-switch-default>
 		<label ng-bind="$meta.name"></label>
 		<input type="text" readonly="readonly" ng-model="_label" />
-		<div ng-messages="$form[$meta.name].$error">
-			<div ng-message="required">This is required.</div>
-		</div>
 	</md-input-container>
 </div>

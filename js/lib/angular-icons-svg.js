@@ -35,11 +35,11 @@
 					svg = prop['svgTransform'](svg) || svg;
 				}
 
-				svg.documentElement.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
+				//svg.documentElement.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
 				var importedNode = $window.document.importNode(svg.documentElement, true);
-				importedNode.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
-				importedNode.setAttribute('style', 'display: none;');
-				angular.element('head').append(importedNode);
+				//importedNode.setAttributeNS('http://www.w3.org/1999/xhtml', 'data-src', link);
+				//importedNode.setAttribute('style', 'display: none;');
+				angular.element('head').append($(importedNode.outerHTML));
 			};
 
 			var loadSvg = function(link){
@@ -82,7 +82,7 @@
 				,'link': function($scope, $element, $attrs){
 					return promise.then(function(){
 						$element.empty();
-
+/*
 						var svgElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'svg');
 						var useElem = $element.prop('ownerDocument').createElementNS('http://www.w3.org/2000/svg', 'use');
 						useElem.setAttributeNS('http://www.w3.org/1999/xlink', 'href', $attrs.icHref);
@@ -90,6 +90,10 @@
 						svgElem.appendChild(useElem);
 
 						$element.append(svgElem);
+*/
+						var html = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use xlink:href="' + $attrs.icHref + '" /></svg>';
+
+						$element.html(html);
 					});
 				}
 			};

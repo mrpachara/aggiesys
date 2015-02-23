@@ -20,8 +20,8 @@
 
 	$conf['db'] = array();
 	$conf['db']['host'] = 'localhost';
-	$conf['db']['user'] = 'ere';
-	$conf['db']['password'] = 'ere';
+	$conf['db']['user'] = 'aggiesys';
+	$conf['db']['password'] = 'a9d7C7Um';
 	$conf['db']['dbname'] = 'aggiesys';
 	$conf['db']['encoding'] = 'UTF-8';
 
