@@ -113,7 +113,7 @@ window.app = aggiesys;
 		}, $httpProvider.defaults.transformRequest);
 
 		$icSvgProvider
-			.url(BASEPATH + 'icons/material-design-icons/links.php')
+			.url(BASEPATH + 'iconset/material-design-icons/links.php')
 			.svgTransform(function(svg){
 				var svgFragment = svg.createDocumentFragment();
 
