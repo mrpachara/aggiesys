@@ -1,4 +1,9 @@
-<md-input-container ng-controller="inputDynamicSelect" style="z-index: 999;">
+<md-input-container ng-controller="inputDynamicSelect" class="input-dynamic-cl-select">
+	<style type="text/css">
+.input-dynamic-cl-select md-autocomplete ul{
+	z-index: 999;
+}
+	</style>
 	<label ng-bind="$meta.name"></label>
 	<md-autocomplete
 		name="{{$meta.name}}"

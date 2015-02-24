@@ -108,7 +108,7 @@
 		private $pdo;
 
 		function __construct(){
-			$this->pdo = new \sys\PDO();
+			$this->pdo = \sys\PDO::getInstance();
 		}
 
 		protected function getPdo(){

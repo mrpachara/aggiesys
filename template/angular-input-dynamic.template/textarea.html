@@ -1,12 +1,12 @@
 <md-input-container ng-if="$mode != null">
-	<label ng-bind="$meta.name"></label>
+	<label ng-bind="$meta.name_field || $meta.name"></label>
 	<textarea name="{{$meta.name}}" columns="40" rows="3" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" />
 	<div ng-messages="$form[$meta.name].$error">
 		<div ng-message="required">This is required.</div>
 	</div>
 </md-input-container>
 <md-input-container ng-if="$mode === null">
-	<label ng-bind="$meta.name"></label>
+	<label ng-bind="$meta.name_field || $meta.name"></label>
 	<textarea columns="1" rows="3" readonly="readonly" ng-model="_label" />
 	<div ng-messages="$form[$meta.name].$error">
 		<div ng-message="required">This is required.</div>

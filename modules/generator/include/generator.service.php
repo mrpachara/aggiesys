@@ -4,8 +4,12 @@
 	class GeneratorService {
 		private $pdo;
 
+		public static function getAutoText(){
+			return '<Auto>';
+		}
+
 		function __construct(){
-			$this->pdo = new \sys\PDO();
+			$this->pdo = new \sys\PDOConfigurated();
 		}
 
 		public function getRn($code){
@@ -34,7 +38,7 @@
 			));
 
 			if(!($rn = $stmt->fetch(\PDO::FETCH_ASSOC))){
-				throw new Exception("Unknown '{$code}' generator!!!", 500);
+				throw new \Exception("Unknown '{$code}' generator!!!", 500);
 			}
 
 			$stmt = $this->pdo->prepare('

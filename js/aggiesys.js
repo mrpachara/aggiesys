@@ -120,6 +120,7 @@ window.app = aggiesys;
 				angular.forEach(svg.documentElement.childNodes, function(node){
 					if((node.nodeType === svg.ELEMENT_NODE) && (node.nodeName.toLowerCase() === 'svg')){
 						var symbolElem = svg.createElementNS('http://www.w3.org/2000/svg', 'symbol');
+						//var symbolElem = svg.createElementNS('http://www.w3.org/2000/svg', 'svg');
 						var idSplit = node.getAttribute('id').split('_');
 						idSplit.pop();
 						symbolElem.setAttribute('id', idSplit.join('_'));
@@ -135,6 +136,7 @@ window.app = aggiesys;
 				});
 
 				var newSvgElem = svg.createElementNS('http://www.w3.org/2000/svg', 'svg');
+				newSvgElem.setAttribute('version', '1.1');
 				newSvgElem.appendChild(svgFragment);
 
 				svg.replaceChild(newSvgElem, svg.documentElement);

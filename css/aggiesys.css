@@ -36,6 +36,8 @@ ic-svg,
 	height: 24px;
 
 	flex: 0 0 auto;
+
+	fill: currentColor;
 }
 
 ic-svg>svg,

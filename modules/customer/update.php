@@ -3,10 +3,7 @@
 
 	$_session->authozPage("STAFF", "static::forbidden_json");
 
-	require_once "include/config.php";
-	require_once "include/customer.service.php";
-
-	$entityService = new \app\CustomerService();
+	require_once "include/include.php";
 
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);

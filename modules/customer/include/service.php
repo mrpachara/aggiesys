@@ -10,8 +10,12 @@
 			);
 		}
 
-		function __construct(){
+		private $generatorClass;
+
+		function __construct($generatorClass){
 			parent::__construct();
+
+			$this->generatorClass = $generatorClass;
 		}
 
 		protected function getEntity($id, $where){
@@ -19,7 +23,7 @@
 			if($id === null) {
 				$data = array(
 					  "id" => null
-					, "code" => null
+					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))//$this->generatorClass::getAutoText()
 					, "name" => null
 					, "address" => null
 				);
@@ -81,6 +85,7 @@
 
 		public function saveEntity($id, &$data){
 			if($id === null){
+				$generator = new $this->generatorClass();
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "customer" (
 						  "code"
@@ -93,7 +98,7 @@
 					)
 				;');
 				$stmt->execute(array(
-					  ':code' => $data['code']
+					  ':code' => $generator->getRn('92')
 					, ':name' => $data['name']
 					, ':address' => $data['address']
 				));

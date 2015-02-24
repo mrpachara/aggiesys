@@ -1,19 +1,7 @@
 <?php
 	namespace sys;
 
-	class PDO extends \PDO {
-		public static function prepareIn($key, $values, &$param = array()){
-			$keys = array();
-
-			for($i = 0; $i < count($values); $i++){
-				$i_key = $key.'_'.$i;
-				$keys[] = $i_key;
-				$param[$i_key] = $values[$i];
-			}
-
-			return implode(', ', $keys);
-		}
-
+	class PDOConfigurated extends \PDO {
 		function __construct($dsn = null, $user = null, $password = null, $option = null){
 			global $conf;
 
@@ -29,6 +17,51 @@
 				// \PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING
 			);
 			//echo "<pre>PDO:".time().":".date("Y-m-d H:i:s")."</pre>";
+		}
+	}
+
+	class PDO {
+		public static function prepareIn($key, $values, &$param = array()){
+			$keys = array();
+
+			for($i = 0; $i < count($values); $i++){
+				$i_key = $key.'_'.$i;
+				$keys[] = $i_key;
+				$param[$i_key] = $values[$i];
+			}
+
+			return implode(', ', $keys);
+		}
+
+		public static function getInstance(){
+			static $instance = null;
+
+			if (null === $instance) {
+				$instance = new PDOConfigurated();
+			}
+
+			return $instance;
+		}
+
+		protected function __construct(){
+		}
+
+		/**
+		 * Private clone method to prevent cloning of the instance of the
+		 * *Singleton* instance.
+		 *
+		 * @return void
+		 */
+		private function __clone(){
+		}
+
+		/**
+		 * Private unserialize method to prevent unserializing of the *Singleton*
+		 * instance.
+		 *
+		 * @return void
+		 */
+		private function __wakeup(){
 		}
 	}
 ?>

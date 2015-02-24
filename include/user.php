@@ -13,7 +13,7 @@
 		}
 
 		function __construct(){
-			$this->pdo = new PDO();
+			$this->pdo = PDO::getInstance();
 		}
 
 		private function prepareUser($user){

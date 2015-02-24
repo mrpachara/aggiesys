@@ -52,7 +52,7 @@
 			$conf_session = $conf['session'];
 
 			//echo "<pre>session->__construct:".time()."</pre>";
-			$this->pdo = new PDO();
+			$this->pdo = new PDOConfigurated();
 			$this->userService = $userService;
 
 			// Set handler to overide SESSION
