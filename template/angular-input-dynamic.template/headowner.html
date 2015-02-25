@@ -11,7 +11,7 @@
 }
 	</style>
 	<div layout="row" layout-sm="column" layout-align-gt-sm="start end">
-		<input-dynamic ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model" input-mode="$mode" input-meta="$meta" input-template="($mode === null)? 'text' : 'select.domain'" input-form="$form" class="input-dynamic-cl-head-owner-code"></input-dynamic>
+		<input-dynamic ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model" input-mode="$mode" input-meta="$meta" input-template="($mode === null)? 'text' : 'autocomplete.domain'" input-form="$form" class="input-dynamic-cl-head-owner-code"></input-dynamic>
 		<input-dynamic ng-disabled="$input.disabled" ng-readonly="($input.required || $input.readonly || $model[$meta.name]['id'])" ng-model="$model[$meta.name]" input-mode="$mode" input-meta="($meta.fields | filter:{'name': 'name'}:true)[0]" input-form="$form" flex></input-dynamic>
 	</div>
 	<div layout="row">

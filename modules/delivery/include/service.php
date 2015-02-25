@@ -12,6 +12,14 @@
 			);
 		}
 
+		protected static function extendAction(&$data){
+			global $conf;
+
+			if(empty($data)) return;
+
+			$data['_updatable'] = $data['_deletable'] = (!$data['_isrefered'] && empty($data['tstmp_canceled']));
+		}
+
 		private $generatorClass;
 
 		function __construct($generatorClass){
@@ -107,6 +115,8 @@
 					)
 					, "details" => array()
 				);
+
+				$data['_isrefered'] = false;
 			} else{
 				$stmt = $this->getPdo()->prepare('
 					SELECT
@@ -117,6 +127,7 @@
 					, "fullname"
 					, "address"
 					, "id_creator"
+					, "tstmp_canceled"
 					FROM "deliveryhead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');
@@ -128,13 +139,32 @@
 					$this->prepareRefEntity($data);
 
 					$data['details'] = $this->getDetails($data['id']);
+
+					$data['_isrefered'] = false;
+
+					$this->getPdo()->beginTransaction();
+
+					try{
+						$stmt = $this->getPdo()->prepare('
+							DELETE FROM "deliveryhead"
+							WHERE "id" = :id
+						;');
+						$stmt->execute(array(
+							  ':id' => $data['id']
+						));
+					} catch(\PDOException $excp){
+						echo $excp->getMessage();
+						$data['_isrefered'] = true;
+					}
+
+					$this->getPdo()->rollBack();
 				}
 			}
 
 			return $data;
 		}
 
-		public function getAllEntity($where, $limit, &$pageData){
+		protected function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT
 					  "deliveryhead"."id" AS "id"
@@ -144,6 +174,7 @@
 					, "deliveryhead"."fullname" AS "fullname"
 					, "deliveryhead"."address" AS "address"
 					, "deliveryhead"."id_creator" AS "id_creator"
+					, ("deliveryhead"."tstmp_canceled" IS NOT NULL) AS "iscanceled"
 				FROM "deliveryhead" LEFT JOIN "farm" ON ("deliveryhead"."id_farm" = "farm"."id")
 				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
@@ -157,7 +188,7 @@
 				$pageData['total'] = ceil($stmt->fetchColumn() / $pageData['limit']);
 			}
 
-			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "code" ASC '.$limit));
+			$stmt = $this->getPdo()->prepare(sprintf($sqlPattern.';', 'ORDER BY "deliveryhead"."tstmp" DESC '.$limit));
 			$stmt->execute($where['params']);
 
 			$datas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -178,98 +209,72 @@
 			return $datas;
 		}
 
-		public function saveEntity($id, &$data){
-			if($id === null){
-				$generator = new $this->generatorClass();
-				$stmt = $this->getPdo()->prepare('
-					INSERT INTO "deliveryhead" (
-					  "code"
-					, "date"
-					, "id_farm"
-					, "fullname"
-					, "address"
-					, "id_creator"
-					) VALUES (
-						  :code
-						, :date
-						, :id_farm
-						, :fullname
-						, :address
-						, :id_creator
-					)
-				;');
-				$stmt->execute(array(
-					  ':code' => $generator->getRn('11')
-					, ':date' => $data['date']
-					, ':id_farm' => $data['farm']['id']
-					, ':fullname' => $data['farm']['name']
-					, ':address' => $data['farm']['address']
-					, ':id_creator' => $GLOBALS['_session']->getUser()['id']
-				));
-
-				$id = $data['id'] = $this->getPdo()->lastInsertId('deliveryhead_id_seq');
-			} else{
-				$stmt = $this->getPdo()->prepare('
-					UPDATE "deliveryhead" SET
-						  "date" = :date
-						, "id_farm" = :id_fard
-						, "fullname" = :fullname
-						, "address" = :address
-					WHERE
-						"id" = :id
-				;');
-				$stmt->execute(array(
-					  ':date' => $data['date']
-					, ':id_fram' => $data['farm']['id']
-					, ':fullname' => $data['farm']['name']
-					, ':address' => $data['farm']['address']
-					, ':id' => $id
-				));
-
-				$data['id'] = $id;
+		protected function saveEntity($id, &$data){
+			if(empty($data['details'])){
+				throw new \sys\DataServiceException("update %s{$id} without details", 500);
 			}
 
-			if(!empty($id)){
-				$stmt = $this->getPdo()->prepare('
-					DELETE FROM "deliverydetail"
-					WHERE "id_deliveryhead" = :id_head
-				;');
+			if($id !== null) $this->deleteEntity($id);
+
+			$generator = new $this->generatorClass();
+			$stmt = $this->getPdo()->prepare('
+				INSERT INTO "deliveryhead" (
+				  "code"
+				, "date"
+				, "id_farm"
+				, "fullname"
+				, "address"
+				, "id_creator"
+				) VALUES (
+					  :code
+					, :date
+					, :id_farm
+					, :fullname
+					, :address
+					, :id_creator
+				)
+			;');
+			$stmt->execute(array(
+				  ':code' => $generator->getRn('11')
+				, ':date' => $data['date']
+				, ':id_farm' => $data['farm']['id']
+				, ':fullname' => $data['farm']['name']
+				, ':address' => $data['farm']['address']
+				, ':id_creator' => $GLOBALS['_session']->getUser()['id']
+			));
+
+			$id = $data['id'] = $this->getPdo()->lastInsertId('deliveryhead_id_seq');
+
+			$stmt = $this->getPdo()->prepare('
+				INSERT INTO "deliverydetail" (
+					  "id_deliveryhead"
+					, "id_vegetable"
+					, "qty"
+					, "price"
+				) VALUES (
+					  :id_head
+					, :id_vegetable
+					, :qty
+					, :price
+				)
+			;');
+
+			foreach($data['details'] as $detail){
 				$stmt->execute(array(
-					  ':id_head' => $id
+					  ':id_head' => $data['id']
+					, ':id_vegetable' => $detail['vegetable']['id']
+					, ':qty' => $detail['qty']
+					, ':price' => $detail['price']
 				));
-			}
-
-			if(!empty($data['details'])){
-				$stmt = $this->getPdo()->prepare('
-					INSERT INTO "deliverydetail" (
-						  "id_deliveryhead"
-						, "id_vegetable"
-						, "qty"
-						, "price"
-					) VALUES (
-						  :id_head
-						, :id_vegetable
-						, :qty
-						, :price
-					)
-				;');
-
-				foreach($data['details'] as $detail){
-					$stmt->execute(array(
-						  ':id_head' => $data['id']
-						, ':id_vegetable' => $detail['vegetable']['id']
-						, ':qty' => $detail['qty']
-						, ':price' => $detail['price']
-					));
-				}
 			}
 
 			return $id;
 		}
 
-		public function deleteEntity($id){
+		protected function deleteEntity($id){
 			$stmt = $this->getPdo()->prepare('
-				DELETE FROM "deliveryhead"
+				UPDATE "deliveryhead" SET
+					  "tstmp_canceled" = CURRENT_TIMESTAMP
 				WHERE "id" = :id
 			;');
 			$stmt->execute(array(

@@ -12,8 +12,8 @@ table.input-dynamic-cl-datalist>tbody>tr>td {
 			<use xlink:href="#ic_remove_circle_outline" />
 		</symbol>
 	</svg>
-	<caption layout="row" layout-align="start center">
-		<label ng-bind="$meta.name" class="app-cp-component-label"></label>
+	<caption style="text-align: left;">
+		<label ng-bind="$meta.name_field || $meta.name" class="app-cp-component-label"></label>
 	</caption>
 	<colgroup>
 		<col ng-if="$mode != null" style="width: 32px;" />

@@ -14,12 +14,16 @@
 
 	try{
 		if($entityService->save((!empty($_GET['id']))? $_GET['id'] : null, $_POST)){
-			$selfStatus = (empty($_GET['id']))? 'created' : 'updated';
+			$selfStatus = 'created';
 
 			$json['statuses'] = array(
 				  array(
 					  'uri' => "{$_moduleName}/self/{$_POST['id']}"
 					, 'status' => $selfStatus
+				)
+				, array(
+					  'uri' => "{$_moduleName}/self/{$_GET['id']}"
+					, 'status' => 'canceled'
 				)
 				, array(
 					  'uri' => "{$_moduleName}/list"

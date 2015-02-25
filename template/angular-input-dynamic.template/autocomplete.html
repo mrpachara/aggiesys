@@ -1,0 +1,49 @@
+<div ng-controller="inputDynamicAutocomplete" class="input-dynamic-cl-select" style="overflow: visible;">
+	<style type="text/css" scoped>
+.input-dynamic-cl-select {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	position: relative;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	overflow-x: hidden;
+	padding: 2px;
+	padding-bottom: 26px;
+}
+.input-dynamic-cl-select label {
+	transform-origin: left top;
+	transform: translate3d(0, 4px, 0) scale(0.75);
+}
+.input-dynamic-cl-select input::-webkit-input-placeholder {
+	color: inherit;
+}
+.input-dynamic-cl-select input::-moz-input-placeholder {
+	color: inherit;
+}
+.input-dynamic-cl-select input:-moz-input-placeholder {
+	color: inherit;
+}
+.input-dynamic-cl-select input:-ms-input-placeholder {
+	color: inherit;
+}
+	</style>
+	<label ng-bind="$meta.name_field || $meta.name"></label>
+	<md-autocomplete
+		name="{{$meta.name}}"
+		md-selected-item="$autocomplete.selectedItem"
+		md-search-text="$autocomplete.searchText"
+		md-items="item in itemSearch($autocomplete.searchText)"
+		ng-disabled="$input.disabled"
+		ng-readonly="$input.readonly"
+		ng-required="$input.required"
+		md-item-text="display"
+		placeholder="{{$model[$meta.name] | model:$meta:'label'}}"
+		class="md-input" style="box-shadow: none; border-bottom: 1px solid gray;">
+		<span md-highlight-text="searchText">{{item.label}}</span>
+	</md-autocomplete>
+	<div ng-messages="$form[$meta.name].$error">
+		<div ng-message="required">This is required.</div>
+	</div>
+</div>

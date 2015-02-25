@@ -1,5 +1,5 @@
 <div ng-controller="inputDynamicRadiogroup">
-	<label ng-bind="$meta.name" class="app-cp-component-label"></label>
+	<label ng-bind="$meta.name_field || $meta.name" class="app-cp-component-label"></label>
 	<md-radio-group ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]">
 		<md-radio-button ng-repeat="item in items" ng-value="item.value">{{item.label}}</md-radio-button>
 	</md-radio-group>

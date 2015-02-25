@@ -2,9 +2,9 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.3.5
--- Dumped by pg_dump version 9.3.5
--- Started on 2015-02-23 12:25:24
+-- Dumped from database version 9.3.6
+-- Dumped by pg_dump version 9.3.6
+-- Started on 2015-02-25 18:41:56 ICT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -14,7 +14,7 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- TOC entry 200 (class 3079 OID 11750)
+-- TOC entry 199 (class 3079 OID 11789)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -22,8 +22,8 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2185 (class 0 OID 0)
--- Dependencies: 200
+-- TOC entry 2221 (class 0 OID 0)
+-- Dependencies: 199
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
 
@@ -31,24 +31,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- TOC entry 199 (class 3079 OID 49511)
--- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
-
-
---
--- TOC entry 2186 (class 0 OID 0)
--- Dependencies: 199
--- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
-
-
---
--- TOC entry 201 (class 3079 OID 24889)
+-- TOC entry 200 (class 3079 OID 17312)
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -56,8 +39,8 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 
 --
--- TOC entry 2187 (class 0 OID 0)
--- Dependencies: 201
+-- TOC entry 2222 (class 0 OID 0)
+-- Dependencies: 200
 -- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
 --
 
@@ -69,7 +52,7 @@ SET search_path = public, pg_catalog;
 SET default_with_oids = false;
 
 --
--- TOC entry 170 (class 1259 OID 24718)
+-- TOC entry 170 (class 1259 OID 17065)
 -- Name: billheader; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -86,7 +69,7 @@ CREATE TABLE billheader (
 
 
 --
--- TOC entry 171 (class 1259 OID 24725)
+-- TOC entry 171 (class 1259 OID 17072)
 -- Name: billheader_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -99,7 +82,7 @@ CREATE SEQUENCE billheader_id_seq
 
 
 --
--- TOC entry 2188 (class 0 OID 0)
+-- TOC entry 2223 (class 0 OID 0)
 -- Dependencies: 171
 -- Name: billheader_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -108,7 +91,7 @@ ALTER SEQUENCE billheader_id_seq OWNED BY billheader.id;
 
 
 --
--- TOC entry 194 (class 1259 OID 25034)
+-- TOC entry 172 (class 1259 OID 17074)
 -- Name: carriage; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -122,7 +105,7 @@ CREATE TABLE carriage (
 
 
 --
--- TOC entry 193 (class 1259 OID 25032)
+-- TOC entry 173 (class 1259 OID 17077)
 -- Name: carriage_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -135,8 +118,8 @@ CREATE SEQUENCE carriage_id_seq
 
 
 --
--- TOC entry 2189 (class 0 OID 0)
--- Dependencies: 193
+-- TOC entry 2224 (class 0 OID 0)
+-- Dependencies: 173
 -- Name: carriage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -144,7 +127,7 @@ ALTER SEQUENCE carriage_id_seq OWNED BY carriage.id;
 
 
 --
--- TOC entry 172 (class 1259 OID 24727)
+-- TOC entry 174 (class 1259 OID 17079)
 -- Name: customer; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -157,7 +140,7 @@ CREATE TABLE customer (
 
 
 --
--- TOC entry 173 (class 1259 OID 24733)
+-- TOC entry 175 (class 1259 OID 17085)
 -- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -170,8 +153,8 @@ CREATE SEQUENCE customer_id_seq
 
 
 --
--- TOC entry 2190 (class 0 OID 0)
--- Dependencies: 173
+-- TOC entry 2225 (class 0 OID 0)
+-- Dependencies: 175
 -- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -179,7 +162,7 @@ ALTER SEQUENCE customer_id_seq OWNED BY customer.id;
 
 
 --
--- TOC entry 192 (class 1259 OID 25015)
+-- TOC entry 176 (class 1259 OID 17087)
 -- Name: deliverydetail; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -193,7 +176,7 @@ CREATE TABLE deliverydetail (
 
 
 --
--- TOC entry 191 (class 1259 OID 25013)
+-- TOC entry 177 (class 1259 OID 17093)
 -- Name: deliverydetail_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -206,8 +189,8 @@ CREATE SEQUENCE deliverydetail_id_seq
 
 
 --
--- TOC entry 2191 (class 0 OID 0)
--- Dependencies: 191
+-- TOC entry 2226 (class 0 OID 0)
+-- Dependencies: 177
 -- Name: deliverydetail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -215,7 +198,7 @@ ALTER SEQUENCE deliverydetail_id_seq OWNED BY deliverydetail.id;
 
 
 --
--- TOC entry 190 (class 1259 OID 24955)
+-- TOC entry 178 (class 1259 OID 17095)
 -- Name: deliveryhead; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -228,14 +211,13 @@ CREATE TABLE deliveryhead (
     address text NOT NULL,
     id_salehead bigint,
     tstmp timestamp without time zone DEFAULT now() NOT NULL,
-    id_canceled bigint,
     id_creator bigint NOT NULL,
     tstmp_canceled timestamp without time zone
 );
 
 
 --
--- TOC entry 189 (class 1259 OID 24953)
+-- TOC entry 179 (class 1259 OID 17102)
 -- Name: deliveryhead_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -248,8 +230,8 @@ CREATE SEQUENCE deliveryhead_id_seq
 
 
 --
--- TOC entry 2192 (class 0 OID 0)
--- Dependencies: 189
+-- TOC entry 2227 (class 0 OID 0)
+-- Dependencies: 179
 -- Name: deliveryhead_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -257,7 +239,7 @@ ALTER SEQUENCE deliveryhead_id_seq OWNED BY deliveryhead.id;
 
 
 --
--- TOC entry 196 (class 1259 OID 25046)
+-- TOC entry 180 (class 1259 OID 17104)
 -- Name: etc; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -269,7 +251,7 @@ CREATE TABLE etc (
 
 
 --
--- TOC entry 195 (class 1259 OID 25044)
+-- TOC entry 181 (class 1259 OID 17107)
 -- Name: etc_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -282,8 +264,8 @@ CREATE SEQUENCE etc_id_seq
 
 
 --
--- TOC entry 2193 (class 0 OID 0)
--- Dependencies: 195
+-- TOC entry 2228 (class 0 OID 0)
+-- Dependencies: 181
 -- Name: etc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -291,7 +273,7 @@ ALTER SEQUENCE etc_id_seq OWNED BY etc.id;
 
 
 --
--- TOC entry 198 (class 1259 OID 25056)
+-- TOC entry 182 (class 1259 OID 17109)
 -- Name: etcitem; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -304,7 +286,7 @@ CREATE TABLE etcitem (
 
 
 --
--- TOC entry 197 (class 1259 OID 25054)
+-- TOC entry 183 (class 1259 OID 17112)
 -- Name: etcitem_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -317,8 +299,8 @@ CREATE SEQUENCE etcitem_id_seq
 
 
 --
--- TOC entry 2194 (class 0 OID 0)
--- Dependencies: 197
+-- TOC entry 2229 (class 0 OID 0)
+-- Dependencies: 183
 -- Name: etcitem_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -326,7 +308,7 @@ ALTER SEQUENCE etcitem_id_seq OWNED BY etcitem.id;
 
 
 --
--- TOC entry 174 (class 1259 OID 24735)
+-- TOC entry 184 (class 1259 OID 17114)
 -- Name: farm; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -339,7 +321,7 @@ CREATE TABLE farm (
 
 
 --
--- TOC entry 175 (class 1259 OID 24741)
+-- TOC entry 185 (class 1259 OID 17120)
 -- Name: farm_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -352,8 +334,8 @@ CREATE SEQUENCE farm_id_seq
 
 
 --
--- TOC entry 2195 (class 0 OID 0)
--- Dependencies: 175
+-- TOC entry 2230 (class 0 OID 0)
+-- Dependencies: 185
 -- Name: farm_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -361,7 +343,7 @@ ALTER SEQUENCE farm_id_seq OWNED BY farm.id;
 
 
 --
--- TOC entry 188 (class 1259 OID 24933)
+-- TOC entry 186 (class 1259 OID 17122)
 -- Name: generator; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -375,7 +357,7 @@ CREATE TABLE generator (
 
 
 --
--- TOC entry 187 (class 1259 OID 24931)
+-- TOC entry 187 (class 1259 OID 17125)
 -- Name: generator_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -388,7 +370,7 @@ CREATE SEQUENCE generator_id_seq
 
 
 --
--- TOC entry 2196 (class 0 OID 0)
+-- TOC entry 2231 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: generator_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -397,7 +379,7 @@ ALTER SEQUENCE generator_id_seq OWNED BY generator.id;
 
 
 --
--- TOC entry 176 (class 1259 OID 24743)
+-- TOC entry 188 (class 1259 OID 17127)
 -- Name: product; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -409,7 +391,7 @@ CREATE TABLE product (
 
 
 --
--- TOC entry 177 (class 1259 OID 24746)
+-- TOC entry 189 (class 1259 OID 17130)
 -- Name: product_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -422,8 +404,8 @@ CREATE SEQUENCE product_id_seq
 
 
 --
--- TOC entry 2197 (class 0 OID 0)
--- Dependencies: 177
+-- TOC entry 2232 (class 0 OID 0)
+-- Dependencies: 189
 -- Name: product_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -431,7 +413,7 @@ ALTER SEQUENCE product_id_seq OWNED BY product.id;
 
 
 --
--- TOC entry 178 (class 1259 OID 24753)
+-- TOC entry 190 (class 1259 OID 17132)
 -- Name: saleheader; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -449,7 +431,7 @@ CREATE TABLE saleheader (
 
 
 --
--- TOC entry 179 (class 1259 OID 24757)
+-- TOC entry 191 (class 1259 OID 17136)
 -- Name: saleheader_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -462,8 +444,8 @@ CREATE SEQUENCE saleheader_id_seq
 
 
 --
--- TOC entry 2198 (class 0 OID 0)
--- Dependencies: 179
+-- TOC entry 2233 (class 0 OID 0)
+-- Dependencies: 191
 -- Name: saleheader_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -471,7 +453,7 @@ ALTER SEQUENCE saleheader_id_seq OWNED BY saleheader.id;
 
 
 --
--- TOC entry 180 (class 1259 OID 24759)
+-- TOC entry 192 (class 1259 OID 17138)
 -- Name: sessions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -484,7 +466,7 @@ CREATE TABLE sessions (
 
 
 --
--- TOC entry 181 (class 1259 OID 24767)
+-- TOC entry 193 (class 1259 OID 17144)
 -- Name: user; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -498,7 +480,7 @@ CREATE TABLE "user" (
 
 
 --
--- TOC entry 182 (class 1259 OID 24770)
+-- TOC entry 194 (class 1259 OID 17148)
 -- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -511,8 +493,8 @@ CREATE SEQUENCE user_id_seq
 
 
 --
--- TOC entry 2199 (class 0 OID 0)
--- Dependencies: 182
+-- TOC entry 2234 (class 0 OID 0)
+-- Dependencies: 194
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -520,7 +502,7 @@ ALTER SEQUENCE user_id_seq OWNED BY "user".id;
 
 
 --
--- TOC entry 183 (class 1259 OID 24772)
+-- TOC entry 195 (class 1259 OID 17150)
 -- Name: userrole; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -532,7 +514,7 @@ CREATE TABLE userrole (
 
 
 --
--- TOC entry 184 (class 1259 OID 24775)
+-- TOC entry 196 (class 1259 OID 17153)
 -- Name: userrole_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -545,8 +527,8 @@ CREATE SEQUENCE userrole_id_seq
 
 
 --
--- TOC entry 2200 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2235 (class 0 OID 0)
+-- Dependencies: 196
 -- Name: userrole_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -554,7 +536,7 @@ ALTER SEQUENCE userrole_id_seq OWNED BY userrole.id;
 
 
 --
--- TOC entry 185 (class 1259 OID 24777)
+-- TOC entry 197 (class 1259 OID 17155)
 -- Name: vegetable; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -566,7 +548,7 @@ CREATE TABLE vegetable (
 
 
 --
--- TOC entry 186 (class 1259 OID 24780)
+-- TOC entry 198 (class 1259 OID 17158)
 -- Name: vegetable_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -579,8 +561,8 @@ CREATE SEQUENCE vegetable_id_seq
 
 
 --
--- TOC entry 2201 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2236 (class 0 OID 0)
+-- Dependencies: 198
 -- Name: vegetable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -588,7 +570,7 @@ ALTER SEQUENCE vegetable_id_seq OWNED BY vegetable.id;
 
 
 --
--- TOC entry 1947 (class 2604 OID 24782)
+-- TOC entry 1984 (class 2604 OID 17160)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -596,7 +578,7 @@ ALTER TABLE ONLY billheader ALTER COLUMN id SET DEFAULT nextval('billheader_id_s
 
 
 --
--- TOC entry 1961 (class 2604 OID 25037)
+-- TOC entry 1985 (class 2604 OID 17161)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -604,7 +586,7 @@ ALTER TABLE ONLY carriage ALTER COLUMN id SET DEFAULT nextval('carriage_id_seq':
 
 
 --
--- TOC entry 1948 (class 2604 OID 24783)
+-- TOC entry 1986 (class 2604 OID 17162)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -612,7 +594,7 @@ ALTER TABLE ONLY customer ALTER COLUMN id SET DEFAULT nextval('customer_id_seq':
 
 
 --
--- TOC entry 1960 (class 2604 OID 25018)
+-- TOC entry 1987 (class 2604 OID 17163)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -620,7 +602,7 @@ ALTER TABLE ONLY deliverydetail ALTER COLUMN id SET DEFAULT nextval('deliverydet
 
 
 --
--- TOC entry 1958 (class 2604 OID 24958)
+-- TOC entry 1989 (class 2604 OID 17164)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -628,7 +610,7 @@ ALTER TABLE ONLY deliveryhead ALTER COLUMN id SET DEFAULT nextval('deliveryhead_
 
 
 --
--- TOC entry 1962 (class 2604 OID 25049)
+-- TOC entry 1990 (class 2604 OID 17165)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -636,7 +618,7 @@ ALTER TABLE ONLY etc ALTER COLUMN id SET DEFAULT nextval('etc_id_seq'::regclass)
 
 
 --
--- TOC entry 1963 (class 2604 OID 25059)
+-- TOC entry 1991 (class 2604 OID 17166)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -644,7 +626,7 @@ ALTER TABLE ONLY etcitem ALTER COLUMN id SET DEFAULT nextval('etcitem_id_seq'::r
 
 
 --
--- TOC entry 1949 (class 2604 OID 24784)
+-- TOC entry 1992 (class 2604 OID 17167)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -652,7 +634,7 @@ ALTER TABLE ONLY farm ALTER COLUMN id SET DEFAULT nextval('farm_id_seq'::regclas
 
 
 --
--- TOC entry 1957 (class 2604 OID 24936)
+-- TOC entry 1993 (class 2604 OID 17168)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -660,7 +642,7 @@ ALTER TABLE ONLY generator ALTER COLUMN id SET DEFAULT nextval('generator_id_seq
 
 
 --
--- TOC entry 1950 (class 2604 OID 24785)
+-- TOC entry 1994 (class 2604 OID 17169)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -668,7 +650,7 @@ ALTER TABLE ONLY product ALTER COLUMN id SET DEFAULT nextval('product_id_seq'::r
 
 
 --
--- TOC entry 1952 (class 2604 OID 24787)
+-- TOC entry 1996 (class 2604 OID 17170)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -676,7 +658,7 @@ ALTER TABLE ONLY saleheader ALTER COLUMN id SET DEFAULT nextval('saleheader_id_s
 
 
 --
--- TOC entry 1953 (class 2604 OID 24789)
+-- TOC entry 1998 (class 2604 OID 17171)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -684,7 +666,7 @@ ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regcl
 
 
 --
--- TOC entry 1955 (class 2604 OID 24790)
+-- TOC entry 1999 (class 2604 OID 17172)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -692,7 +674,7 @@ ALTER TABLE ONLY userrole ALTER COLUMN id SET DEFAULT nextval('userrole_id_seq':
 
 
 --
--- TOC entry 1956 (class 2604 OID 24791)
+-- TOC entry 2000 (class 2604 OID 17173)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -700,7 +682,7 @@ ALTER TABLE ONLY vegetable ALTER COLUMN id SET DEFAULT nextval('vegetable_id_seq
 
 
 --
--- TOC entry 2151 (class 0 OID 24718)
+-- TOC entry 2187 (class 0 OID 17065)
 -- Dependencies: 170
 -- Data for Name: billheader; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -710,7 +692,7 @@ COPY billheader (id, code, date, id_debtor, fullname, address, tstmp, id_creator
 
 
 --
--- TOC entry 2202 (class 0 OID 0)
+-- TOC entry 2237 (class 0 OID 0)
 -- Dependencies: 171
 -- Name: billheader_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -719,8 +701,8 @@ SELECT pg_catalog.setval('billheader_id_seq', 1, false);
 
 
 --
--- TOC entry 2175 (class 0 OID 25034)
--- Dependencies: 194
+-- TOC entry 2189 (class 0 OID 17074)
+-- Dependencies: 172
 -- Data for Name: carriage; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -731,8 +713,8 @@ COPY carriage (id, code, registration, code_typecarriage, name) FROM stdin;
 
 
 --
--- TOC entry 2203 (class 0 OID 0)
--- Dependencies: 193
+-- TOC entry 2238 (class 0 OID 0)
+-- Dependencies: 173
 -- Name: carriage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -740,8 +722,8 @@ SELECT pg_catalog.setval('carriage_id_seq', 3, true);
 
 
 --
--- TOC entry 2153 (class 0 OID 24727)
--- Dependencies: 172
+-- TOC entry 2191 (class 0 OID 17079)
+-- Dependencies: 174
 -- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -752,8 +734,8 @@ COPY customer (id, code, name, address) FROM stdin;
 
 
 --
--- TOC entry 2204 (class 0 OID 0)
--- Dependencies: 173
+-- TOC entry 2239 (class 0 OID 0)
+-- Dependencies: 175
 -- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -761,54 +743,70 @@ SELECT pg_catalog.setval('customer_id_seq', 3, true);
 
 
 --
--- TOC entry 2173 (class 0 OID 25015)
--- Dependencies: 192
+-- TOC entry 2193 (class 0 OID 17087)
+-- Dependencies: 176
 -- Data for Name: deliverydetail; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY deliverydetail (id, id_deliveryhead, id_vegetable, qty, price) FROM stdin;
-1	2	6	10	100.00
-2	2	8	20	200.00
-3	2	14	30	300.00
-6	3	19	300	3000.00
-5	3	14	200	2000.00
-4	3	12	100	1000.00
+10	4	6	100	400
+11	4	12	200	500
+12	4	13	400	1000
+13	5	6	100	300
+14	5	19	400	500
+15	6	6	200	300
+16	6	19	400	500
+17	7	6	100	400
+18	7	12	200	500
+19	7	13	400	1000
+20	7	20	1000	1000
+21	8	6	100	400
+22	8	12	200	500
+23	8	13	400	1000
+24	9	6	100	400
+25	9	12	200	500
+26	9	13	400	1000
+27	9	20	1000	1000
 \.
 
 
 --
--- TOC entry 2205 (class 0 OID 0)
--- Dependencies: 191
+-- TOC entry 2240 (class 0 OID 0)
+-- Dependencies: 177
 -- Name: deliverydetail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('deliverydetail_id_seq', 6, true);
+SELECT pg_catalog.setval('deliverydetail_id_seq', 27, true);
 
 
 --
--- TOC entry 2171 (class 0 OID 24955)
--- Dependencies: 190
+-- TOC entry 2195 (class 0 OID 17095)
+-- Dependencies: 178
 -- Data for Name: deliveryhead; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY deliveryhead (id, code, date, id_farm, fullname, address, id_salehead, tstmp, id_canceled, id_creator, tstmp_canceled) FROM stdin;
-2	test001	2015-02-15 00:00:00	2	Farm 001	asdf	\N	2015-02-15 21:33:18.337	\N	3	\N
-3	test002	2015-02-15 00:00:00	3	Farm 002	1234	\N	2015-02-15 21:34:23.361	\N	3	\N
+COPY deliveryhead (id, code, date, id_farm, fullname, address, id_salehead, tstmp, id_creator, tstmp_canceled) FROM stdin;
+5	111502250002	2015-02-25 10:22:35	3	Farm 002	123\nabc\ndef	\N	2015-02-25 17:23:27.40689	3	2015-02-25 18:25:40.886826
+6	111502250003	2015-02-25 03:22:35	3	Farm 002	123\nabc\ndef	\N	2015-02-25 18:25:40.886826	3	\N
+4	111502250001	2015-02-25 00:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 14:24:10.77425	3	2015-02-25 18:32:27.207261
+7	111502250004	2015-02-24 17:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:32:27.207261	3	2015-02-25 18:34:27.810579
+8	111502250005	2015-02-24 10:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:34:27.810579	3	2015-02-25 18:36:32.242571
+9	111502250006	2015-02-24 03:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:36:32.242571	3	\N
 \.
 
 
 --
--- TOC entry 2206 (class 0 OID 0)
--- Dependencies: 189
+-- TOC entry 2241 (class 0 OID 0)
+-- Dependencies: 179
 -- Name: deliveryhead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('deliveryhead_id_seq', 3, true);
+SELECT pg_catalog.setval('deliveryhead_id_seq', 9, true);
 
 
 --
--- TOC entry 2177 (class 0 OID 25046)
--- Dependencies: 196
+-- TOC entry 2197 (class 0 OID 17104)
+-- Dependencies: 180
 -- Data for Name: etc; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -819,8 +817,8 @@ COPY etc (id, code, name) FROM stdin;
 
 
 --
--- TOC entry 2207 (class 0 OID 0)
--- Dependencies: 195
+-- TOC entry 2242 (class 0 OID 0)
+-- Dependencies: 181
 -- Name: etc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -828,8 +826,8 @@ SELECT pg_catalog.setval('etc_id_seq', 3, true);
 
 
 --
--- TOC entry 2179 (class 0 OID 25056)
--- Dependencies: 198
+-- TOC entry 2199 (class 0 OID 17109)
+-- Dependencies: 182
 -- Data for Name: etcitem; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -843,8 +841,8 @@ COPY etcitem (id, id_etc, code, value) FROM stdin;
 
 
 --
--- TOC entry 2208 (class 0 OID 0)
--- Dependencies: 197
+-- TOC entry 2243 (class 0 OID 0)
+-- Dependencies: 183
 -- Name: etcitem_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -852,8 +850,8 @@ SELECT pg_catalog.setval('etcitem_id_seq', 68, true);
 
 
 --
--- TOC entry 2155 (class 0 OID 24735)
--- Dependencies: 174
+-- TOC entry 2201 (class 0 OID 17114)
+-- Dependencies: 184
 -- Data for Name: farm; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -864,8 +862,8 @@ COPY farm (id, code, name, address) FROM stdin;
 
 
 --
--- TOC entry 2209 (class 0 OID 0)
--- Dependencies: 175
+-- TOC entry 2244 (class 0 OID 0)
+-- Dependencies: 185
 -- Name: farm_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -873,28 +871,35 @@ SELECT pg_catalog.setval('farm_id_seq', 3, true);
 
 
 --
--- TOC entry 2169 (class 0 OID 24933)
--- Dependencies: 188
+-- TOC entry 2203 (class 0 OID 17122)
+-- Dependencies: 186
 -- Data for Name: generator; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY generator (id, code, length, code_reuse, num) FROM stdin;
 3	81	4		17
+6	13	4	150225	1
+7	15	4	150225	1
+8	17	4	150225	1
+9	19	4	150225	1
+10	91	4		1
+11	92	4		1
+4	11	4	150225	7
 \.
 
 
 --
--- TOC entry 2210 (class 0 OID 0)
+-- TOC entry 2245 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: generator_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('generator_id_seq', 3, true);
+SELECT pg_catalog.setval('generator_id_seq', 11, true);
 
 
 --
--- TOC entry 2157 (class 0 OID 24743)
--- Dependencies: 176
+-- TOC entry 2205 (class 0 OID 17127)
+-- Dependencies: 188
 -- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -903,8 +908,8 @@ COPY product (id, code, name) FROM stdin;
 
 
 --
--- TOC entry 2211 (class 0 OID 0)
--- Dependencies: 177
+-- TOC entry 2246 (class 0 OID 0)
+-- Dependencies: 189
 -- Name: product_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -912,8 +917,8 @@ SELECT pg_catalog.setval('product_id_seq', 1, false);
 
 
 --
--- TOC entry 2159 (class 0 OID 24753)
--- Dependencies: 178
+-- TOC entry 2207 (class 0 OID 17132)
+-- Dependencies: 190
 -- Data for Name: saleheader; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -922,8 +927,8 @@ COPY saleheader (id, code, date, tstmp, id_customer, registration, id_creator, i
 
 
 --
--- TOC entry 2212 (class 0 OID 0)
--- Dependencies: 179
+-- TOC entry 2247 (class 0 OID 0)
+-- Dependencies: 191
 -- Name: saleheader_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -931,20 +936,20 @@ SELECT pg_catalog.setval('saleheader_id_seq', 1, false);
 
 
 --
--- TOC entry 2161 (class 0 OID 24759)
--- Dependencies: 180
+-- TOC entry 2209 (class 0 OID 17138)
+-- Dependencies: 192
 -- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY sessions (expires, data, id_user, id) FROM stdin;
-2015-02-22 16:40:02.723	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	lniri376bflst5eb4vgeh2s3u3
-2015-02-22 16:59:49.66	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	ap9qkr1s5gpn26iipldg6m2cc4
+2015-02-25 19:33:17.686247	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	sjk2mseesqq79ekehqrj8f1tn0
+2015-02-25 21:37:01.775515	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	e6noc0vd63dpgmfoemtscsar86
 \.
 
 
 --
--- TOC entry 2162 (class 0 OID 24767)
--- Dependencies: 181
+-- TOC entry 2210 (class 0 OID 17144)
+-- Dependencies: 193
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -962,8 +967,8 @@ COPY "user" (id, username, password, fullname, isterminated) FROM stdin;
 
 
 --
--- TOC entry 2213 (class 0 OID 0)
--- Dependencies: 182
+-- TOC entry 2248 (class 0 OID 0)
+-- Dependencies: 194
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -971,8 +976,8 @@ SELECT pg_catalog.setval('user_id_seq', 37, true);
 
 
 --
--- TOC entry 2164 (class 0 OID 24772)
--- Dependencies: 183
+-- TOC entry 2212 (class 0 OID 17150)
+-- Dependencies: 195
 -- Data for Name: userrole; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -994,8 +999,8 @@ COPY userrole (id, id_user, role) FROM stdin;
 
 
 --
--- TOC entry 2214 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2249 (class 0 OID 0)
+-- Dependencies: 196
 -- Name: userrole_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -1003,8 +1008,8 @@ SELECT pg_catalog.setval('userrole_id_seq', 123, true);
 
 
 --
--- TOC entry 2166 (class 0 OID 24777)
--- Dependencies: 185
+-- TOC entry 2214 (class 0 OID 17155)
+-- Dependencies: 197
 -- Data for Name: vegetable; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -1020,8 +1025,8 @@ COPY vegetable (id, code, name) FROM stdin;
 
 
 --
--- TOC entry 2215 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2250 (class 0 OID 0)
+-- Dependencies: 198
 -- Name: vegetable_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -1029,7 +1034,7 @@ SELECT pg_catalog.setval('vegetable_id_seq', 21, true);
 
 
 --
--- TOC entry 1965 (class 2606 OID 24793)
+-- TOC entry 2002 (class 2606 OID 17175)
 -- Name: billheader_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1038,7 +1043,7 @@ ALTER TABLE ONLY billheader
 
 
 --
--- TOC entry 1968 (class 2606 OID 24795)
+-- TOC entry 2005 (class 2606 OID 17177)
 -- Name: billheader_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1047,7 +1052,7 @@ ALTER TABLE ONLY billheader
 
 
 --
--- TOC entry 2017 (class 2606 OID 25041)
+-- TOC entry 2008 (class 2606 OID 17179)
 -- Name: carriage_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1056,7 +1061,7 @@ ALTER TABLE ONLY carriage
 
 
 --
--- TOC entry 2020 (class 2606 OID 25039)
+-- TOC entry 2011 (class 2606 OID 17181)
 -- Name: carriage_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1065,7 +1070,7 @@ ALTER TABLE ONLY carriage
 
 
 --
--- TOC entry 1971 (class 2606 OID 24797)
+-- TOC entry 2014 (class 2606 OID 17183)
 -- Name: customer_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1074,7 +1079,7 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 1973 (class 2606 OID 24799)
+-- TOC entry 2016 (class 2606 OID 17185)
 -- Name: customer_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1083,7 +1088,7 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 2015 (class 2606 OID 25020)
+-- TOC entry 2018 (class 2606 OID 17187)
 -- Name: deliverydetail_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1092,7 +1097,7 @@ ALTER TABLE ONLY deliverydetail
 
 
 --
--- TOC entry 2010 (class 2606 OID 24962)
+-- TOC entry 2020 (class 2606 OID 17189)
 -- Name: deliveryhead_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1101,7 +1106,7 @@ ALTER TABLE ONLY deliveryhead
 
 
 --
--- TOC entry 2013 (class 2606 OID 24960)
+-- TOC entry 2023 (class 2606 OID 17191)
 -- Name: deliveryhead_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1110,7 +1115,7 @@ ALTER TABLE ONLY deliveryhead
 
 
 --
--- TOC entry 2023 (class 2606 OID 25053)
+-- TOC entry 2025 (class 2606 OID 17193)
 -- Name: etc_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1119,7 +1124,7 @@ ALTER TABLE ONLY etc
 
 
 --
--- TOC entry 2025 (class 2606 OID 25051)
+-- TOC entry 2027 (class 2606 OID 17195)
 -- Name: etc_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1128,7 +1133,7 @@ ALTER TABLE ONLY etc
 
 
 --
--- TOC entry 2027 (class 2606 OID 25063)
+-- TOC entry 2029 (class 2606 OID 17197)
 -- Name: etcitem_id_etc_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1137,7 +1142,7 @@ ALTER TABLE ONLY etcitem
 
 
 --
--- TOC entry 2029 (class 2606 OID 25061)
+-- TOC entry 2031 (class 2606 OID 17199)
 -- Name: etcitem_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1146,7 +1151,7 @@ ALTER TABLE ONLY etcitem
 
 
 --
--- TOC entry 1975 (class 2606 OID 24801)
+-- TOC entry 2033 (class 2606 OID 17201)
 -- Name: farm_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1155,7 +1160,7 @@ ALTER TABLE ONLY farm
 
 
 --
--- TOC entry 1977 (class 2606 OID 24803)
+-- TOC entry 2035 (class 2606 OID 17203)
 -- Name: farm_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1164,7 +1169,7 @@ ALTER TABLE ONLY farm
 
 
 --
--- TOC entry 2006 (class 2606 OID 24945)
+-- TOC entry 2037 (class 2606 OID 17205)
 -- Name: generator_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1173,7 +1178,7 @@ ALTER TABLE ONLY generator
 
 
 --
--- TOC entry 2008 (class 2606 OID 24938)
+-- TOC entry 2039 (class 2606 OID 17207)
 -- Name: generator_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1182,7 +1187,7 @@ ALTER TABLE ONLY generator
 
 
 --
--- TOC entry 1979 (class 2606 OID 24805)
+-- TOC entry 2041 (class 2606 OID 17209)
 -- Name: product_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1191,7 +1196,7 @@ ALTER TABLE ONLY product
 
 
 --
--- TOC entry 1981 (class 2606 OID 24807)
+-- TOC entry 2043 (class 2606 OID 17211)
 -- Name: product_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1200,7 +1205,7 @@ ALTER TABLE ONLY product
 
 
 --
--- TOC entry 1983 (class 2606 OID 24811)
+-- TOC entry 2045 (class 2606 OID 17213)
 -- Name: saleheader_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1209,7 +1214,7 @@ ALTER TABLE ONLY saleheader
 
 
 --
--- TOC entry 1986 (class 2606 OID 24813)
+-- TOC entry 2048 (class 2606 OID 17215)
 -- Name: saleheader_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1218,7 +1223,7 @@ ALTER TABLE ONLY saleheader
 
 
 --
--- TOC entry 1991 (class 2606 OID 24886)
+-- TOC entry 2053 (class 2606 OID 17217)
 -- Name: sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1227,7 +1232,7 @@ ALTER TABLE ONLY sessions
 
 
 --
--- TOC entry 1994 (class 2606 OID 24817)
+-- TOC entry 2056 (class 2606 OID 17219)
 -- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1236,7 +1241,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1996 (class 2606 OID 24819)
+-- TOC entry 2058 (class 2606 OID 17221)
 -- Name: user_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1245,7 +1250,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1998 (class 2606 OID 24821)
+-- TOC entry 2060 (class 2606 OID 17223)
 -- Name: userrole_id_user_role_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1254,7 +1259,7 @@ ALTER TABLE ONLY userrole
 
 
 --
--- TOC entry 2000 (class 2606 OID 24823)
+-- TOC entry 2062 (class 2606 OID 17225)
 -- Name: userrole_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1263,7 +1268,7 @@ ALTER TABLE ONLY userrole
 
 
 --
--- TOC entry 2002 (class 2606 OID 24825)
+-- TOC entry 2064 (class 2606 OID 17227)
 -- Name: vegetable_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1272,7 +1277,7 @@ ALTER TABLE ONLY vegetable
 
 
 --
--- TOC entry 2004 (class 2606 OID 24827)
+-- TOC entry 2066 (class 2606 OID 17229)
 -- Name: vegetable_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1281,7 +1286,7 @@ ALTER TABLE ONLY vegetable
 
 
 --
--- TOC entry 1966 (class 1259 OID 24969)
+-- TOC entry 2003 (class 1259 OID 17230)
 -- Name: billheader_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1289,7 +1294,7 @@ CREATE INDEX billheader_date_idx ON billheader USING btree (date);
 
 
 --
--- TOC entry 1969 (class 1259 OID 24829)
+-- TOC entry 2006 (class 1259 OID 17231)
 -- Name: billheader_tstmp_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1297,7 +1302,7 @@ CREATE INDEX billheader_tstmp_idx ON billheader USING btree (tstmp);
 
 
 --
--- TOC entry 2018 (class 1259 OID 25043)
+-- TOC entry 2009 (class 1259 OID 17232)
 -- Name: carriage_code_typecarriage_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1305,7 +1310,7 @@ CREATE INDEX carriage_code_typecarriage_idx ON carriage USING btree (code_typeca
 
 
 --
--- TOC entry 2021 (class 1259 OID 25042)
+-- TOC entry 2012 (class 1259 OID 17233)
 -- Name: carriage_registration_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1313,7 +1318,7 @@ CREATE INDEX carriage_registration_idx ON carriage USING btree (registration);
 
 
 --
--- TOC entry 2011 (class 1259 OID 24968)
+-- TOC entry 2021 (class 1259 OID 17234)
 -- Name: deliveryhead_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1321,7 +1326,7 @@ CREATE INDEX deliveryhead_date_idx ON deliveryhead USING btree (date);
 
 
 --
--- TOC entry 1984 (class 1259 OID 24980)
+-- TOC entry 2046 (class 1259 OID 17235)
 -- Name: saleheader_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1329,7 +1334,7 @@ CREATE INDEX saleheader_date_idx ON saleheader USING btree (date);
 
 
 --
--- TOC entry 1987 (class 1259 OID 24831)
+-- TOC entry 2049 (class 1259 OID 17236)
 -- Name: saleheader_registration_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1337,7 +1342,7 @@ CREATE INDEX saleheader_registration_idx ON saleheader USING btree (registration
 
 
 --
--- TOC entry 1988 (class 1259 OID 24832)
+-- TOC entry 2050 (class 1259 OID 17237)
 -- Name: saleheader_tstmp_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1345,7 +1350,7 @@ CREATE INDEX saleheader_tstmp_idx ON saleheader USING btree (tstmp);
 
 
 --
--- TOC entry 1989 (class 1259 OID 24833)
+-- TOC entry 2051 (class 1259 OID 17238)
 -- Name: sessions_expires_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1353,7 +1358,7 @@ CREATE INDEX sessions_expires_idx ON sessions USING btree (expires);
 
 
 --
--- TOC entry 1992 (class 1259 OID 24930)
+-- TOC entry 2054 (class 1259 OID 17239)
 -- Name: user_isterminated_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1361,7 +1366,7 @@ CREATE INDEX user_isterminated_idx ON "user" USING btree (isterminated);
 
 
 --
--- TOC entry 2030 (class 2606 OID 24834)
+-- TOC entry 2067 (class 2606 OID 17240)
 -- Name: billheader_id_creator_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1370,7 +1375,7 @@ ALTER TABLE ONLY billheader
 
 
 --
--- TOC entry 2031 (class 2606 OID 24839)
+-- TOC entry 2068 (class 2606 OID 17245)
 -- Name: billheader_id_debtor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1379,7 +1384,7 @@ ALTER TABLE ONLY billheader
 
 
 --
--- TOC entry 2041 (class 2606 OID 25021)
+-- TOC entry 2069 (class 2606 OID 17250)
 -- Name: deliverydetail_id_deliveryhead_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1388,7 +1393,7 @@ ALTER TABLE ONLY deliverydetail
 
 
 --
--- TOC entry 2042 (class 2606 OID 25026)
+-- TOC entry 2070 (class 2606 OID 17255)
 -- Name: deliverydetail_id_vegetable_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1397,16 +1402,7 @@ ALTER TABLE ONLY deliverydetail
 
 
 --
--- TOC entry 2039 (class 2606 OID 41315)
--- Name: deliveryhead_id_canceled_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY deliveryhead
-    ADD CONSTRAINT deliveryhead_id_canceled_fkey FOREIGN KEY (id_canceled) REFERENCES deliveryhead(id) ON DELETE RESTRICT;
-
-
---
--- TOC entry 2040 (class 2606 OID 41320)
+-- TOC entry 2071 (class 2606 OID 17265)
 -- Name: deliveryhead_id_creator_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1415,7 +1411,7 @@ ALTER TABLE ONLY deliveryhead
 
 
 --
--- TOC entry 2037 (class 2606 OID 25002)
+-- TOC entry 2072 (class 2606 OID 17270)
 -- Name: deliveryhead_id_farm_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1424,7 +1420,7 @@ ALTER TABLE ONLY deliveryhead
 
 
 --
--- TOC entry 2038 (class 2606 OID 25007)
+-- TOC entry 2073 (class 2606 OID 17275)
 -- Name: deliveryhead_id_salehead_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1433,7 +1429,7 @@ ALTER TABLE ONLY deliveryhead
 
 
 --
--- TOC entry 2043 (class 2606 OID 25064)
+-- TOC entry 2074 (class 2606 OID 17280)
 -- Name: etcitem_id_etc_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1442,7 +1438,7 @@ ALTER TABLE ONLY etcitem
 
 
 --
--- TOC entry 2032 (class 2606 OID 24859)
+-- TOC entry 2075 (class 2606 OID 17285)
 -- Name: saleheader_id_creator_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1451,7 +1447,7 @@ ALTER TABLE ONLY saleheader
 
 
 --
--- TOC entry 2033 (class 2606 OID 24864)
+-- TOC entry 2076 (class 2606 OID 17290)
 -- Name: saleheader_id_customer_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1460,7 +1456,7 @@ ALTER TABLE ONLY saleheader
 
 
 --
--- TOC entry 2034 (class 2606 OID 24869)
+-- TOC entry 2077 (class 2606 OID 17295)
 -- Name: saleheader_id_instead_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1469,7 +1465,7 @@ ALTER TABLE ONLY saleheader
 
 
 --
--- TOC entry 2035 (class 2606 OID 24874)
+-- TOC entry 2078 (class 2606 OID 17300)
 -- Name: sessions_id_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1478,7 +1474,7 @@ ALTER TABLE ONLY sessions
 
 
 --
--- TOC entry 2036 (class 2606 OID 24879)
+-- TOC entry 2079 (class 2606 OID 17305)
 -- Name: userrole_id_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1486,7 +1482,7 @@ ALTER TABLE ONLY userrole
     ADD CONSTRAINT userrole_id_user_fkey FOREIGN KEY (id_user) REFERENCES "user"(id) ON DELETE CASCADE;
 
 
--- Completed on 2015-02-23 12:25:24
+-- Completed on 2015-02-25 18:41:57 ICT
 
 --
 -- PostgreSQL database dump complete

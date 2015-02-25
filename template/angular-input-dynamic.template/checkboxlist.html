@@ -1,4 +1,4 @@
 <div ng-controller="inputDynamicCheckboxlist">
-	<label ng-bind="$meta.name" class="app-cp-component-label"></label>
+	<label ng-bind="$meta.name_field || $meta.name" class="app-cp-component-label"></label>
 	<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-class="item.classes" aria-label="{{meta.name + ' ' + item.value}}">{{item.label}}</md-checkbox>
 </div>

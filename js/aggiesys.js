@@ -228,9 +228,10 @@ window.app = aggiesys;
 	;
 
 	aggiesys.filter('model', function($parse){
-		return function(input, mode, meta){
-			if((mode === null) && !angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression.display)){
-				return $parse(meta.expression.display)(input);
+		return function(input, meta, expressionName){
+			expressionName = expressionName || 'display';
+			if(!angular.isUndefined(meta.expression) && !angular.isUndefined(meta.expression[expressionName])){
+				return $parse(meta.expression[expressionName])(input);
 			} else{
 				return input;
 			}
@@ -366,7 +367,7 @@ window.app = aggiesys;
 				/*
 					IMPORTANT:
 					state must be created from new Object unless state doesn't store in history.state.
-					may be angular $location cache state object and will replace/pushState when new state not equal with old onec
+					may be angular $location cache state object and will replace/pushState when new state not equal with old once
 				*/
 				var state = angular.extend({}, ($location.state() != null)? $location.state() : {}, link.state);
 

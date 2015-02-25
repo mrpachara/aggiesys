@@ -248,5 +248,12 @@
 
 			return $id;
 		}
+
+		public function saveOrReplace($id, &$data){
+			if(empty($id)){
+				$this->save(null, &$data);
+			} else{
+			}
+		}
 	}
 ?>

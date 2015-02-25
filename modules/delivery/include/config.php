@@ -16,6 +16,7 @@
 			, 'fields' => array(
 				  array(
 					  'name' => "date"
+					, 'name_field' => 'วันที่ใบรับพืชผล'
 					, 'template' => array(
 						  '*' => 'text.domain'
 					)
@@ -48,12 +49,14 @@
 			, 'fields' => array(
 				  array(
 					  'name' => 'name'
+					, 'name_field' => 'ชื่อลูกสวน'
 					, 'required' => array(
 						  '*' => true
 					)
 				)
 				, array(
 					  'name' => 'address'
+					, 'name_field' => 'ที่อยู่ลูกสวน'
 					, 'template' => array(
 						  '*' => 'textarea'
 					)
@@ -76,19 +79,19 @@
 		)
 		, array(
 			  'name' => "details"
-			, 'name_field' => 'รายการใบรับพืชผล'
+			, 'name_field' => 'รายการพืชผล'
 			, 'show' => array(
 				  'self' => true
 				, 'create' => true
-				, 'update' => true
+				, 'replace' => true
 			)
 			, 'fields' => array(
 				  array(
 					  'name' => "vegetable"
 					, 'name_field' => 'พืชผล'
 					, 'template' => array(
-						  'create' => "select.domain"
-						, 'update' => "select.domain"
+						  'create' => "autocomplete.domain"
+						, 'replace' => "autocomplete.domain"
 					)
 					, 'required' => array(
 						  '*' => true
@@ -130,7 +133,7 @@
 					)
 					, 'required' => array(
 						  'create' => true
-						, 'update' => true
+						, 'replace' => true
 					)
 					, 'links' => array(
 						  array(

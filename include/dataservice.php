@@ -151,7 +151,7 @@
 			return $data;
 		}
 
-		abstract public function getAllEntity($where, $limit, &$pageData);
+		abstract protected function getAllEntity($where, $limit, &$pageData);
 
 		public function getAll($termText = null, &$page = null){
 			$pageData = array(
@@ -177,7 +177,7 @@
 			return $datas;
 		}
 
-		abstract public function saveEntity($id, &$data);
+		abstract protected function saveEntity($id, &$data);
 
 		public function save($id, &$data){
 			if(empty($data)){
@@ -208,7 +208,7 @@
 			return ($this->getPdo()->commit())? $id : false;
 		}
 
-		abstract public function deleteEntity($id);
+		abstract protected function deleteEntity($id);
 
 		public function delete($id){
 			if(empty($id)){

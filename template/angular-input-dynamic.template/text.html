@@ -1,7 +1,7 @@
 <div ng-if="$mode != null" ng-switch on="($url.link || {}).accept">
 	<md-input-container ng-switch-when="number" ng-controller="inputDynamicNumber">
 		<label ng-bind="$meta.name_field || $meta.name"></label>
-		<input type="number" name="{{meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
+		<input type="number" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
 		<div ng-messages="$form[$meta.name].$error">
 			<div ng-message="required">This is required.</div>
 			<div ng-message="number">Invalid number value.</div>

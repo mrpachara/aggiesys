@@ -181,19 +181,19 @@
 				})
 			;
 		})
-		.controller('inputDynamicSelect', function($scope, $http, $parse, $timeout, $element){
+		.controller('inputDynamicAutocomplete', function($scope, $http, $parse, $timeout, $element){
 			var expression = {};
 			angular.forEach($scope.$meta.expression, function(value, key){
 				expression[key] = $parse(value);
 			});
 
-			$scope.$select = {}
+			$scope.$autocomplete = {}
 
-			$scope.$select.selectedItem = {
+			$scope.$autocomplete.selectedItem = {
 				 'data': $scope.$parent.$model[$scope.$parent.$meta.name]
 			};
 
-			$scope.$select.searchText = null;
+			$scope.$autocomplete.searchText = null;
 
 			$scope.itemSearch = function(searchText){
 				return (searchText)? $http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href + '?term=' + encodeURIComponent(searchText))
@@ -203,25 +203,15 @@
 				: [];
 			};
 
-			$scope.$watch('$select.selectedItem', function(value){
+			$scope.$watch('$autocomplete.selectedItem', function(value){
 				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : {};
-
-				if(!angular.isUndefined(expression['label'])){
-					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
-				} else{
-					$scope.$select.searchText = value.label;
-				}
+				$scope.$autocomplete.searchText = '';
 			});
 
 			$element.on('blur.inputDynamicSelect', 'input', function(ev){
-				if(!angular.isUndefined(expression['label'])){
-					$scope.$select.searchText = expression['label']($scope.$parent.$model[$scope.$parent.$meta.name]);
-				} else{
-					$scope.$select.searchText = $scope.$select.selectedItem.label;
-				}
 				$timeout(function(){
-					$scope.$apply();
-				}, 500);
+					$scope.$autocomplete.searchText = '';
+				}, 300);
 			});
 
 		})

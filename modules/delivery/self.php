@@ -19,17 +19,10 @@
 		if($data === false){
 			throw new Exception("{$_moduleName} whith id '{$_GET['id']}' not found", 404);
 		}
-/*
-		$data['farm'] = array(
-			  'uri' => 'farm/self/'.$data['farm']['id']
-			, 'value' => $data['farm']['id']
-			, 'label' => (!empty($data['farm']['id']))? $data['farm']['code'].'-'.$data['farm']['name'] : ''
-			, 'data' => $data['farm']
-		);
-*/
+
 		if($data['_updatable']){
 			$json['links'][] =  array(
-				 'rel' => (empty($data['id']))? 'create' : 'update'
+				 'rel' => (empty($data['id']))? 'create' : 'replace'
 				,'type' => 'submit'
 				,'href' => "{$_modulePath}/update.php".((!empty($data['id']))? "?id={$data['id']}" : "")
 				,'classes' => array("md-primary")
@@ -38,9 +31,9 @@
 
 		if(!empty($data['id']) && ($data['_deletable'])){
 			$json['links'][] =  array(
-				 'rel' => 'delete'
+				 'rel' => 'cancel'
 				,'type' => 'get'
-				,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
+				,'href' => (!empty($data['id']))? "{$_modulePath}/cancel.php?id={$data['id']}" : null
 				,'classes' => array("md-warn")
 				,'confirm' => array(
 					 'title' => "Do you want to delete?"
