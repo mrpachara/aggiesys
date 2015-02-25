@@ -3,9 +3,7 @@
 
 	$_session->authozPage("STAFF", "static::forbidden_json");
 
-	require_once "include/config.php";
-	require_once "include/vegetable.service.php";
-	require_once "../generator/include/generator.service.php";
+	require_once "include/include.php";
 
 	$entityService = new \app\VegetableService("\\app\\GeneratorService");
 

@@ -2,6 +2,7 @@
 	$_fields = array(
 		  array(
 			  'name' => "code"
+			, 'name_field' => 'รหัสใบรับพืชผล'
 			, 'width' => "10em"
 			, 'readonly' => array(
 				  '*' => true
@@ -32,6 +33,7 @@
 		)
 		, array(
 			  'name' => "date"
+			, 'name_field' => 'วันที่ใบรับพืชผล'
 			, 'width' => "15em"
 			, 'template' => array(
 					  '*' => null
@@ -39,6 +41,7 @@
 		)
 		, array(
 			  'name' => "farm"
+			, 'name_field' => 'ลูกสวน'
 			, 'required' => array(
 				'*' => true
 			)
@@ -73,6 +76,7 @@
 		)
 		, array(
 			  'name' => "details"
+			, 'name_field' => 'รายการใบรับพืชผล'
 			, 'show' => array(
 				  'self' => true
 				, 'create' => true
@@ -81,6 +85,7 @@
 			, 'fields' => array(
 				  array(
 					  'name' => "vegetable"
+					, 'name_field' => 'พืชผล'
 					, 'template' => array(
 						  'create' => "select.domain"
 						, 'update' => "select.domain"
@@ -101,6 +106,7 @@
 				)
 				, array(
 					  'name' => "qty"
+					, 'name_field' => 'จำนวน'
 					, 'width' => '10em'
 					, 'template' => array(
 						  '*' => 'text.domain'
@@ -117,6 +123,7 @@
 				)
 				, array(
 					  'name' => "price"
+					, 'name_field' => 'ราคา'
 					, 'width' => '10em'
 					, 'template' => array(
 						  '*' => 'text.domain'
@@ -135,6 +142,22 @@
 			)
 			, 'template' => array(
 				  '*' => 'datalist'
+			)
+		)
+		, array(
+			  'name' => "creator"
+			, 'name_field' => 'ผู้ออกใบรับพืชผล'
+			, 'width' => "10em"
+			, 'readonly' => array(
+				  '*' => true
+			)
+			, 'expression' => array(
+				  'display' => "fullname"
+				, 'label' => "username"
+			)
+			, 'template' => array(
+					  '*' => null
+					, 'self' => 'text'
 			)
 		)
 	);

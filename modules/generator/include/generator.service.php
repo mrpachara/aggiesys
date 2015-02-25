@@ -5,7 +5,7 @@
 		private $pdo;
 
 		public static function getAutoText(){
-			return '<Auto>';
+			return '<AUTO>';
 		}
 
 		function __construct(){

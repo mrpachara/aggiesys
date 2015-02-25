@@ -12,11 +12,16 @@
 			);
 		}
 
-		function __construct(){
+		private $generatorClass;
+
+		function __construct($generatorClass){
 			parent::__construct();
+
+			$this->generatorClass = $generatorClass;
 		}
 
-		private function putFarm(&$data){
+		private function prepareRefEntity(&$data){
+			/* farm */
 			$stmt = $this->getPdo()->prepare('SELECT * FROM "farm" WHERE "id" = :id;');
 			$stmt->execute(array(
 				  ':id' => $data['id_farm']
@@ -25,9 +30,27 @@
 			if($farm = $stmt->fetch(\PDO::FETCH_ASSOC)){
 				if(!empty($data['fullname'])) $farm['name'] = $data['fullname'];
 				if(!empty($data['address'])) $farm['address'] = $data['address'];
+
+				$data['farm'] = $farm;
 			}
 
-			return $data['farm'] = $farm;
+			/* creator */
+			$stmt = $this->getPdo()->prepare('
+				SELECT
+					  "id"
+					, "username"
+					, "fullname"
+				FROM "user" WHERE "id" = :id
+			;');
+			$stmt->execute(array(
+				  ':id' => $data['id_creator']
+			));
+
+			if($creator = $stmt->fetch(\PDO::FETCH_ASSOC)){
+				$data['creator'] = $creator;
+			}
+
+			return $data;
 		}
 
 		private function getDetails($id_head){
@@ -61,10 +84,13 @@
 		protected function getEntity($id, $where){
 			$data = false;
 			if($id === null) {
+				$stmt = $this->getPdo()->prepare('SELECT LOCALTIMESTAMP(0);');
+				$stmt->execute();
+				$localtstmt = $stmt->fetchColumn();
 				$data = array(
 					  "id" => null
-					, "code" => '<Auto>'
-					, "date" => date("Y-m-d H:i:s".".123")
+					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))
+					, "date" => $localtstmt
 					, "id_farm" => null
 					, "fullname" => null
 					, "address" => null
@@ -73,6 +99,11 @@
 						, 'code' => null
 						, 'name' => null
 						, 'address' => null
+					)
+					, 'creator' => array(
+						  'id' => null
+						, 'username' => null
+						, 'fullname' => null
 					)
 					, "details" => array()
 				);
@@ -85,6 +116,7 @@
 					, "id_farm"
 					, "fullname"
 					, "address"
+					, "id_creator"
 					FROM "deliveryhead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');
@@ -93,7 +125,7 @@
 				$data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 				if(!empty($data['id'])){
-					$this->putFarm($data);
+					$this->prepareRefEntity($data);
 
 					$data['details'] = $this->getDetails($data['id']);
 				}
@@ -111,6 +143,7 @@
 					, "deliveryhead"."id_farm" AS "id_farm"
 					, "deliveryhead"."fullname" AS "fullname"
 					, "deliveryhead"."address" AS "address"
+					, "deliveryhead"."id_creator" AS "id_creator"
 				FROM "deliveryhead" LEFT JOIN "farm" ON ("deliveryhead"."id_farm" = "farm"."id")
 				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
@@ -129,7 +162,7 @@
 
 			$datas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 			foreach($datas as &$data){
-				$this->putFarm($data);
+				$this->prepareRefEntity($data);
 			}
 
 			if(!empty($pageData['current'])){
@@ -147,41 +180,88 @@
 
 		public function saveEntity($id, &$data){
 			if($id === null){
+				$generator = new $this->generatorClass();
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "deliveryhead" (
-						  "code"
-						, "name"
-						, "address"
+					  "code"
+					, "date"
+					, "id_farm"
+					, "fullname"
+					, "address"
+					, "id_creator"
 					) VALUES (
 						  :code
-						, :name
+						, :date
+						, :id_farm
+						, :fullname
 						, :address
+						, :id_creator
 					)
 				;');
 				$stmt->execute(array(
-					  ':code' => $data['code']
-					, ':name' => $data['name']
-					, ':address' => $data['address']
+					  ':code' => $generator->getRn('11')
+					, ':date' => $data['date']
+					, ':id_farm' => $data['farm']['id']
+					, ':fullname' => $data['farm']['name']
+					, ':address' => $data['farm']['address']
+					, ':id_creator' => $GLOBALS['_session']->getUser()['id']
 				));
 
 				$id = $data['id'] = $this->getPdo()->lastInsertId('deliveryhead_id_seq');
 			} else{
 				$stmt = $this->getPdo()->prepare('
 					UPDATE "deliveryhead" SET
-						  "code" = :code
-						, "name" = :name
+						  "date" = :date
+						, "id_farm" = :id_fard
+						, "fullname" = :fullname
 						, "address" = :address
 					WHERE
 						"id" = :id
 				;');
 				$stmt->execute(array(
-					  ':code' => $data['code']
-					, ':name' => $data['name']
-					, ':address' => $data['address']
+					  ':date' => $data['date']
+					, ':id_fram' => $data['farm']['id']
+					, ':fullname' => $data['farm']['name']
+					, ':address' => $data['farm']['address']
 					, ':id' => $id
 				));
 
 				$data['id'] = $id;
+			}
+
+			if(!empty($id)){
+				$stmt = $this->getPdo()->prepare('
+					DELETE FROM "deliverydetail"
+					WHERE "id_deliveryhead" = :id_head
+				;');
+				$stmt->execute(array(
+					  ':id_head' => $id
+				));
+			}
+
+			if(!empty($data['details'])){
+				$stmt = $this->getPdo()->prepare('
+					INSERT INTO "deliverydetail" (
+						  "id_deliveryhead"
+						, "id_vegetable"
+						, "qty"
+						, "price"
+					) VALUES (
+						  :id_head
+						, :id_vegetable
+						, :qty
+						, :price
+					)
+				;');
+
+				foreach($data['details'] as $detail){
+					$stmt->execute(array(
+						  ':id_head' => $data['id']
+						, ':id_vegetable' => $detail['vegetable']['id']
+						, ':qty' => $detail['qty']
+						, ':price' => $detail['price']
+					));
+				}
 			}
 
 			return $id;

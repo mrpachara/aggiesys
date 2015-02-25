@@ -22,7 +22,7 @@
 			if($id === null) {
 				$data = array(
 					  "id" => null
-					, "code" => "<AUTO>"
+					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))//$this->generatorClass::getAutoText()
 					, "name" => null
 				);
 			} else{
