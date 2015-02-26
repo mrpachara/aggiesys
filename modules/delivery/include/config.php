@@ -35,7 +35,7 @@
 		, array(
 			  'name' => "date"
 			, 'name_field' => 'วันที่ใบรับพืชผล'
-			, 'width' => "15em"
+			, 'width' => "12em"
 			, 'expression' => array(
 				  'display' => "toString() | datetime_locale"
 			)

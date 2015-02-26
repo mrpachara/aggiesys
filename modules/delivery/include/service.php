@@ -128,6 +128,7 @@
 					SELECT
 					  "id"
 					, "code"
+					, (\''.call_user_func(array($this->generatorClass, 'getAutoText')).'\') AS "_code"
 					, '.\sys\PDO::getJsDate('"date"').' AS "date"
 					, "id_farm"
 					, "fullname"

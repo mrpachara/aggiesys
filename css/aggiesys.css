@@ -75,6 +75,10 @@ table.app-view-list>thead>tr>th {
 	text-align: left;
 }
 
+table.app-view-list>tbody>tr>td:not(.app-view-list-toolsbar) {
+	min-width: 5em;
+}
+
 table.app-view-list>tbody>tr.app-cl-item-canceled>td:first-child,
 table.app-view-list>tbody>tr.app-cl-item-canceled>td:first-child *:not(.app-view-list-altheader) {
 	text-decoration: line-through;

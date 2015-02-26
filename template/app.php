@@ -3,8 +3,6 @@
 		header("HTTP/1.1 404 Not Found");
 		exit;
 	}
-
-	header("Content-Language: th-TH");
 ?>
 <!DOCTYPE html>
 <html lang="th" xml:lang="th" xmlns="http://www.w3.org/1999/xhtml" ng-app="Aggiesys" layout="column">

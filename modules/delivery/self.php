@@ -9,8 +9,8 @@
 	$_moduleName = basename(__DIR__);
 
 	$json = array(
-		 'uri' => "{$_moduleName}/self".((!empty($_GET['id']))? "/{$_GET['id']}" : '' )
-		,'links' => array()
+		  'uri' => "{$_moduleName}/self".((!empty($_GET['id']))? "/{$_GET['id']}" : '' )
+		, 'links' => array()
 	);
 
 	try{
@@ -21,23 +21,32 @@
 		}
 
 		if($data['_updatable']){
-			$json['links'][] =  array(
-				 'rel' => (empty($data['id']))? 'create' : 'replace'
-				,'type' => 'submit'
-				,'href' => "{$_modulePath}/update.php".((!empty($data['id']))? "?id={$data['id']}" : "")
-				,'classes' => array("md-primary")
+			$replaceLink = array(
+				  'rel' => (empty($data['id']))? 'create' : 'replace'
+				, 'type' => 'submit'
+				, 'href' => "{$_modulePath}/update.php".((!empty($data['id']))? "?id={$data['id']}" : "")
+				, 'data' => array(
+					  'code' => $data['_code']
+				)
+				, 'classes' => array("md-primary")
 			);
+
+			$replaceLink['data'] = array(
+				  'code' => $data['_code']
+			);
+
+			$json['links'][] = $replaceLink;
 		}
 
 		if(!empty($data['id']) && ($data['_deletable'])){
 			$json['links'][] =  array(
-				 'rel' => 'cancel'
-				,'type' => 'get'
-				,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
-				,'classes' => array("md-warn")
-				,'confirm' => array(
-					 'title' => "Do you want to cancel?"
-					,'content' => "Your action cannot be undo."
+				  'rel' => 'cancel'
+				, 'type' => 'get'
+				, 'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
+				, 'classes' => array("md-warn")
+				, 'confirm' => array(
+					  'title' => "Do you want to cancel?"
+					, 'content' => "Your action cannot be undo."
 				)
 			);
 		}
@@ -58,7 +67,7 @@
 	} catch(Exception $excp){
 		$json['errors'] = array(
 			  array(
-			  	'exception' => ($excp instanceof \sys\DataServiceException)? new Exception(sprintf($excp->getMessage(), "{$_moduleName}/self/"), $excp->getCode(), $excp) : $excp
+			  	  'exception' => ($excp instanceof \sys\DataServiceException)? new Exception(sprintf($excp->getMessage(), "{$_moduleName}/self/"), $excp->getCode(), $excp) : $excp
 			)
 		);
 	}

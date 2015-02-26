@@ -372,7 +372,11 @@ window.app = aggiesys;
 
 			if(link.type === 'submit'){
 				!angular.isUndefined($scope.model.data)
-				if(!angular.isUndefined($scope.model.data)) $scope.model.data = angular.copy(model.data);
+				if(!angular.isUndefined($scope.model.data)){
+					$scope.model.data = angular.copy(model.data);
+
+					if(!angular.isUndefined(link.data)) angular.extend($scope.model.data, link.data);
+				}
 
 				$scope.mode = link.rel;
 			} else if((link.type === 'search') && !angular.isUndefined(link.query)){
@@ -448,6 +452,9 @@ window.app = aggiesys;
 			} else{
 				$scope.mode = null;
 			}
+
+			//angular.element('#app-ly-container-content').prop('scrollTop', 0);
+			angular.element('#app-ly-container-content').animate({'scrollTop':0}, '500', 'swing');
 		};
 
 		$scope.historyBack = function(){
@@ -461,38 +468,5 @@ window.app = aggiesys;
 		$scope.showScope = function(){
 			console.log($scope);
 		};
-	});
-
-	app.controller('AppViewCheckboxDomainController', function($scope, $attrs, $appHttp){
-		$scope.items = [];
-		$scope.isChecked = {};
-
-		var url = null;
-		angular.forEach($scope.$eval($attrs.ngLinks), function(link){
-			if(link.rel == 'domain') url = link.href;
-		});
-
-		$appHttp.get(url)
-			.then(function(response){
-				angular.forEach(response.data.items, function(item){
-					$scope.items.push(item);
-
-					var binded = $scope.$eval($attrs.ngModel);
-
-					angular.forEach($scope.items, function(item){
-						$scope.isChecked[item.value] = (binded.indexOf(item.value) > -1);
-					});
-				});
-
-				$scope.$watchCollection('isChecked', function(values){
-					var binded = $scope.$eval($attrs.ngModel);
-					binded.splice(0, binded.length);
-
-					angular.forEach(values, function(value, key){
-						if(value) binded.push(key);
-					});
-				});
-			})
-		;
 	});
 })(this.jQuery, this.angular);

@@ -1,24 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
-	<symbol id="ic_view_list_create" viewBox="0 0 24 24">
-		<use xlink:href="#ic_insert_drive_file" />
-	</symbol>
-	<symbol id="ic_view_list_self" viewBox="0 0 24 24">
-		<use xlink:href="#ic_pageview" />
-	</symbol>
-	<symbol id="ic_view_list_update" viewBox="0 0 24 24">
-		<use xlink:href="#ic_edit" />
-	</symbol>
-	<symbol id="ic_view_list_replace" viewBox="0 0 24 24">
-		<use xlink:href="#ic_content_copy" />
-	</symbol>
-	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
-		<use xlink:href="#ic_delete" />
-	</symbol>
-	<symbol id="ic_view_list_cancel" viewBox="0 0 24 24">
-		<use xlink:href="#ic_block" />
-	</symbol>
-</svg>
 <form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column" ng-class="(model.status || {}).classes">
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none;">
+		<symbol id="ic_view_list_create" viewBox="0 0 24 24">
+			<use xlink:href="#ic_insert_drive_file" />
+		</symbol>
+		<symbol id="ic_view_list_self" viewBox="0 0 24 24">
+			<use xlink:href="#ic_pageview" />
+		</symbol>
+		<symbol id="ic_view_list_update" viewBox="0 0 24 24">
+			<use xlink:href="#ic_edit" />
+		</symbol>
+		<symbol id="ic_view_list_replace" viewBox="0 0 24 24">
+			<use xlink:href="#ic_content_copy" />
+		</symbol>
+		<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
+			<use xlink:href="#ic_delete" />
+		</symbol>
+		<symbol id="ic_view_list_cancel" viewBox="0 0 24 24">
+			<use xlink:href="#ic_block" />
+		</symbol>
+	</svg>
 	<div ng-if="model.status" class="app-view-self-status">
 		<div ng-bind="(model.status || {}).message"></div>
 	</div>
@@ -45,9 +45,9 @@
 			<span>Cancel</span>
 		</md-button>
 	</div>
-
+<!--
 	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 		<span style="margin-top: 0.25em;">Show Scope</span>
 	</md-button>
-
+-->
 </form>
