@@ -25,15 +25,14 @@
 				  'rel' => (empty($data['id']))? 'create' : 'replace'
 				, 'type' => 'submit'
 				, 'href' => "{$_modulePath}/update.php".((!empty($data['id']))? "?id={$data['id']}" : "")
-				, 'data' => array(
-					  'code' => $data['_code']
-				)
 				, 'classes' => array("md-primary")
 			);
 
-			$replaceLink['data'] = array(
-				  'code' => $data['_code']
-			);
+			if(!empty($data['id'])){
+				$replaceLink['data'] = array(
+					  'code' => $data['_code']
+				);
+			}
 
 			$json['links'][] = $replaceLink;
 		}
