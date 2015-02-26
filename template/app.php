@@ -3,13 +3,15 @@
 		header("HTTP/1.1 404 Not Found");
 		exit;
 	}
+
+	header("Content-Language: th-TH");
 ?>
 <!DOCTYPE html>
 <html lang="th" xml:lang="th" xmlns="http://www.w3.org/1999/xhtml" ng-app="Aggiesys" layout="column">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta charset="UTF-8" />
-		<meta http-equiv="Content-Language" content="en_US, th_TH" />
+		<meta http-equiv="Content-Language" content="th_TH" />
 		<title><?= htmlspecialchars($conf['app']['name']) ?> Application</title>
 
 		<base href="<?= htmlspecialchars(APPPATH) ?>" />

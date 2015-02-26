@@ -22,6 +22,16 @@
 	<div ng-if="model.status" class="app-view-self-status">
 		<div ng-bind="(model.status || {}).message"></div>
 	</div>
+	<div layout ng-show="mode === null" layout-align="start center" style="padding: 0.5em 0px; flex-wrap: wrap; justify-content: space-between;">
+		<md-button type="button" ng-repeat="link in model.links" ng-if="link.href != null" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em;">
+			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
+			<span>{{link.rel}}</span>
+		</md-button>
+		<md-button type="button" ng-click="historyBack()" layout layout-align="center center" aria-label="navigate back" class="md-accent" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em; margin-left: auto;">
+			<ic-svg ic-href="#ic_navigate_before"></ic-svg>
+			<span>Back</span>
+		</md-button>
+	</div>
 	<div ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['self']))">
 		<input-dynamic flex ng-model="model.data" input-mode="mode" input-meta="field" input-form="selfForm"></input-dynamic>
 	</div>
@@ -35,19 +45,9 @@
 			<span>Cancel</span>
 		</md-button>
 	</div>
-	<div layout ng-show="mode === null" layout-align="start center" style="padding: 0.5em 0px; flex-wrap: wrap; justify-content: space-between;">
-		<md-button type="button" ng-repeat="link in model.links" ng-if="link.href != null" ng-class="link.classes" ng-click="execute(link)" layout layout-align="center center" aria-label="{{link.rel}} mode" class="md-raised" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em;">
-			<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
-			<span>{{link.rel}}</span>
-		</md-button>
-		<md-button type="button" ng-click="historyBack()" layout layout-align="center center" aria-label="navigate back" class="md-accent" style="padding: 0.50em 1.00em; margin: 0.5em 0.5em; margin-left: auto;">
-			<ic-svg ic-href="#ic_navigate_before"></ic-svg>
-			<span>Back</span>
-		</md-button>
-	</div>
-<!--
+
 	<md-button type="button" ng-click="showScope()" layout layout-align="center center" aria-label="show scope" class="md-raised" style="padding: 0.50em 1.00em; margin: 0px 0.5em;">
 		<span style="margin-top: 0.25em;">Show Scope</span>
 	</md-button>
--->
+
 </form>

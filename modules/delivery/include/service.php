@@ -96,13 +96,13 @@
 		protected function getEntity($id, $where){
 			$data = false;
 			if($id === null) {
-				$stmt = $this->getPdo()->prepare('SELECT LOCALTIMESTAMP(0);');
+				$stmt = $this->getPdo()->prepare('SELECT '.\sys\PDO::getJsDate('CURRENT_TIMESTAMP').';');
 				$stmt->execute();
-				$localtstmt = $stmt->fetchColumn();
+				$currentstmt = $stmt->fetchColumn();
 				$data = array(
 					  "id" => null
 					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))
-					, "date" => $localtstmt
+					, "date" => $currentstmt
 					, "id_farm" => null
 					, "fullname" => null
 					, "address" => null
@@ -128,7 +128,7 @@
 					SELECT
 					  "id"
 					, "code"
-					, "date"
+					, '.\sys\PDO::getJsDate('"date"').' AS "date"
 					, "id_farm"
 					, "fullname"
 					, "address"
@@ -176,7 +176,7 @@
 				SELECT
 					  "deliveryhead"."id" AS "id"
 					, "deliveryhead"."code" AS "code"
-					, "deliveryhead"."date" AS "date"
+					, '.\sys\PDO::getJsDate('"deliveryhead"."date"').' AS "date"
 					, "deliveryhead"."id_farm" AS "id_farm"
 					, "deliveryhead"."fullname" AS "fullname"
 					, "deliveryhead"."address" AS "address"

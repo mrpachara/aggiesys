@@ -81,7 +81,7 @@ table.app-view-list>tbody>tr.app-cl-item-canceled>td:first-child *:not(.app-view
 }
 
 table.app-view-list>tbody>tr.app-cl-item-canceled>td:not(.app-view-list-toolsbar) {
-	color: gray;
+	color: rgba(0,0,0,0.26);
 }
 
 table.app-view-list .app-view-action-list {
@@ -111,21 +111,33 @@ table.app-view-list .app-view-list-value {
 }
 
 form.app-view-self {
-	position: relative;
 }
 
 form.app-view-self .app-view-self-status {
-	text-align: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+
+	position: relative;
+}
+
+form.app-view-self.app-cl-item-canceled .app-view-self-status {
+	height: 0px;
+	overflow: visible;
 }
 
 form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
-	position: absolute;
-
-	text-align: center;
 	font-size: 120px;
-	color: rgba(255, 0, 0, 0.25);
+	color: rgba(255, 0, 0, 0.125);
 
-	transform: rotate(-0.125turn) translateY(100%);
+	transform: translateY(100px) translateX(-14.645%) rotate(-0.125turn);
+	transform-origin: right center;
+}
+@media (max-width: 600px) {
+	form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
+		font-size: 60px;
+	}
 }
 
 @media (max-width: 600px) {

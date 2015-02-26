@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.3.6
 -- Dumped by pg_dump version 9.3.6
--- Started on 2015-02-25 18:41:56 ICT
+-- Started on 2015-02-26 18:02:57 ICT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -59,11 +59,11 @@ SET default_with_oids = false;
 CREATE TABLE billheader (
     id bigint NOT NULL,
     code character varying(64) NOT NULL,
-    date timestamp without time zone NOT NULL,
+    date timestamp with time zone NOT NULL,
     id_debtor bigint,
     fullname character varying(128) NOT NULL,
     address text NOT NULL,
-    tstmp timestamp with time zone DEFAULT transaction_timestamp() NOT NULL,
+    tstmp time with time zone DEFAULT transaction_timestamp() NOT NULL,
     id_creator bigint NOT NULL
 );
 
@@ -205,14 +205,14 @@ ALTER SEQUENCE deliverydetail_id_seq OWNED BY deliverydetail.id;
 CREATE TABLE deliveryhead (
     id bigint NOT NULL,
     code character varying(64),
-    date timestamp without time zone NOT NULL,
+    date timestamp with time zone NOT NULL,
     id_farm bigint NOT NULL,
     fullname character varying(128) NOT NULL,
     address text NOT NULL,
     id_salehead bigint,
-    tstmp timestamp without time zone DEFAULT now() NOT NULL,
+    tstmp timestamp with time zone DEFAULT now() NOT NULL,
     id_creator bigint NOT NULL,
-    tstmp_canceled timestamp without time zone
+    tstmp_canceled timestamp with time zone
 );
 
 
@@ -420,7 +420,7 @@ ALTER SEQUENCE product_id_seq OWNED BY product.id;
 CREATE TABLE saleheader (
     id bigint NOT NULL,
     code character varying(64) NOT NULL,
-    date timestamp without time zone NOT NULL,
+    date timestamp with time zone NOT NULL,
     tstmp timestamp with time zone DEFAULT transaction_timestamp() NOT NULL,
     id_customer bigint NOT NULL,
     registration character varying(64) NOT NULL,
@@ -458,7 +458,7 @@ ALTER SEQUENCE saleheader_id_seq OWNED BY saleheader.id;
 --
 
 CREATE TABLE sessions (
-    expires timestamp without time zone,
+    expires timestamp with time zone,
     data text,
     id_user bigint,
     id character varying(32) NOT NULL
@@ -570,7 +570,7 @@ ALTER SEQUENCE vegetable_id_seq OWNED BY vegetable.id;
 
 
 --
--- TOC entry 1984 (class 2604 OID 17160)
+-- TOC entry 1983 (class 2604 OID 17160)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -602,7 +602,7 @@ ALTER TABLE ONLY deliverydetail ALTER COLUMN id SET DEFAULT nextval('deliverydet
 
 
 --
--- TOC entry 1989 (class 2604 OID 17164)
+-- TOC entry 1988 (class 2604 OID 17164)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -767,6 +767,14 @@ COPY deliverydetail (id, id_deliveryhead, id_vegetable, qty, price) FROM stdin;
 25	9	12	200	500
 26	9	13	400	1000
 27	9	20	1000	1000
+28	10	13	100	2000
+29	10	19	2000	2000
+30	10	8	678	5679
+31	11	19	10	10
+32	12	19	100	2000
+33	12	6	1222	3333
+34	13	19	123	123
+35	13	8	1234	1234
 \.
 
 
@@ -776,7 +784,7 @@ COPY deliverydetail (id, id_deliveryhead, id_vegetable, qty, price) FROM stdin;
 -- Name: deliverydetail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('deliverydetail_id_seq', 27, true);
+SELECT pg_catalog.setval('deliverydetail_id_seq', 35, true);
 
 
 --
@@ -786,12 +794,16 @@ SELECT pg_catalog.setval('deliverydetail_id_seq', 27, true);
 --
 
 COPY deliveryhead (id, code, date, id_farm, fullname, address, id_salehead, tstmp, id_creator, tstmp_canceled) FROM stdin;
-5	111502250002	2015-02-25 10:22:35	3	Farm 002	123\nabc\ndef	\N	2015-02-25 17:23:27.40689	3	2015-02-25 18:25:40.886826
-6	111502250003	2015-02-25 03:22:35	3	Farm 002	123\nabc\ndef	\N	2015-02-25 18:25:40.886826	3	\N
-4	111502250001	2015-02-25 00:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 14:24:10.77425	3	2015-02-25 18:32:27.207261
-7	111502250004	2015-02-24 17:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:32:27.207261	3	2015-02-25 18:34:27.810579
-8	111502250005	2015-02-24 10:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:34:27.810579	3	2015-02-25 18:36:32.242571
-9	111502250006	2015-02-24 03:22:58	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:36:32.242571	3	\N
+5	111502250002	2015-02-25 10:22:35+07	3	Farm 002	123\nabc\ndef	\N	2015-02-25 17:23:27.40689+07	3	2015-02-25 18:25:40.886826+07
+6	111502250003	2015-02-25 03:22:35+07	3	Farm 002	123\nabc\ndef	\N	2015-02-25 18:25:40.886826+07	3	\N
+4	111502250001	2015-02-25 00:22:58+07	2	Farm 001	123\nabc\ndef	\N	2015-02-25 14:24:10.77425+07	3	2015-02-25 18:32:27.207261+07
+7	111502250004	2015-02-24 17:22:58+07	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:32:27.207261+07	3	2015-02-25 18:34:27.810579+07
+8	111502250005	2015-02-24 10:22:58+07	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:34:27.810579+07	3	2015-02-25 18:36:32.242571+07
+9	111502250006	2015-02-24 03:22:58+07	2	Farm 001	123\nabc\ndef	\N	2015-02-25 18:36:32.242571+07	3	\N
+10	111502260001	2015-02-26 07:52:57+07	4	asdf	asdf\nasdf\nasdf	\N	2015-02-26 14:54:00.056499+07	3	\N
+11	111502260002	2015-02-26 07:56:49+07	3	Farm 002	123\nabc\ndef	\N	2015-02-26 14:57:48.008297+07	3	\N
+12	111502260003	2015-02-26 16:35:01+07	2	Farm 001	123\nabc\ndef	\N	2015-02-26 16:35:48.270592+07	3	\N
+13	111502260004	2015-02-26 17:55:29+07	4	asdf	asdf\nasdf\nasdf	\N	2015-02-26 17:56:17.831865+07	3	\N
 \.
 
 
@@ -801,7 +813,7 @@ COPY deliveryhead (id, code, date, id_farm, fullname, address, id_salehead, tstm
 -- Name: deliveryhead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('deliveryhead_id_seq', 9, true);
+SELECT pg_catalog.setval('deliveryhead_id_seq', 13, true);
 
 
 --
@@ -858,6 +870,7 @@ SELECT pg_catalog.setval('etcitem_id_seq', 68, true);
 COPY farm (id, code, name, address) FROM stdin;
 3	F002	Farm 002	123\nabc\ndef
 2	F001	Farm 001	123\nabc\ndef
+4	910001	asdf	asdf\nasdf\nasdf
 \.
 
 
@@ -867,7 +880,7 @@ COPY farm (id, code, name, address) FROM stdin;
 -- Name: farm_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('farm_id_seq', 3, true);
+SELECT pg_catalog.setval('farm_id_seq', 4, true);
 
 
 --
@@ -882,9 +895,9 @@ COPY generator (id, code, length, code_reuse, num) FROM stdin;
 7	15	4	150225	1
 8	17	4	150225	1
 9	19	4	150225	1
-10	91	4		1
 11	92	4		1
-4	11	4	150225	7
+10	91	4		2
+4	11	4	150226	5
 \.
 
 
@@ -942,8 +955,11 @@ SELECT pg_catalog.setval('saleheader_id_seq', 1, false);
 --
 
 COPY sessions (expires, data, id_user, id) FROM stdin;
-2015-02-25 19:33:17.686247	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	sjk2mseesqq79ekehqrj8f1tn0
-2015-02-25 21:37:01.775515	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	e6noc0vd63dpgmfoemtscsar86
+2015-02-26 20:43:31.554539+07	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	lbnaafe2mbkpfdn1pc50297gr7
+2015-02-26 20:56:26.893873+07	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	f307lgo5kl34p570gat93u7846
+2015-02-26 20:36:18.897708+07	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	rud4ft0lqgvtrgqebtpb146r40
+2015-02-26 21:00:09.093363+07	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	4h990pb3ohmo73q0emmkj0aip7
+2015-02-26 20:40:21.891006+07	__GSESSION__|a:1:{s:9:"__tmpsess";N;}	3	153mk5k415uib2dkpvkf3eoh45
 \.
 
 
@@ -1286,7 +1302,7 @@ ALTER TABLE ONLY vegetable
 
 
 --
--- TOC entry 2003 (class 1259 OID 17230)
+-- TOC entry 2003 (class 1259 OID 25300)
 -- Name: billheader_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1294,7 +1310,7 @@ CREATE INDEX billheader_date_idx ON billheader USING btree (date);
 
 
 --
--- TOC entry 2006 (class 1259 OID 17231)
+-- TOC entry 2006 (class 1259 OID 25312)
 -- Name: billheader_tstmp_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1318,7 +1334,7 @@ CREATE INDEX carriage_registration_idx ON carriage USING btree (registration);
 
 
 --
--- TOC entry 2021 (class 1259 OID 17234)
+-- TOC entry 2021 (class 1259 OID 25271)
 -- Name: deliveryhead_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1326,7 +1342,7 @@ CREATE INDEX deliveryhead_date_idx ON deliveryhead USING btree (date);
 
 
 --
--- TOC entry 2046 (class 1259 OID 17235)
+-- TOC entry 2046 (class 1259 OID 25262)
 -- Name: saleheader_date_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1350,7 +1366,7 @@ CREATE INDEX saleheader_tstmp_idx ON saleheader USING btree (tstmp);
 
 
 --
--- TOC entry 2051 (class 1259 OID 17238)
+-- TOC entry 2051 (class 1259 OID 25253)
 -- Name: sessions_expires_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1482,7 +1498,7 @@ ALTER TABLE ONLY userrole
     ADD CONSTRAINT userrole_id_user_fkey FOREIGN KEY (id_user) REFERENCES "user"(id) ON DELETE CASCADE;
 
 
--- Completed on 2015-02-25 18:41:57 ICT
+-- Completed on 2015-02-26 18:02:57 ICT
 
 --
 -- PostgreSQL database dump complete

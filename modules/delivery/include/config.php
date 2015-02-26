@@ -36,8 +36,11 @@
 			  'name' => "date"
 			, 'name_field' => 'วันที่ใบรับพืชผล'
 			, 'width' => "15em"
+			, 'expression' => array(
+				  'display' => "toString() | datetime_locale"
+			)
 			, 'template' => array(
-					  '*' => null
+				  '*' => null
 			)
 		)
 		, array(

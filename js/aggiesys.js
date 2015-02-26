@@ -238,6 +238,12 @@ window.app = aggiesys;
 		};
 	});
 
+	aggiesys.filter('datetime_locale', function(){
+		return function(input){
+			return (new Date(input)).toLocaleString();
+		};
+	});
+
 	aggiesys.factory('$appHttp', function($rootScope, $q, $http, $mdToast){
 		var $appHttp;
 		angular.forEach(['', 'get', 'head', 'post','put', 'delete', 'jsonp', 'patch'], function(method){

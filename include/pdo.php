@@ -33,6 +33,11 @@
 			return implode(', ', $keys);
 		}
 
+
+		public static function getJsDate($field){
+			return "to_char({$field}::timestamp with time zone at time zone 'Z', 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')";
+		}
+
 		public static function getInstance(){
 			static $instance = null;
 
