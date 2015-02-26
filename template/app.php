@@ -42,28 +42,28 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 			<md-content flex class="md-padding" layout="column">
 				<div ng-click="$mdSidenav('left').close()">
 					<div>
-						<a href="delivery/list">Delivery</a>
+						<a href="delivery/list">ใบรับพืชผล</a>
 					</div>
 					<div>
-						<a href="vegetable/list">Vegetable</a>
+						<a href="vegetable/list">ข้อมูลพืชผล</a>
 					</div>
 					<div>
-						<a href="farm/list">Farm</a>
+						<a href="farm/list">ข้อมูลลูกสวน</a>
 					</div>
 					<div>
-						<a href="customer/list">Customer</a>
+						<a href="customer/list">ข้อมูลลูกค้า</a>
 					</div>
 					<div>
-						<a href="carriage/list">Carriage</a>
+						<a href="carriage/list">ข้อมูลรถ</a>
 					</div>
 					<div>
-						<a href="user/list">User</a>
+						<a href="user/list">ข้อมูลผู้ใช้</a>
 					</div>
 					<div>
 						<a href="session/list">Session</a>
 					</div>
 					<div>
-						<a href="etc/list">Etc</a>
+						<a href="etc/list">ข้อมูลอื่นๆ</a>
 					</div>
 				</div>
 			</md-content>
