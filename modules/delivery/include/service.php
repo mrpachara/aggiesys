@@ -17,7 +17,7 @@
 
 			if(empty($data)) return;
 
-			$data['_updatable'] = $data['_deletable'] = (!$data['_isrefered'] && empty($data['tstmp_canceled']));
+			$data['_updatable'] = $data['_deletable'] = (!$data['_isrefered'] && !$data['iscanceled']);
 		}
 
 		private $generatorClass;
@@ -42,6 +42,8 @@
 				$data['farm'] = $farm;
 			}
 
+			unset($data['id_farm']);
+
 			/* creator */
 			$stmt = $this->getPdo()->prepare('
 				SELECT
@@ -57,6 +59,8 @@
 			if($creator = $stmt->fetch(\PDO::FETCH_ASSOC)){
 				$data['creator'] = $creator;
 			}
+
+			unset($data['id_creator']);
 
 			return $data;
 		}
@@ -102,6 +106,8 @@
 					, "id_farm" => null
 					, "fullname" => null
 					, "address" => null
+					, "tstmp_canceled" => null
+					, "iscanceled" => false
 					, 'farm' => array(
 						  'id' => null
 						, 'code' => null
@@ -128,6 +134,7 @@
 					, "address"
 					, "id_creator"
 					, "tstmp_canceled"
+					, ("tstmp_canceled" IS NOT NULL) AS "iscanceled"
 					FROM "deliveryhead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');

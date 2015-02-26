@@ -75,6 +75,15 @@ table.app-view-list>thead>tr>th {
 	text-align: left;
 }
 
+table.app-view-list>tbody>tr.app-cl-item-canceled>td:first-child,
+table.app-view-list>tbody>tr.app-cl-item-canceled>td:first-child *:not(.app-view-list-altheader) {
+	text-decoration: line-through;
+}
+
+table.app-view-list>tbody>tr.app-cl-item-canceled>td:not(.app-view-list-toolsbar) {
+	color: gray;
+}
+
 table.app-view-list .app-view-action-list {
 	justify-content: space-around;
 }
@@ -102,7 +111,23 @@ table.app-view-list .app-view-list-value {
 }
 
 form.app-view-self {
+	position: relative;
 }
+
+form.app-view-self .app-view-self-status {
+	text-align: center;
+}
+
+form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
+	position: absolute;
+
+	text-align: center;
+	font-size: 120px;
+	color: rgba(255, 0, 0, 0.25);
+
+	transform: rotate(-0.125turn) translateY(100%);
+}
+
 @media (max-width: 600px) {
 	table.app-view-list>colgroup>col.app-view-list-col-realign {
 		width: auto !important;

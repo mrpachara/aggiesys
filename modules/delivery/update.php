@@ -22,14 +22,17 @@
 					, 'status' => $selfStatus
 				)
 				, array(
-					  'uri' => "{$_moduleName}/self/{$_GET['id']}"
-					, 'status' => 'canceled'
-				)
-				, array(
 					  'uri' => "{$_moduleName}/list"
 					, 'status' => 'updated'
 				)
 			);
+
+			if(!empty($_GET['id'])){
+				$json['statuses'][] = array(
+					  'uri' => "{$_moduleName}/self/{$_GET['id']}"
+					, 'status' => 'canceled'
+				);
+			}
 
 			$json['info'] = "{$_moduleName}/self/{$_POST['id']} was {$selfStatus}";
 		}

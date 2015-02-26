@@ -26,14 +26,6 @@
 		$termText = (!empty($_GET['term']))? $_GET['term'] : null;
 		$page = (!empty($_GET['page']))? $_GET['page'] : null;
 		foreach($entityService->getAll($termText, $page) as $data){
-/*
-			$data['farm'] = array(
-				  'uri' => 'farm/self/'.$data['farm']['id']
-				, 'value' => $data['farm']['id']
-				, 'label' => (!empty($data['farm']['id']))? $data['farm']['code'].'-'.$data['farm']['fullname'] : ''
-				, 'data' => $data['farm']
-			);
-*/
 			$item = array(
 				  'uri' => "{$_moduleName}/self/{$data['id']}"
 				, 'value' => $data['id']
@@ -47,6 +39,14 @@
 				, 'type' => 'view'
 				, 'href' => "{$_moduleName}/self/{$data['id']}"
 			);
+
+			if($data['iscanceled']){
+				$item['status'] = array(
+					  'name' => 'canceled'
+					, 'message' => 'ถูกยกเลิก'
+					, 'classes' => array('app-cl-item-canceled')
+				);
+			}
 
 			$json['items'][] = $item;
 		}

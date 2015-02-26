@@ -8,11 +8,20 @@
 	<symbol id="ic_view_list_update" viewBox="0 0 24 24">
 		<use xlink:href="#ic_edit" />
 	</symbol>
+	<symbol id="ic_view_list_replace" viewBox="0 0 24 24">
+		<use xlink:href="#ic_content_copy" />
+	</symbol>
 	<symbol id="ic_view_list_delete" viewBox="0 0 24 24">
 		<use xlink:href="#ic_delete" />
 	</symbol>
+	<symbol id="ic_view_list_cancel" viewBox="0 0 24 24">
+		<use xlink:href="#ic_block" />
+	</symbol>
 </svg>
-<form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column">
+<form name="selfForm" method="post" ng-submit="submit($event)" class="app-view-self" layout="column" ng-class="(model.status || {}).classes">
+	<div ng-if="model.status" class="app-view-self-status">
+		<div ng-bind="(model.status || {}).message"></div>
+	</div>
 	<div ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['self']))">
 		<input-dynamic flex ng-model="model.data" input-mode="mode" input-meta="field" input-form="selfForm"></input-dynamic>
 	</div>

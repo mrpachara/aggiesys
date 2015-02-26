@@ -17,7 +17,7 @@
 			$json['statuses'] = array(
 				  array(
 					  'uri' => "{$_moduleName}/self/{$_GET['id']}"
-					, 'status' => 'deleted'
+					, 'status' => 'canceled'
 				)
 				, array(
 					  'uri' => "{$_moduleName}/list"

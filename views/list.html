@@ -38,7 +38,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="item in model.items">
+		<tr ng-repeat="item in model.items" ng-class="(item.status || {}).classes">
 			<td ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))">
 				<label ng-bind="field.name" flex="40" class="app-view-list-altheader"></label>
 				<span ng-bind="item.data[field.name] | model:field" flex="60" class="app-view-list-value"></span>

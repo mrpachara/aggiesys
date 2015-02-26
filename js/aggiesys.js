@@ -318,33 +318,46 @@ window.app = aggiesys;
 				   !angular.isUndefined(response.data)
 				&& angular.isArray(response.data.statuses)
 			){
-				var isServed = false;
-				angular.forEach(response.data.statuses, function(status){
-					if(isServed) return;
+				var finalAction = {
+					 'uri': null
+					,'action': null
+				};
 
-					if(status.uri.indexOf(model.uri) === 0){
-						if(status.status === 'created'){
-							$location.url(status.uri).replace();
-							isServed = true;
-						} else if(model.uri == status.uri){
-							if(status.status === 'updated'){
-								$route.reload();
-								isServed = true;
-							} else if(status.status === 'deleted'){
-								$scope.historyBack();
-								isServed = true;
-							}
-						}
-					} else if(model.uri == status.uri){
-						if(status.status === 'updated'){
-							$route.reload();
-							isServed = true;
-						} else if(status.status === 'deleted'){
-							$scope.historyBack();
-							isServed = true;
-						}
+				angular.forEach(response.data.statuses, function(status){
+					if(status.uri === model.uri){
+						finalAction.action = status.status;
 					}
 				});
+
+				if(finalAction.action === null){
+					angular.forEach(response.data.statuses, function(status){
+						if(status.uri.indexOf(model.uri) === 0){
+							if(status.status === 'created'){
+								finalAction.uri = status.uri;
+								finalAction.action = 'updated';
+							}
+						}
+					});
+				} else if((finalAction.action === 'deleted') || (finalAction.action === 'canceled')){
+					angular.forEach(response.data.statuses, function(status){
+						if(status.status === 'created'){
+							finalAction.uri = status.uri;
+							finalAction.action = 'updated';
+						}
+					});
+				}
+
+				if(finalAction.action === 'deleted'){
+					$scope.historyBack();
+				} else if(finalAction.action === 'canceled'){
+					$route.reload();
+				} else if(finalAction.action === 'updated'){
+					if(finalAction.uri === null){
+						$route.reload();
+					} else{
+						$location.url(finalAction.uri).replace();
+					}
+				}
 			}
 		};
 

@@ -33,16 +33,24 @@
 			$json['links'][] =  array(
 				 'rel' => 'cancel'
 				,'type' => 'get'
-				,'href' => (!empty($data['id']))? "{$_modulePath}/cancel.php?id={$data['id']}" : null
+				,'href' => (!empty($data['id']))? "{$_modulePath}/delete.php?id={$data['id']}" : null
 				,'classes' => array("md-warn")
 				,'confirm' => array(
-					 'title' => "Do you want to delete?"
+					 'title' => "Do you want to cancel?"
 					,'content' => "Your action cannot be undo."
 				)
 			);
 		}
 
 		if(empty($data['id'])) $json['mode'] = "create";
+
+		if($data['iscanceled']){
+			$json['status'] = array(
+				  'name' => 'canceled'
+				, 'message' => 'ถูกยกเลิก'
+				, 'classes' => array('app-cl-item-canceled')
+			);
+		}
 
 		$json['data'] = $data;
 
