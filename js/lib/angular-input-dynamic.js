@@ -122,6 +122,17 @@
 							}
 						});
 					});
+
+					(function(){
+						var meta = ($scope.$meta)? $scope.$meta : {};
+						angular.forEach(meta.expression, function(expression, key){
+							if(key != 'calculate') return;
+
+							$scope.$watch(expression, function(value){
+								$scope.$model[meta.name] = value;
+							})
+						});
+					})();
 				}
 			};
 		})
@@ -131,6 +142,9 @@
 
 			$scope.$watch('$model[$meta.name]', function(value){
 				$scope.$parent.$model[$scope.$parent.$meta.name] = value;
+			});
+			$scope.$watch('$parent.$model[$meta.name]', function(value){
+				$scope.$model[$scope.$parent.$meta.name] = value;
 			});
 		})
 		.controller('inputDynamicDatetime', function($scope){

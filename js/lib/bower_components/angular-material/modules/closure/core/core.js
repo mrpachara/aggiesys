@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.1
+ * v0.8.2
  */
 goog.provide('ng.material.core');
 
@@ -441,7 +441,7 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
       }
 
       for (var mediaName in $mdConstant.MEDIA) {
-        var normalizedName = getNormalizedName(attrs, attrName + '-' + mediaName);
+        normalizedName = getNormalizedName(attrs, attrName + '-' + mediaName);
         if (!attrs[normalizedName]) {
           return;
         }
@@ -1714,7 +1714,19 @@ function InterimElementProvider() {
           options: options,
           deferred: $q.defer(),
           show: function() {
-            return showDone = $mdCompiler.compile(options).then(function(compileData) {
+            var compilePromise;
+            if (options.skipCompile) {
+              compilePromise = $q(function(resolve) { 
+                resolve({
+                  locals: {},
+                  link: function() { return options.element; }
+                });
+              });
+            } else {
+              compilePromise = $mdCompiler.compile(options);
+            }
+
+            return showDone = compilePromise.then(function(compileData) {
               angular.extend(compileData.locals, self.options);
 
               element = compileData.link(options.scope);

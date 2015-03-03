@@ -138,6 +138,9 @@
 						  'create' => true
 						, 'replace' => true
 					)
+					, 'expression' => array(
+						  'calculate' => "\$model.vegetable.price_buy * \$model.qty"
+					)
 					, 'links' => array(
 						  array(
 							  'rel' => 'domain'

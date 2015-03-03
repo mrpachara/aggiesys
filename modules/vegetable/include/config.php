@@ -17,5 +17,39 @@
 				, 'update' => true
 			)
 		)
+		,array(
+			  'name' => "price_buy"
+			, 'name_field' => 'ราคาซื้อ'
+			, 'width' => "10em"
+			, 'required' => array(
+				  '*' => true
+			)
+			, 'template' => array(
+				  '*' => 'text.domain'
+			)
+			, 'links' => array(
+				  array(
+					  'rel' => 'domain'
+					, 'accept' => 'number'
+				)
+			)
+		)
+		,array(
+			  'name' => "price_sell"
+			, 'name_field' => 'ราคาขาย'
+			, 'width' => "10em"
+			, 'required' => array(
+				  '*' => true
+			)
+			, 'template' => array(
+				  '*' => 'text.domain'
+			)
+			, 'links' => array(
+				  array(
+					  'rel' => 'domain'
+					, 'accept' => 'number'
+				)
+			)
+		)
 	);
 ?>

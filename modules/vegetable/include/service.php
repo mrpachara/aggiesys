@@ -24,6 +24,8 @@
 					  "id" => null
 					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))//$this->generatorClass::getAutoText()
 					, "name" => null
+					, "price_buy" => 0
+					, "price_sell" => 0
 				);
 			} else{
 				$stmt = $this->getPdo()->prepare('
@@ -31,6 +33,8 @@
 						  "id"
 						, "code"
 						, "name"
+						, "price_buy"
+						, "price_sell"
 					FROM "vegetable"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');
@@ -48,6 +52,8 @@
 					  "vegetable"."id" AS "id"
 					, "vegetable"."code" AS "code"
 					, "vegetable"."name" AS "name"
+					, "vegetable"."price_buy" AS "price_buy"
+					, "vegetable"."price_sell" AS "price_sell"
 				FROM "vegetable"
 				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
@@ -86,14 +92,20 @@
 					INSERT INTO "vegetable" (
 						  "code"
 						, "name"
+						, "price_buy"
+						, "price_sell"
 					) VALUES (
 						  :code
 						, :name
+						, :price_buy
+						, :price_sell
 					)
 				;');
 				$stmt->execute(array(
 					  ':code' => $generator->getRn('81')
 					, ':name' => $data['name']
+					, ':price_buy' => $data['price_buy']
+					, ':price_sell' => $data['price_sell']
 				));
 
 				$id = $data['id'] = $this->getPdo()->lastInsertId('vegetable_id_seq');
@@ -101,12 +113,16 @@
 				$stmt = $this->getPdo()->prepare('
 					UPDATE "vegetable" SET
 						  "name" = :name
+						, "price_buy" = :price_buy
+						, "price_sell" = :price_sell
 					WHERE
 						"id" = :id
 				;');
 				$stmt->execute(array(
 					  ':name' => $data['name']
 					, ':id' => $id
+					, ':price_buy' => $data['price_buy']
+					, ':price_sell' => $data['price_sell']
 				));
 
 				$data['id'] = $id;

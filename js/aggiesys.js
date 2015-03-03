@@ -74,7 +74,7 @@ window.app = aggiesys;
 		return defer.promise;
 	};
 
-	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $icSvgProvider, $mdToastProvider, $inputDynamicProvider){
+	aggiesys.config(function($routeProvider, $locationProvider, $httpProvider, $mdThemingProvider, $icSvgProvider, $mdToastProvider, $inputDynamicProvider){
 		$routeProvider
 			.when('/', {
 				 redirectTo:'/delivery'
@@ -111,6 +111,11 @@ window.app = aggiesys;
 
 			return requestAsUriEncodeForPhp(data);
 		}, $httpProvider.defaults.transformRequest);
+
+		$mdThemingProvider.theme('docs-dark', 'default')
+			.primaryPalette('yellow')
+			.dark()
+		;
 
 		$icSvgProvider
 			.url(BASEPATH + 'iconset/material-design-icons/links.php')

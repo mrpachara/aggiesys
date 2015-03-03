@@ -21,21 +21,34 @@
 		}
 
 		private $generatorClass;
+		private $farmService;
+		private $vegetableService;
 
-		function __construct($generatorClass){
+		function __construct($generatorClass, $farmService, $vegetableService){
 			parent::__construct();
 
 			$this->generatorClass = $generatorClass;
+			$this->farmService = $farmService;
+			$this->vegetableService = $vegetableService;
 		}
 
 		private function prepareRefEntity(&$data){
 			/* farm */
+			/*
 			$stmt = $this->getPdo()->prepare('SELECT * FROM "farm" WHERE "id" = :id;');
 			$stmt->execute(array(
 				  ':id' => $data['id_farm']
 			));
 
 			if($farm = $stmt->fetch(\PDO::FETCH_ASSOC)){
+				if(!empty($data['fullname'])) $farm['name'] = $data['fullname'];
+				if(!empty($data['address'])) $farm['address'] = $data['address'];
+
+				$data['farm'] = $farm;
+			}
+			*/
+
+			if($farm = $this->farmService->get($data['id_farm'])){
 				if(!empty($data['fullname'])) $farm['name'] = $data['fullname'];
 				if(!empty($data['address'])) $farm['address'] = $data['address'];
 
@@ -74,20 +87,7 @@
 			$details = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 			foreach($details as &$detail){
-				$stmt = $this->getPdo()->prepare('
-					SELECT
-						  "id"
-						, "code"
-						, "name"
-					FROM "vegetable"
-					WHERE "id" = :id
-				;');
-
-				$stmt->execute(array(
-					  ':id' => $detail['id_vegetable']
-				));
-
-				$detail['vegetable'] = $stmt->fetch(\PDO::FETCH_ASSOC);
+				$detail['vegetable'] = $this->vegetableService->get($detail['id_vegetable']);
 			}
 
 			return $details;
@@ -161,7 +161,6 @@
 							  ':id' => $data['id']
 						));
 					} catch(\PDOException $excp){
-						echo $excp->getMessage();
 						$data['_isrefered'] = true;
 					}
 
