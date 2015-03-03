@@ -34,7 +34,7 @@
 	$conf['authoz']['superuserrole'] = 'ROOT';
 	$conf['authoz']['forbidden_code'] = 403;
 	$conf['authoz']['forbidden_message'] = 'Forbidden';
-	$conf['authoz']['allowedroles'] = array("MANAGER", "USER", "STAFF");
+	$conf['authoz']['allowedroles'] = array("MANAGER", "STAFF", "USER");
 	$conf['authoz']['specialroles'] = array("ADMIN");
 
 	$conf['page'] = array();

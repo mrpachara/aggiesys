@@ -84,7 +84,14 @@
 			if(!empty($this->excp)) return false;
 
 			try{
-				$stmt = $this->pdo->prepare('SELECT * FROM "sessions" WHERE (("id" = :id) AND ("expires" > CURRENT_TIMESTAMP)) FOR UPDATE;');
+				$stmt = $this->pdo->prepare('
+					SELECT
+						  "id" AS "id"
+						, '.\sys\PDO::getJsDate('"expires"').' AS "expires"
+						, "data" AS "data"
+						, "id_user" AS "id_user"
+					FROM "sessions" WHERE (("id" = :id) AND ("expires" > CURRENT_TIMESTAMP)) FOR UPDATE
+				;');
 				$stmt->execute(array(
 					  ':id' => $session_id
 				));

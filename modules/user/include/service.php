@@ -238,13 +238,30 @@
 		}
 
 		public function deleteEntity($id){
-			$stmt = $this->getPdo()->prepare('
-				DELETE FROM "user"
-				WHERE "id" = :id
-			;');
-			$stmt->execute(array(
-				  ':id' => $id
-			));
+			$this->getPdo()->query("SAVEPOINT trydelete_user;");
+			try{
+				$stmt = $this->getPdo()->prepare('
+					DELETE FROM "user"
+					WHERE "id" = :id
+				;');
+				$stmt->execute(array(
+					  ':id' => $id
+				));
+			} catch(\PDOException $excp){
+				if($excp->getCode() == 23503){
+					$this->getPdo()->query("ROLLBACK TO SAVEPOINT trydelete_user;");
+					$stmt = $this->getPdo()->prepare('
+						UPDATE "user" SET
+							  "isterminated" = TRUE
+						WHERE "id" = :id
+					;');
+					$stmt->execute(array(
+						  ':id' => $id
+					));
+				} else{
+					throw $excp;
+				}
+			}
 
 			return $id;
 		}

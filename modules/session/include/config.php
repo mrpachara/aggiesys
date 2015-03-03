@@ -7,6 +7,9 @@
 		,array(
 			 'name' => "expires"
 			, 'width' => "15em"
+			, 'expression' => array(
+				  'display' => "toString() | datetime_locale"
+			)
 		)
 		,array(
 			 'name' => "username"
