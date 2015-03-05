@@ -1,8 +1,11 @@
 <div flex>
 	<div ng-if="$mode != null" ng-switch on="($url.link || {}).accept" layout="row" layout-align="start center" flex>
+		<md-button type="button" class="input-dynamic-cp-autocalculate" ng-if="$input.isHasCalculate" ng-class="{'input-dynamic-st-active': $input.isAutoCalculate}" ng-click="$input.toggleAutoCalculate()" aria-label="auto calculate">
+			<ic-svg ic-href="#ic_keyboard"></ic-svg>
+		</md-button>
 		<md-input-container ng-switch-when="number" ng-controller="inputDynamicNumber" flex>
 			<label ng-bind="$meta.name_field || $meta.name"></label>
-			<input type="number" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly && !$input.isAutoCalculate" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
+			<input type="number" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly || ($input.isHasCalculate && $input.isAutoCalculate)" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em; text-align: right;" />
 			<div ng-messages="$form[$meta.name].$error">
 				<div ng-message="required">This is required.</div>
 				<div ng-message="number">Invalid number value.</div>
@@ -10,7 +13,7 @@
 		</md-input-container>
 		<md-input-container ng-switch-when="datetime-local" ng-controller="inputDynamicDatetime" flex>
 			<label ng-bind="$meta.name_field || $meta.name"></label>
-			<input type="datetime-local" step="1" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly && !$input.isAutoCalculate" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em;" />
+			<input type="datetime-local" step="1" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly || ($input.isHasCalculate && $input.isAutoCalculate)" ng-required="$input.required" ng-model="$model[$meta.name]" style="font-family: monospace; font-size: 1.25em;" />
 			<div ng-messages="$form[$meta.name].$error">
 				<div ng-message="required">This is required.</div>
 				<div ng-message="datetimeLocal">Invalid datetime value.</div>
@@ -18,14 +21,11 @@
 		</md-input-container>
 		<md-input-container ng-switch-default flex>
 			<label ng-bind="$meta.name_field || $meta.name"></label>
-			<input type="text" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly && !$input.isAutoCalculate" ng-required="$input.required" ng-model="$model[$meta.name]" />
+			<input type="text" name="{{$meta.name}}" ng-disabled="$input.disabled" ng-readonly="$input.readonly || ($input.isHasCalculate && $input.isAutoCalculate)" ng-required="$input.required" ng-model="$model[$meta.name]" />
 			<div ng-messages="$form[$meta.name].$error">
 				<div ng-message="required">This is required.</div>
 			</div>
 		</md-input-container flex>
-		<md-button type="button" class="input-dynamic-cp-autocalculate" ng-if="$input.isHasCalculate" ng-class="{'input-dynamic-st-active': $input.isAutoCalculate}" ng-click="$input.toggleAutoCalculate()" aria-label="auto calculate">
-			<ic-svg ic-href="#ic_sync"></ic-svg>
-		</md-button>
 	</div>
 	<div ng-if="$mode === null" ng-switch on="($url.link || {}).accept" flex>
 		<md-input-container ng-switch-when="number" ng-controller="inputDynamicNumber" flex>

@@ -38,6 +38,9 @@ table.input-dynamic-cl-datalist>tbody>tr>td {
 					<ic-svg ic-href="#ic_item_new"></ic-svg>
 				</md-button>
 			</th>
+			<th ng-repeat="field in $meta.fields" ng-if="!field.show || field.show[$mode]">
+				<span>&nbsp;</span>
+			</th>
 		</tr>
 	</tfoot>
 </table>

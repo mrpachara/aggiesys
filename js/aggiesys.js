@@ -373,7 +373,7 @@ window.app = aggiesys;
 		};
 
 		$scope.execute = function(link){
-			if(angular.isUndefined(link)) return;
+			if(angular.isUndefined(link) || angular.isUndefined(link.href) || (link.href === null)) return;
 
 			if(link.type === 'submit'){
 				!angular.isUndefined($scope.model.data)
