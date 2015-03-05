@@ -139,7 +139,7 @@
 						, 'replace' => true
 					)
 					, 'expression' => array(
-						  'calculate' => "\$model.vegetable.price_buy * \$model.qty"
+						  'calculate' => "vegetable.price_buy * qty"
 					)
 					, 'links' => array(
 						  array(

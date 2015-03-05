@@ -1,0 +1,3 @@
+input-dynamic .input-dynamic-cp-autocalculate:not(.input-dynamic-st-active) {
+	opacity: 0.10;
+}

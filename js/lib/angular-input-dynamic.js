@@ -27,7 +27,7 @@
 		.run(function(){
 
 		})
-		.directive('inputDynamic', function($http, $compile, $parse){
+		.directive('inputDynamic', function($http, $compile, $parse, $timeout){
 			var applyTemplate = function($scope, $element, html){
 				$element.html(html);
 				$compile($element.contents())($scope);
@@ -64,7 +64,14 @@
 						,'link': {}
 					};
 
-					$scope.$input = {};
+					$scope.$input = {
+						 'isHasCalculate': false
+						,'isAutoCalculate': true
+						,'toggleAutoCalculate': function(){
+							var meta = ($scope.$meta)? $scope.$meta : {};
+							$scope.$input['isAutoCalculate'] = !$scope.$input['isAutoCalculate'];
+						}
+					};
 
 					angular.forEach(inputProps, function(prop){
 						var scopePropName = '$' + prop;
@@ -124,13 +131,19 @@
 					});
 
 					(function(){
+						$scope.$input['isHasCalculate'] = false;
+						$scope.$input['isAutoCalculate'] = true;
 						var meta = ($scope.$meta)? $scope.$meta : {};
 						angular.forEach(meta.expression, function(expression, key){
 							if(key != 'calculate') return;
 
-							$scope.$watch(expression, function(value){
-								$scope.$model[meta.name] = value;
-							})
+							$scope.$input['isHasCalculate'] = true;
+							if(!angular.isUndefined($scope.$model[meta.name]) && ($scope.$model[meta.name] !== null)) $scope.$input['isAutoCalculate'] = false;
+
+							var parser = $parse(expression);
+							$scope.$watch(function(scope){
+								if($scope.$input['isAutoCalculate']) scope.$model[meta.name] = parser(scope.$model);
+							});
 						});
 					})();
 				}
@@ -153,6 +166,9 @@
 
 			$scope.$watch('$model[$meta.name]', function(value){
 				$scope.$parent.$model[$scope.$parent.$meta.name] = (value)? value.toJSON() : null;
+			});
+			$scope.$watch('$parent.$model[$meta.name]', function(value){
+				$scope.$model[$scope.$parent.$meta.name] = new Date(value);
 			});
 		})
 		.controller('inputDynamicCheckboxlist', function($scope, $http){

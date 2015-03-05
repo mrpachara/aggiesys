@@ -16,6 +16,7 @@
 
 		<link rel="stylesheet" href="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.css" />
 		<link rel="stylesheet" href="<?= BASEPATH ?>css/aggiesys.css" />
+		<link rel="stylesheet" href="<?= BASEPATH ?>css/inputdynamic.css" />
 
 		<script>
 var BASEPATH = <?= json_encode(BASEPATH) ?>;
