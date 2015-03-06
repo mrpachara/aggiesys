@@ -149,6 +149,23 @@
 				}
 			};
 		})
+		.filter('summary', function($parse){
+			var typeMethod = {
+				 'sum': function(accumulate, value){
+					return accumulate + value;
+				}
+			};
+
+			return function(input, type, expression){
+				if(!angular.isArray(input)) return null;
+
+				var accumulate = 0;
+				var parser = $parse(expression);
+				angular.forEach(input, function(item){
+					accumulate = typeMethod[type](accumulate, parser(item.data));
+				});
+			};
+		})
 		.controller('inputDynamicNumber', function($scope){
 			$scope.$model = {};
 			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? Number($scope.$parent.$model[$scope.$parent.$meta.name]) : null;
