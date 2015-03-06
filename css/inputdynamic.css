@@ -1,4 +1,7 @@
 input-dynamic .input-dynamic-cp-autocalculate {
+	-webkit-transform: translateX(25%);
+	-moz-transform: translateX(25%);
+	-ms-transform: translateX(25%);
 	transform: translateX(25%);
 }
 input-dynamic .input-dynamic-cp-autocalculate.input-dynamic-st-active {

@@ -18,9 +18,22 @@
 		<link rel="stylesheet" href="<?= BASEPATH ?>css/aggiesys.css" />
 		<link rel="stylesheet" href="<?= BASEPATH ?>css/inputdynamic.css" />
 
+		<link rel="stylesheet/less" type="text/css" href="<?= BASEPATH ?>css/less/aggiesys.less" />
+
 		<script>
 var BASEPATH = <?= json_encode(BASEPATH) ?>;
+var less = {
+	 'env': "development"
+	,'async': true
+	,'fileAsync': true
+	//,'poll': 1000
+	//,'functions': {}
+	//,'dumpLineNumbers': "comments"
+	//,'relativeUrls': false
+	//,'rootpath': ":/a.com/"
+};
 		</script>
+		<script src="<?= BASEPATH ?>js/lib/bower_components/less/dist/less.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/jquery/dist/jquery.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular/angular.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-aria/angular-aria.js"></script>
