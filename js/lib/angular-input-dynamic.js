@@ -152,18 +152,24 @@
 		.filter('summary', function($parse){
 			var typeMethod = {
 				 'sum': function(accumulate, value){
-					return accumulate + value;
+					return ((accumulate)? accumulate : 0) + value;
 				}
 			};
 
 			return function(input, type, expression){
 				if(!angular.isArray(input)) return null;
+				if(!(type in typeMethod)){
+					// TODO: throw exception
+					return null;
+				}
 
 				var accumulate = 0;
 				var parser = $parse(expression);
 				angular.forEach(input, function(item){
-					accumulate = typeMethod[type](accumulate, parser(item.data));
+					accumulate = typeMethod[type](accumulate, parser(item));
 				});
+
+				return accumulate;
 			};
 		})
 		.controller('inputDynamicNumber', function($scope){
@@ -263,16 +269,19 @@
 
 		})
 		.controller('inputDynamicDatalist', function($scope){
-			if(!angular.isArray($scope.$parent.$model[$scope.$parent.$meta.name])){
+			$scope.$summary = {};
+			var meta = ($scope.$parent.$meta)? $scope.$parent.$meta : {};
+
+			if(!angular.isArray($scope.$parent.$model[meta.name])){
 				$scope.$parent.$model[$scope.$parent.$meta.name] = [];
 			}
 
 			$scope.addItem = function(){
-				$scope.$parent.$model[$scope.$parent.$meta.name].push({});
+				$scope.$parent.$model[meta.name].push({});
 			};
 
 			$scope.delItem = function(index){
-				$scope.$parent.$model[$scope.$parent.$meta.name].splice(index, 1);
+				$scope.$parent.$model[meta.name].splice(index, 1);
 			};
 		})
 	;

@@ -38,8 +38,13 @@ table.input-dynamic-cl-datalist>tbody>tr>td {
 					<ic-svg ic-href="#ic_item_new"></ic-svg>
 				</md-button>
 			</th>
-			<th ng-repeat="field in $meta.fields" ng-if="!field.show || field.show[$mode]">
-				<span>&nbsp;</span>
+			<th ng-repeat="field in $meta.fields" ng-if="!field.show || field.show[$mode]" style="padding-right: 1.25em;">
+				<div layout="column" ng-if="field.summary" flex>
+					<output ng-repeat="(summary_type, prop) in field.summary" ng-class="prop.classes" flex style="border-bottom: 3px double black;">
+						<span class="app-view-list-altheader">{{prop.text}}</span>
+						<span>{{$model[$meta.name] | summary:summary_type:prop.expression}}</span>
+					</output>
+				</div>
 			</th>
 		</tr>
 	</tfoot>

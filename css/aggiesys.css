@@ -164,7 +164,8 @@ form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
 		visibility: hidden;
 	}
 
-	table.app-view-list>tbody>tr>*:not(.app-view-list-toolsbar){
+	table.app-view-list>tbody>tr>*:not(.app-view-list-toolsbar),
+	table.app-view-list>tfoot>tr>*:not(.app-view-list-toolsbar){
 		display: flex;
 	}
 

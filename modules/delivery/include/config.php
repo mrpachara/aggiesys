@@ -147,6 +147,13 @@
 							, 'accept' => 'number'
 						)
 					)
+					, 'summary' => array(
+						  'sum' => array(
+							  'expression' => "price"
+							, 'text' => 'ราคารวม'
+							, 'classes' => array('input-dynamic-cl-number')
+						)
+					)
 				)
 			)
 			, 'template' => array(
