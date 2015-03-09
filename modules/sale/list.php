@@ -29,7 +29,7 @@
 			$item = array(
 				  'uri' => "{$_moduleName}/self/{$data['id']}"
 				, 'value' => $data['id']
-				, 'label' => $data['code'].'-'.$data['fullname']
+				, 'label' => $data['code']
 				, 'links' => array()
 				, 'data' => $data
 			);

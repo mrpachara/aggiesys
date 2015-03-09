@@ -1,62 +1,16 @@
 <?php
 	namespace app;
 
-	class DeliveryService extends \sys\DataService {
+	class SaleService extends \sys\DataService {
 		protected static function getSearchableFields(){
 			return array(
 				  'doc.code'
 				, 'doc.date'
-				, 'farm.code'
-				, 'deliveryhead.fullname'
-				, 'deliveryhead.address'
+				, 'customer.code'
+				, 'salehead.fullname'
+				, 'salehead.address'
+				, 'salehead.registration'
 			);
-		}
-
-		protected static function getWhereSearchSpecial(&$searchTerm){
-			$where = array(
-				  'sqls' => array()
-				, 'params' => array()
-			);
-
-			if(!empty($searchTerm['specials']['isrefered'])){
-				$checkText = '> 0';
-				if($searchTerm['specials']['isrefered'][0] == 'false') $checkText = '= 0';
-
-				$where['sqls'][] = sprintf('(
-					(
-						SELECT
-							  COUNT("docref"."id_ref")
-						FROM "docref"
-							LEFT JOIN "doc" AS "isrefered_doc" ON ("docref"."id_doc" = "isrefered_doc"."id")
-						WHERE
-							("docref"."id_ref" = "doc"."id") AND ("isrefered_doc"."id_doc" IS NULL)
-					) %s
-				)', $checkText);
-				$where['sqls'][] = '("doc"."id_doc" IS NULL)';
-			}
-
-			if(!empty($searchTerm['specials']['unsold'])){
-				$except = $searchTerm['specials']['unsold'][0];
-
-				$where['sqls'][] = '(
-					(
-						SELECT
-							  COUNT("docref"."id_ref")
-						FROM "docref"
-							LEFT JOIN "doc" AS "_unsold_doc" ON ("docref"."id_doc" = "_unsold_doc"."id")
-							INNER JOIN "salehead" ON ("salehead"."id_doc" = "_unsold_doc"."id")
-						WHERE
-							    ("docref"."id_ref" = "doc"."id")
-							AND ("_unsold_doc"."id_doc" IS NULL)
-							AND ("salehead"."id" <> :_unsold_id)
-					) = 0
-				)';
-				$where['params'][':_unsold_id'] = $except;
-
-				$where['sqls'][] = '("doc"."id_doc" IS NULL)';
-			}
-
-			return $where;
 		}
 
 		protected static function extendAction(&$data){
@@ -68,26 +22,26 @@
 		}
 
 		private $generatorClass;
-		private $farmService;
+		private $customerService;
 		private $vegetableService;
 
-		function __construct($generatorClass, $farmService, $vegetableService){
+		function __construct($generatorClass, $customerService, $vegetableService){
 			parent::__construct();
 
 			$this->generatorClass = $generatorClass;
-			$this->farmService = $farmService;
+			$this->customerService = $customerService;
 			$this->vegetableService = $vegetableService;
 		}
 
 		private function prepareRefEntity(&$data){
-			if($farm = $this->farmService->get($data['id_farm'])){
-				if(!empty($data['fullname'])) $farm['name'] = $data['fullname'];
-				if(!empty($data['address'])) $farm['address'] = $data['address'];
+			if($customer = $this->customerService->get($data['id_customer'])){
+				if(!empty($data['fullname'])) $customer['name'] = $data['fullname'];
+				if(!empty($data['address'])) $customer['address'] = $data['address'];
 
-				$data['farm'] = $farm;
+				$data['customer'] = $customer;
 			}
 
-			unset($data['id_farm']);
+			unset($data['id_customer']);
 
 			/* creator */
 			$stmt = $this->getPdo()->prepare('
@@ -110,16 +64,32 @@
 			return $data;
 		}
 
+		private function getDocrefs($id_head){
+			$stmt = $this->getPdo()->prepare('
+				SELECT
+					  "deliveryhead"."id"
+				FROM "docref"
+					LEFT JOIN "doc" ON ("docref"."id_ref" = "doc"."id")
+					INNER JOIN "deliveryhead" ON ("deliveryhead"."id_doc" = "doc"."id")
+				WHERE "docref"."id_doc" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id_head) ORDER BY "doc"."tstmp" DESC
+			;');
+			$stmt->execute(array(
+				  ':id_head' => $id_head
+			));
+
+			return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+		}
+
 		private function getDetails($id_head){
 			$stmt = $this->getPdo()->prepare('
 				SELECT
-					  "deliverydetail"."id" AS "id"
-					, "deliverydetail"."id_vegetable" AS "id_vegetable"
+					  "saledetail"."id" AS "id"
+					, "saledetail"."id_vegetable" AS "id_vegetable"
 					, "docdetail"."qty" AS "qty"
 					, "docdetail"."price" AS "price"
-				FROM "deliverydetail"
-					LEFT JOIN "docdetail" ON("deliverydetail"."id_docdetail" = "docdetail"."id")
-				WHERE "docdetail"."id_doc" = (SELECT "id_doc" FROM "deliveryhead" WHERE "id" = :id_head) ORDER BY "id" ASC
+				FROM "saledetail"
+					LEFT JOIN "docdetail" ON("saledetail"."id_docdetail" = "docdetail"."id")
+				WHERE "docdetail"."id_doc" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id_head) ORDER BY "id" ASC
 			;');
 			$stmt->execute(array(
 				  ':id_head' => $id_head
@@ -144,11 +114,11 @@
 					  "id" => null
 					, "code" => call_user_func(array($this->generatorClass, 'getAutoText'))
 					, "date" => $currentstmt
-					, "id_farm" => null
+					, "id_customer" => null
 					, "fullname" => null
 					, "address" => null
 					, "iscanceled" => false
-					, 'farm' => array(
+					, 'customer' => array(
 						  'id' => null
 						, 'code' => null
 						, 'name' => null
@@ -159,6 +129,7 @@
 						, 'username' => null
 						, 'fullname' => null
 					)
+					, "deliveries" => array()
 					, "details" => array()
 				);
 
@@ -168,11 +139,11 @@
 					SELECT
 					  "id"
 					, (\''.call_user_func(array($this->generatorClass, 'getAutoText')).'\') AS "_code"
-					, "id_farm"
+					, "id_customer"
 					, "fullname"
 					, "address"
 					, "id_doc"
-					FROM "deliveryhead"
+					FROM "salehead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				;');
 				$stmt->execute($where['params']);
@@ -197,6 +168,7 @@
 
 					$this->prepareRefEntity($data);
 
+					$data['deliveries'] = $this->getDocrefs($data['id']);
 					$data['details'] = $this->getDetails($data['id']);
 
 					$data['_isrefered'] = false;
@@ -206,7 +178,7 @@
 					try{
 						$stmt = $this->getPdo()->prepare('
 							DELETE FROM "doc"
-							WHERE "id" = (SELECT "id_doc" FROM "deliveryhead" WHERE "id" = :id)
+							WHERE "id" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id)
 						;');
 						$stmt->execute(array(
 							  ':id' => $data['id']
@@ -223,40 +195,19 @@
 		}
 
 		protected function getAllEntity($where, $limit, &$pageData){
-			/*
 			$sqlPattern = '
 				SELECT
-					  "deliveryhead"."id" AS "id"
+					  "salehead"."id" AS "id"
 					, "doc"."code" AS "code"
 					, '.\sys\PDO::getJsDate('"doc"."date"').' AS "date"
-					, "deliveryhead"."id_farm" AS "id_farm"
-					, "deliveryhead"."fullname" AS "fullname"
-					, "deliveryhead"."address" AS "address"
+					, "salehead"."id_customer" AS "id_customer"
+					, "salehead"."fullname" AS "fullname"
+					, "salehead"."address" AS "address"
 					, "doc"."id_creator" AS "id_creator"
 					, ("doc"."id_doc" IS NOT NULL) AS "iscanceled"
-					, COUNT("docref"."id_ref") AS "numofref"
-				FROM "deliveryhead"
-					LEFT JOIN "doc" ON ("deliveryhead"."id_doc" = "doc"."id")
-					LEFT JOIN "docref" ON ("doc"."id" = "docref"."id_doc")
-					LEFT JOIN "farm" ON ("deliveryhead"."id_farm" = "farm"."id")
-				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
-				GROUP BY "deliveryhead"."id", "doc"."code", "doc"."date", "deliveryhead"."id_farm", "deliveryhead"."fullname", "deliveryhead"."address", "doc"."id_creator", "doc"."id_doc", "doc"."tstmp"
-				%s
-			';
-			*/
-			$sqlPattern = '
-				SELECT
-					  "deliveryhead"."id" AS "id"
-					, "doc"."code" AS "code"
-					, '.\sys\PDO::getJsDate('"doc"."date"').' AS "date"
-					, "deliveryhead"."id_farm" AS "id_farm"
-					, "deliveryhead"."fullname" AS "fullname"
-					, "deliveryhead"."address" AS "address"
-					, "doc"."id_creator" AS "id_creator"
-					, ("doc"."id_doc" IS NOT NULL) AS "iscanceled"
-				FROM "deliveryhead"
-					LEFT JOIN "doc" ON ("deliveryhead"."id_doc" = "doc"."id")
-					LEFT JOIN "farm" ON ("deliveryhead"."id_farm" = "farm"."id")
+				FROM "salehead"
+					LEFT JOIN "doc" ON ("salehead"."id_doc" = "doc"."id")
+					LEFT JOIN "customer" ON ("salehead"."id_customer" = "customer"."id")
 				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
 			';
@@ -310,34 +261,34 @@
 				)
 			;');
 			$stmt->execute(array(
-				  ':code' => $generator->getRn('11')
+				  ':code' => $generator->getRn('13')
 				, ':date' => $data['date']
-				, ':type' => 'DEBIT'
+				, ':type' => 'CREDIT'
 				, ':id_creator' => $GLOBALS['_session']->getUser()['id']
 			));
 			$id_doc = $this->getPdo()->lastInsertId('doc_id_seq');
 
 			$stmt = $this->getPdo()->prepare('
-				INSERT INTO "deliveryhead" (
+				INSERT INTO "salehead" (
 				  "id_doc"
-				, "id_farm"
+				, "id_customer"
 				, "fullname"
 				, "address"
 				) VALUES (
 					  :id_doc
-					, :id_farm
+					, :id_customer
 					, :fullname
 					, :address
 				)
 			;');
 			$stmt->execute(array(
 				  ':id_doc' => $id_doc
-				, ':id_farm' => $data['farm']['id']
-				, ':fullname' => $data['farm']['name']
-				, ':address' => $data['farm']['address']
+				, ':id_customer' => $data['customer']['id']
+				, ':fullname' => $data['customer']['name']
+				, ':address' => $data['customer']['address']
 			));
 
-			$new_id = $data['id'] = $this->getPdo()->lastInsertId('deliveryhead_id_seq');
+			$new_id = $data['id'] = $this->getPdo()->lastInsertId('salehead_id_seq');
 
 			$stmtDocdetail = $this->getPdo()->prepare('
 				INSERT INTO "docdetail" (
@@ -354,7 +305,7 @@
 			;');
 
 			$stmtDetail = $this->getPdo()->prepare('
-				INSERT INTO "deliverydetail" (
+				INSERT INTO "saledetail" (
 					  "id_docdetail"
 					, "id_vegetable"
 				) VALUES (
@@ -414,7 +365,7 @@
 			$stmt = $this->getPdo()->prepare('
 				UPDATE "doc" SET
 					  "id_doc" = :id_doc
-				WHERE "id" = (SELECT "id_doc" FROM "deliveryhead" WHERE "id" = :id)
+				WHERE "id" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id)
 			;');
 			$stmt->execute(array(
 				  ':id' => $id

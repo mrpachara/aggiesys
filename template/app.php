@@ -59,6 +59,9 @@ var less = {
 						<a href="delivery/list">ใบรับพืชผล</a>
 					</div>
 					<div>
+						<a href="sale/list">ใบขายพืชผล</a>
+					</div>
+					<div>
 						<a href="vegetable/list">ข้อมูลพืชผล</a>
 					</div>
 					<div>

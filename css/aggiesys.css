@@ -135,12 +135,14 @@ form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
 	font-size: 120px;
 	color: rgba(255, 0, 0, 0.125);
 
-	transform: translateY(100px) translateX(-14.645%) rotate(-0.125turn);
+	transform: translateY(150px) translateX(-14.645%) rotate(-0.125turn);
 	transform-origin: right center;
 }
 @media (max-width: 600px) {
 	form.app-view-self.app-cl-item-canceled .app-view-self-status>* {
 		font-size: 60px;
+
+		transform: translateY(300px) translateX(-14.645%) rotate(-0.125turn);
 	}
 }
 

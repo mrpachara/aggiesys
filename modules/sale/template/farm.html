@@ -1,0 +1,9 @@
+<div layout="column">
+	<div layout="row">
+		<input-dynamic ng-model="data" ng-disabled="ctrl.disabled" ng-readonly="ctrl.readonly" ng-required="ctrl.required" input-mode="mode" input-meta="meta" input-template="(mode === null)? 'text' : 'select.domain'" input-form="form" style="width: 10em;"></input-dynamic>
+		<input-dynamic flex ng-disabled="disabled" ng-readonly="ctrl.readonly || data[meta.name]['id']" ng-model="data[meta.name]" input-mode="mode" input-template="'text'" input-meta="(meta.fields | filter:{'name': 'name'}:true)[0]" input-form="form"></input-dynamic>
+	</div>
+	<div layout="row">
+		<input-dynamic flex ng-disabled="disabled" ng-readonly="ctrl.readonly || data[meta.name]['id']" ng-model="data[meta.name]" input-mode="mode" input-template="'textarea'" input-meta="(meta.fields | filter:{'name': 'address'}:true)[0]" input-form="form"></input-dynamic>
+	</div>
+</div>

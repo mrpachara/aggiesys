@@ -150,23 +150,13 @@
 			};
 		})
 		.filter('summary', function($parse){
-			var typeMethod = {
-				 'sum': function(accumulate, value){
-					return ((accumulate)? accumulate : 0) + value;
-				}
-			};
-
-			return function(input, type, expression){
+			return function(input, expression){
 				if(!angular.isArray(input)) return null;
-				if(!(type in typeMethod)){
-					// TODO: throw exception
-					return null;
-				}
 
-				var accumulate = 0;
+				var accumulate = null;
 				var parser = $parse(expression);
 				angular.forEach(input, function(item){
-					accumulate = typeMethod[type](accumulate, parser(item));
+					accumulate = ((accumulate)? accumulate : 0) + parser(item);
 				});
 
 				return accumulate;

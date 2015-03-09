@@ -26,7 +26,7 @@
 				if(count($termSplited) == 1){
 					$searchTerm['terms'][] = $term;
 				} else{
-					if(!is_array($searchTerm['specials'][$termSplited[0]])) $searchTerm['specials'][$termSplited[0]] = array();
+					if(empty($searchTerm['specials'][$termSplited[0]])) $searchTerm['specials'][$termSplited[0]] = array();
 
 					$searchTerm['specials'][$termSplited[0]][] = $termSplited[1];
 				}
