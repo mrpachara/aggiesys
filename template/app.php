@@ -47,7 +47,7 @@ var less = {
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 	</head>
 	<body layout="row">
-		<md-sidenav md-swipe-left="$mdSidenav('left').close()" md-component-id="left" md-is-locked-open="$media('gt-md')" class="md-sidenav-left md-whiteframe-z2">
+		<md-sidenav md-swipe-left="$mdSidenav('left').close()" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" class="md-sidenav-left md-whiteframe-z2">
 			<md-toolbar>
 				<h1 class="md-toolbar-tools">
 					<span><?= htmlspecialchars($conf['app']['name']) ?></span>
