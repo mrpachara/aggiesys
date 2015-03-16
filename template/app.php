@@ -43,6 +43,7 @@ var less = {
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-input-dynamic.js"></script>
+		<script src="<?= BASEPATH ?>js/angular-input-dynamic-controller.js"></script>
 
 		<script src="<?= BASEPATH ?>js/aggiesys.js"></script>
 	</head>

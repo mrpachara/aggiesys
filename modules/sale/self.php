@@ -65,9 +65,8 @@
 		foreach($_fields as &$field){
 			if($field['name'] == 'deliveries'){
 				foreach($field['links'] as &$link){
-					if($link['rel'] == 'domain'){
-						$link['href'] .= (empty($data['id']))? '0' : $data['id'];
-						break;
+					if(($link['rel'] == 'domain') || ($link['rel'] == 'deliveries-list')){
+						$link['href'] .= (empty($data['deliveries']))? '0' : implode(',', $data['deliveries']);
 					}
 				}
 				break;

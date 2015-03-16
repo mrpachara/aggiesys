@@ -40,6 +40,13 @@
 				, 'href' => "{$_moduleName}/self/{$data['id']}"
 			);
 
+			$item['links'][] = array(
+				  'rel' => 'self'
+				, 'type' => 'get'
+				, 'resource' => true
+				, 'href' => BASEPATH."modules/{$_moduleName}/self.php?id={$data['id']}"
+			);
+
 			if($data['iscanceled']){
 				$item['status'] = array(
 					  'name' => 'canceled'

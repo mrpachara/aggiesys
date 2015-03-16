@@ -75,7 +75,7 @@
 			return $stmt->fetchAll(\PDO::FETCH_COLUMN);
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$data = array(
@@ -92,6 +92,7 @@
 						, "fullname"
 					FROM "user"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -105,7 +106,7 @@
 			return $data;
 		}
 
-		public function getAllEntity($where, $limit, &$pageData){
+		protected function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT DISTINCT
 					  "user"."id" AS "id"
@@ -150,7 +151,7 @@
 			return $datas;
 		}
 
-		public function saveEntity($id, &$data){
+		protected function saveEntity($id, &$data){
 			if($id === null){
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "user" (
@@ -237,7 +238,7 @@
 			return $id;
 		}
 
-		public function deleteEntity($id){
+		protected function deleteEntity($id){
 			$this->getPdo()->query("SAVEPOINT trydelete_user;");
 			try{
 				$stmt = $this->getPdo()->prepare('

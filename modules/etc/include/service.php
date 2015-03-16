@@ -19,7 +19,7 @@
 			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$data = array(
@@ -36,6 +36,7 @@
 						, "name"
 					FROM "etc"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -49,7 +50,7 @@
 			return $data;
 		}
 
-		public function getAllEntity($where, $limit, &$pageData){
+		protected function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT
 					  "etc"."id" AS "id"
@@ -70,7 +71,11 @@
 			return $datas;
 		}
 
-		public function saveEntity($id, &$data){
+		protected function saveEntity($id, &$data){
+			if(empty($data['items'])){
+				throw new \sys\DataServiceException("update %s{$id} without items", 500);
+			}
+
 			if($id === null){
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "etc" (
@@ -139,7 +144,7 @@
 			return $id;
 		}
 
-		public function deleteEntity($id){
+		protected function deleteEntity($id){
 			$stmt = $this->getPdo()->prepare('
 				DELETE FROM "etc"
 				WHERE "id" = :id

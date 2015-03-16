@@ -4,9 +4,9 @@
 	class CarriageService extends \sys\DataService {
 		protected static function getSearchableFields(){
 			return array(
-				  'code'
-				, 'name'
-				, 'registration'
+				  'carriage.code'
+				, 'carriage.name'
+				, 'carriage.registration'
 				, 'etcitem.code'
 			);
 		}
@@ -15,7 +15,7 @@
 			parent::__construct();
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$data = array(
@@ -42,6 +42,7 @@
 							WHERE "etc"."code" = \'TYPE_CARRIAGE\'
 						) AS "etcitem" ON ("carriage"."code_typecarriage" = "etcitem"."code")
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -51,7 +52,7 @@
 			return $data;
 		}
 
-		public function getAllEntity($where, $limit, &$pageData){
+		protected function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT
 					  "carriage"."id"
@@ -96,7 +97,7 @@
 			return $datas;
 		}
 
-		public function saveEntity($id, &$data){
+		protected function saveEntity($id, &$data){
 			if($id === null){
 				$stmt = $this->getPdo()->prepare('
 					INSERT INTO "carriage" (
@@ -143,7 +144,7 @@
 			return $id;
 		}
 
-		public function deleteEntity($id){
+		protected function deleteEntity($id){
 			$stmt = $this->getPdo()->prepare('
 				DELETE FROM "carriage"
 				WHERE "id" = :id

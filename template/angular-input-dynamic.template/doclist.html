@@ -1,0 +1,14 @@
+<div ng-controller="inputDynamicCheckboxlist" style="padding-bottom: 1em;">
+	<label ng-bind="$meta.name_field || $meta.name" class="app-cp-component-label"></label>
+	<div ng-repeat="item in items" ng-class="item.classes" style="margin-left: 1em; padding-top: 0.50em; padding-bottom: 0.50em;">
+		<span layout="row" layout-align="left center">
+			<span ng-bind="item.data.code"></span>
+			<span layout="row" layout-align="center center" style="margin-left: 0.50em; margin-right: 0.50em;">
+				<span>[</span>
+				<span ng-bind="item.data.date | datetime_app" style="display: inline-block; width: 12em; font-family: monospace; white-space: nowrap; text-align: center;"></span>
+				<span>]</span>
+			</span>
+			<span ng-bind="item.data.fullname"></span>
+		</span>
+	</div>
+</div>

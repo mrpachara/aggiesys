@@ -40,12 +40,12 @@
 	<tbody>
 		<tr ng-repeat="item in model.items" ng-class="(item.status || {}).classes">
 			<td ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))">
-				<label ng-bind="field.name" flex="40" class="app-view-list-altheader"></label>
+				<label ng-bind="field.name_field || field.name" flex="40" class="app-view-list-altheader"></label>
 				<span ng-bind="item.data[field.name] | model:field" flex="60" class="app-view-list-value"></span>
 			</td>
 			<td class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
-					<md-button ng-repeat="link in item.links" ng-disabled="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+					<md-button ng-repeat="link in item.links" ng-if="!link.resource" ng-disabled="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>

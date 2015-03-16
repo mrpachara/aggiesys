@@ -1,7 +1,12 @@
 <?php
 	require_once "../../global.inc.php";
 
-	$_session->authozPage('ADMIN', '\sys\Sessions::forbidden_json');
+	$_session->authozPage("ADMIN", "static::forbidden_json");
+
+	require_once "include/include.php";
+
+	$_modulePath = reflocation(__DIR__);
+	$_moduleName = basename(__DIR__);
 
 	$json = array();
 

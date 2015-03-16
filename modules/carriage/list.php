@@ -3,10 +3,7 @@
 
 	$_session->authozPage("STAFF", "static::forbidden_json");
 
-	require_once "include/config.php";
-	require_once "include/carriage.service.php";
-
-	$entityService = new \app\CarriageService();
+	require_once "include/include.php";
 
 	$_modulePath = reflocation(__DIR__);
 	$_moduleName = basename(__DIR__);
@@ -32,7 +29,7 @@
 			$item = array(
 				  'uri' => "{$_moduleName}/self/{$data['id']}"
 				, 'value' => $data['id']
-				, 'label' => $data['code'].'-'.$data['name']
+				, 'label' => $data['registration'].' ['.$data['code'].'-'.$data['name'].']'
 				, 'links' => array()
 				, 'data' => $data
 			);

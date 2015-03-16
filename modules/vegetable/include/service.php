@@ -17,7 +17,7 @@
 			$this->generatorClass = $generatorClass;
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$data = array(
@@ -37,6 +37,7 @@
 						, "price_sell"
 					FROM "vegetable"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 

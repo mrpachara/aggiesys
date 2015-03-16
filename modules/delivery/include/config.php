@@ -37,7 +37,7 @@
 			, 'name_field' => 'วันที่ใบรับพืชผล'
 			, 'width' => "12em"
 			, 'expression' => array(
-				  'display' => "toString() | datetime_locale"
+				  'display' => "toString() | datetime_app"
 			)
 			, 'template' => array(
 				  '*' => null
@@ -124,6 +124,8 @@
 						  array(
 							  'rel' => 'domain'
 							, 'accept' => 'number'
+							, 'min' => 0
+							, 'fixed' => 2
 						)
 					)
 				)
@@ -145,6 +147,8 @@
 						  array(
 							  'rel' => 'domain'
 							, 'accept' => 'number'
+							, 'min' => 0
+							, 'fixed' => 2
 						)
 					)
 					, 'summary' => array(
@@ -152,6 +156,7 @@
 							  'expression' => "price"
 							, 'text' => 'ราคารวม'
 							, 'classes' => array('input-dynamic-cl-number')
+							, 'fixed' => 2
 						)
 					)
 				)

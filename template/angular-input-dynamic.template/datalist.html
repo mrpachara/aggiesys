@@ -42,7 +42,7 @@ table.input-dynamic-cl-datalist>tbody>tr>td {
 				<div layout="column" ng-if="field.summary" flex>
 					<output ng-repeat="prop in field.summary" ng-class="prop.classes" flex style="border-bottom: 3px double black;">
 						<span class="app-view-list-altheader">{{prop.text}}</span>
-						<span>{{$model[$meta.name] | summary:prop.expression}}</span>
+						<span>{{$model[$meta.name] | summary:prop.expression:prop.fixed}}</span>
 					</output>
 				</div>
 			</th>

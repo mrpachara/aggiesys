@@ -59,12 +59,12 @@
 						$parse($scope.$meta.expression.label)($scope.$model[$scope.$meta.name]) : $scope.$model[$scope.$meta.name]
 					;
 
-					$scope.$url = {
+					var defaultUrl = {
 						 'href': null
 						,'link': {}
 					};
 
-					$scope.$input = {
+					var defaultInput = {
 						 'isHasCalculate': false
 						,'isAutoCalculate': true
 						,'toggleAutoCalculate': function(){
@@ -72,6 +72,9 @@
 							$scope.$input['isAutoCalculate'] = !$scope.$input['isAutoCalculate'];
 						}
 					};
+
+					$scope.$url = angular.extend({}, defaultUrl);
+					$scope.$input = angular.extend({}, defaultInput);
 
 					angular.forEach(inputProps, function(prop){
 						var scopePropName = '$' + prop;
@@ -85,10 +88,7 @@
 
 					$scope.$watch('$input.template', function(value){
 						if(value === null){
-							$scope.$url = {
-								 'url': null
-								,'link': {}
-							};
+							$scope.$url = angular.extend({}, defaultUrl);
 						} else{
 							var meta = ($scope.$meta)? $scope.$meta : {};
 							var template = (angular.isUndefined(value))? 'text' : value;
@@ -113,6 +113,7 @@
 					});
 
 					$scope.$watch('$mode', function(value){
+						//$scope.$input = angular.extend({}, defaultInput);
 						angular.forEach(inputProps, function(prop){
 							var scopePropName = '$' + prop;
 							var meta = ($scope.$meta)? $scope.$meta : {};
@@ -147,131 +148,6 @@
 						});
 					})();
 				}
-			};
-		})
-		.filter('summary', function($parse){
-			return function(input, expression){
-				if(!angular.isArray(input)) return null;
-
-				var accumulate = null;
-				var parser = $parse(expression);
-				angular.forEach(input, function(item){
-					accumulate = ((accumulate)? accumulate : 0) + parser(item);
-				});
-
-				return accumulate;
-			};
-		})
-		.controller('inputDynamicNumber', function($scope){
-			$scope.$model = {};
-			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? Number($scope.$parent.$model[$scope.$parent.$meta.name]) : null;
-
-			$scope.$watch('$model[$meta.name]', function(value){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = value;
-			});
-			$scope.$watch('$parent.$model[$meta.name]', function(value){
-				$scope.$model[$scope.$parent.$meta.name] = value;
-			});
-		})
-		.controller('inputDynamicDatetime', function($scope){
-			$scope.$model = {};
-			$scope.$model[$scope.$parent.$meta.name] = ($scope.$parent.$model[$scope.$parent.$meta.name])? new Date($scope.$parent.$model[$scope.$parent.$meta.name]) : null;
-
-			$scope.$watch('$model[$meta.name]', function(value){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = (value)? value.toJSON() : null;
-			});
-			$scope.$watch('$parent.$model[$meta.name]', function(value){
-				$scope.$model[$scope.$parent.$meta.name] = new Date(value);
-			});
-		})
-		.controller('inputDynamicCheckboxlist', function($scope, $http){
-			$scope.items = [];
-			$scope.isChecked = {};
-
-			if(!angular.isArray($scope.$parent.$model[$scope.$parent.$meta.name])){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = [];
-			}
-
-			$http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href)
-				.then(function(response){
-					angular.forEach(response.data.items, function(item){
-						$scope.items.push(item);
-
-						angular.forEach($scope.items, function(item){
-							$scope.isChecked[item.value] = ($scope.$parent.$model[$scope.$parent.$meta.name].indexOf(item.value) > -1);
-						});
-					});
-
-					$scope.$watchCollection('isChecked', function(values){
-						$scope.$parent.$model[$scope.$parent.$meta.name] = [];
-
-						angular.forEach(values, function(value, key){
-							if(value) $scope.$parent.$model[$scope.$parent.$meta.name].push(key);
-						});
-					});
-
-				})
-			;
-		})
-		.controller('inputDynamicRadiogroup', function($scope, $http){
-			$scope.items = [];
-
-			$http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href)
-				.then(function(response){
-					angular.forEach(response.data.items, function(item){
-						$scope.items.push(item);
-					});
-				})
-			;
-		})
-		.controller('inputDynamicAutocomplete', function($scope, $http, $parse, $timeout, $element){
-			var expression = {};
-			angular.forEach($scope.$meta.expression, function(value, key){
-				expression[key] = $parse(value);
-			});
-
-			$scope.$autocomplete = {}
-
-			$scope.$autocomplete.selectedItem = {
-				 'data': $scope.$parent.$model[$scope.$parent.$meta.name]
-			};
-
-			$scope.$autocomplete.searchText = null;
-
-			$scope.itemSearch = function(searchText){
-				return (searchText)? $http[$scope.$parent.$url.link.type]($scope.$parent.$url.link.href + '?term=' + encodeURIComponent(searchText))
-					.then(function(response){
-						return response.data.items;
-					})
-				: [];
-			};
-
-			$scope.$watch('$autocomplete.selectedItem', function(value){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : {};
-				$scope.$autocomplete.searchText = '';
-			});
-
-			$element.on('blur.inputDynamicSelect', 'input', function(ev){
-				$timeout(function(){
-					$scope.$autocomplete.searchText = '';
-				}, 300);
-			});
-
-		})
-		.controller('inputDynamicDatalist', function($scope){
-			$scope.$summary = {};
-			var meta = ($scope.$parent.$meta)? $scope.$parent.$meta : {};
-
-			if(!angular.isArray($scope.$parent.$model[meta.name])){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = [];
-			}
-
-			$scope.addItem = function(){
-				$scope.$parent.$model[meta.name].push({});
-			};
-
-			$scope.delItem = function(index){
-				$scope.$parent.$model[meta.name].splice(index, 1);
 			};
 		})
 	;

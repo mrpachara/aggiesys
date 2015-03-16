@@ -18,7 +18,7 @@
 			$this->generatorClass = $generatorClass;
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$data = array(
@@ -36,6 +36,7 @@
 						, "address"
 					FROM "customer"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -45,7 +46,7 @@
 			return $data;
 		}
 
-		public function getAllEntity($where, $limit, &$pageData){
+		protected function getAllEntity($where, $limit, &$pageData){
 			$sqlPattern = '
 				SELECT DISTINCT
 					  "customer"."id" AS "id"
@@ -83,7 +84,7 @@
 			return $datas;
 		}
 
-		public function saveEntity($id, &$data){
+		protected function saveEntity($id, &$data){
 			if($id === null){
 				$generator = new $this->generatorClass();
 				$stmt = $this->getPdo()->prepare('
@@ -126,7 +127,7 @@
 			return $id;
 		}
 
-		public function deleteEntity($id){
+		protected function deleteEntity($id){
 			$stmt = $this->getPdo()->prepare('
 				DELETE FROM "customer"
 				WHERE "id" = :id

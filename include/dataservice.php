@@ -115,9 +115,9 @@
 			return $this->pdo;
 		}
 
-		abstract protected function getEntity($id, $where);
+		abstract protected function getEntity($id, $where, $forupdate);
 
-		public function get($id = null){
+		public function get($id = null, $forupdate = false){
 			$where = static::getWhere();
 
 			$where = array_merge_recursive(
@@ -127,14 +127,14 @@
 				), $where
 			);
 
-			$data = $this->getEntity($id, $where);
+			$data = $this->getEntity($id, $where, $forupdate);
 
 			static::extendAction($data);
 
 			return $data;
 		}
 
-		public function getByCode($code = null){
+		public function getByCode($code = null, $forupdate = false){
 			$where = static::getWhere();
 
 			$where = array_merge_recursive(
@@ -144,7 +144,7 @@
 				), $where
 			);
 
-			$data = $this->getEntity(0, $where);
+			$data = $this->getEntity(0, $where, $forupdate);
 
 			static::extendAction($data);
 
@@ -184,7 +184,9 @@
 				throw new \sys\DataServiceException("update %s{$id} without data", 400);
 			}
 
-			$existedData = $this->get($id);
+			$this->getPdo()->beginTransaction();
+
+			$existedData = $this->get($id, true);
 
 			if($existedData === false){
 				throw new \sys\DataServiceException("%s{$id} not found", 404);
@@ -195,8 +197,6 @@
 			}
 
 			$id = $existedData['id'];
-
-			$this->getPdo()->beginTransaction();
 
 			try{
 				$id = $this->saveEntity($id, $data);

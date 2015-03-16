@@ -1,0 +1,22 @@
+<div ng-controller="inputDynamicCheckboxlist" style="padding-bottom: 1em;">
+	<label ng-bind="$meta.name_field || $meta.name" class="app-cp-component-label"></label>
+	<md-button type="button" ng-click="toggleAll()" aria-label="toggle all" layout="row" layout-align="center center" style="margin-left: 6px;">
+		<ic-svg ic-href="#ic_select_all"></ic-svg>
+		<span style="margin-left: 8px;">{{(items.length == $model[$meta.name].length)? 'Unselect' : 'Select'}} All</span>
+	</md-button>
+	<md-checkbox ng-repeat="item in items" ng-model="isChecked[item.value]" ng-change="dirty()" ng-class="item.classes" aria-label="{{meta.name + ' ' + item.value}}">
+		<span layout="row" layout-align="left center">
+			<span ng-bind="item.data.code"></span>
+			<span layout="row" layout-align="center center" style="margin-left: 0.50em; margin-right: 0.50em;">
+				<span>[</span>
+				<span ng-bind="item.data.date | datetime_app" style="display: inline-block; width: 12em; font-family: monospace; white-space: nowrap; text-align: center;"></span>
+				<span>]</span>
+			</span>
+			<span ng-bind="item.data.fullname"></span>
+		</span>
+	</md-checkbox>
+	<md-button type="button" ng-click="transform()" aria-label="generate details" layout="row" layout-align="center center" class="md-raised" ng-class="{'md-warn': itemsDirty, 'md-hue-3': itemsDirty}">
+		<ic-svg ic-href="#ic_autorenew"></ic-svg>
+		<span>Recalculate</span>
+	</md-button>
+</div>

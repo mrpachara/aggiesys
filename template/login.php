@@ -28,7 +28,6 @@ var BASEPATH = <?= json_encode(BASEPATH) ?>;
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-material/angular-material.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/bower_components/angular-messages/angular-messages.js"></script>
 		<script src="<?= BASEPATH ?>js/lib/angular-icons-svg.js"></script>
-		<script src="<?= BASEPATH ?>js/lib/angular-input-dynamic.js"></script>
 
 		<script src="<?= BASEPATH ?>js/login.js"></script>
 	</head>

@@ -9,7 +9,7 @@
 				, 'customer.code'
 				, 'salehead.fullname'
 				, 'salehead.address'
-				, 'salehead.registration'
+				, 'carriage.code'
 			);
 		}
 
@@ -23,17 +23,20 @@
 
 		private $generatorClass;
 		private $customerService;
+		private $carriageService;
 		private $vegetableService;
 
-		function __construct($generatorClass, $customerService, $vegetableService){
+		function __construct($generatorClass, $customerService, $carriageService, $vegetableService){
 			parent::__construct();
 
 			$this->generatorClass = $generatorClass;
 			$this->customerService = $customerService;
+			$this->carriageService = $carriageService;
 			$this->vegetableService = $vegetableService;
 		}
 
 		private function prepareRefEntity(&$data){
+			/* customer */
 			if($customer = $this->customerService->get($data['id_customer'])){
 				if(!empty($data['fullname'])) $customer['name'] = $data['fullname'];
 				if(!empty($data['address'])) $customer['address'] = $data['address'];
@@ -42,6 +45,13 @@
 			}
 
 			unset($data['id_customer']);
+
+			/* carriage */
+			if($customer = $this->carriageService->get($data['id_carriage'])){
+				$data['carriage'] = $customer;
+			}
+
+			unset($data['id_carriage']);
 
 			/* creator */
 			$stmt = $this->getPdo()->prepare('
@@ -104,7 +114,7 @@
 			return $details;
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$stmt = $this->getPdo()->prepare('SELECT '.\sys\PDO::getJsDate('CURRENT_TIMESTAMP').';');
@@ -124,6 +134,12 @@
 						, 'name' => null
 						, 'address' => null
 					)
+					, 'carriage' => array(
+						  'id' => null
+						, 'code' => null
+						, 'name' => null
+						, 'registration' => null
+					)
 					, 'creator' => array(
 						  'id' => null
 						, 'username' => null
@@ -142,9 +158,11 @@
 					, "id_customer"
 					, "fullname"
 					, "address"
+					, "id_carriage"
 					, "id_doc"
 					FROM "salehead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -171,23 +189,20 @@
 					$data['deliveries'] = $this->getDocrefs($data['id']);
 					$data['details'] = $this->getDetails($data['id']);
 
-					$data['_isrefered'] = false;
+					$stmt = $this->getPdo()->prepare('
+						SELECT
+							  COUNT("docref"."id_doc") AS "numref"
+						FROM "docref"
+							LEFT JOIN "doc" ON ("docref"."id_doc" = "doc"."id")
+						WHERE
+							    ("doc"."id_doc" IS NULL)
+							AND ("id_ref" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id))
+					;');
+					$stmt->execute(array(
+						  ':id' => $data['id']
+					));
 
-					$this->getPdo()->beginTransaction();
-
-					try{
-						$stmt = $this->getPdo()->prepare('
-							DELETE FROM "doc"
-							WHERE "id" = (SELECT "id_doc" FROM "salehead" WHERE "id" = :id)
-						;');
-						$stmt->execute(array(
-							  ':id' => $data['id']
-						));
-					} catch(\PDOException $excp){
-						$data['_isrefered'] = true;
-					}
-
-					$this->getPdo()->rollBack();
+					$data['_isrefered'] = ($stmt->fetchColumn() > 0);
 				}
 			}
 
@@ -203,11 +218,13 @@
 					, "salehead"."id_customer" AS "id_customer"
 					, "salehead"."fullname" AS "fullname"
 					, "salehead"."address" AS "address"
+					, "salehead"."id_carriage" AS "id_carriage"
 					, "doc"."id_creator" AS "id_creator"
 					, ("doc"."id_doc" IS NOT NULL) AS "iscanceled"
 				FROM "salehead"
 					LEFT JOIN "doc" ON ("salehead"."id_doc" = "doc"."id")
 					LEFT JOIN "customer" ON ("salehead"."id_customer" = "customer"."id")
+					LEFT JOIN "carriage" ON ("salehead"."id_carriage" = "carriage"."id")
 				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
 				%s
 			';
@@ -268,17 +285,88 @@
 			));
 			$id_doc = $this->getPdo()->lastInsertId('doc_id_seq');
 
+			if(!empty($data['deliveries'])){
+				/*
+					IMPORTANT:
+						Don't use allow criteria in locking phrase, it alway meet criteria (alway allow).
+						Because it use before locked value to meet criteria.
+						So lock with record criteria first and then check allow criteria later.
+				*/
+				$paramIn = array();
+				$stmtDeliveries = $this->getPdo()->prepare('
+					SELECT
+						  "deliveryhead"."id" AS "id"
+					FROM "deliveryhead"
+					WHERE
+						"deliveryhead"."id" IN ('.\sys\PDO::prepareIn(':id_deliveryhead', $data['deliveries'], $paramIn).')
+					FOR UPDATE
+				;');
+				$stmtDeliveries->execute($paramIn);
+
+				$locked_ids = $stmtDeliveries->fetchAll(\PDO::FETCH_COLUMN);
+
+				$paramIn = array();
+				$stmtDeliveries = $this->getPdo()->prepare('
+					SELECT
+						  "deliveryhead"."id" AS "id"
+					FROM "deliveryhead"
+					WHERE
+						    ("deliveryhead"."id" IN ('.\sys\PDO::prepareIn(':id_deliveryhead', $locked_ids, $paramIn).'))
+						AND ((
+							SELECT
+								  COUNT("docref"."id_ref")
+							FROM "docref"
+								LEFT JOIN "doc" AS "_unsold_doc" ON ("docref"."id_doc" = "_unsold_doc"."id")
+								INNER JOIN "salehead" ON ("salehead"."id_doc" = "_unsold_doc"."id")
+							WHERE
+								    ("docref"."id_ref" = "deliveryhead"."id_doc")
+								AND ("_unsold_doc"."id_doc" IS NULL)
+								AND ("salehead"."id" <> :_unsold_id)
+						) = 0)
+					FOR UPDATE
+				;');
+				$stmtDeliveries->execute(array_merge(
+					  $paramIn
+					, array(
+						  ':_unsold_id' => ($id !== null)? $id : 0
+					)
+				));
+
+				if($data['deliveries'] != $stmtDeliveries->fetchAll(\PDO::FETCH_COLUMN)){
+					throw new \sys\DataServiceException("update %s{$id} not allow deliveries", 500);
+				}
+
+				$stmt = $this->getPdo()->prepare('
+					INSERT INTO "docref" (
+					  "id_doc"
+					, "id_ref"
+					) VALUES (
+						  :id_doc
+						, (SELECT id_doc FROM "deliveryhead" WHERE "id" = :id_ref)
+					)
+				;');
+
+				foreach($data['deliveries'] as $delivery){
+					$stmt->execute(array(
+						  ':id_doc' => $id_doc
+						, ':id_ref' => $delivery
+					));
+				}
+			}
+
 			$stmt = $this->getPdo()->prepare('
 				INSERT INTO "salehead" (
 				  "id_doc"
 				, "id_customer"
 				, "fullname"
 				, "address"
+				, "id_carriage"
 				) VALUES (
 					  :id_doc
 					, :id_customer
 					, :fullname
 					, :address
+					, :id_carriage
 				)
 			;');
 			$stmt->execute(array(
@@ -286,6 +374,7 @@
 				, ':id_customer' => $data['customer']['id']
 				, ':fullname' => $data['customer']['name']
 				, ':address' => $data['customer']['address']
+				, ':id_carriage' => (!empty($data['carriage']['id']))? $data['carriage']['id'] : null
 			));
 
 			$new_id = $data['id'] = $this->getPdo()->lastInsertId('salehead_id_seq');

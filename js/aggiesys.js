@@ -1,8 +1,12 @@
-var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg', 'inputDynamic']);
+var aggiesys = angular.module('Aggiesys', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate', 'icSvg', 'inputDynamic', 'inputDynamicController']);
 window.app = aggiesys;
 
 (function($, angular){
 	'use strict';
+
+	var fillLeft = function(pattern, n){
+		return (pattern + n).slice(-pattern.length);
+	};
 
 	var headersGetter = function(name, headersObj){
 		name = name || '';
@@ -246,6 +250,14 @@ window.app = aggiesys;
 	aggiesys.filter('datetime_locale', function(){
 		return function(input){
 			return (new Date(input)).toLocaleString();
+		};
+	});
+
+	aggiesys.filter('datetime_app', function($filter){
+		return function(input){
+			var jsDate = new Date(input);
+
+			return $filter('date')(jsDate, 'dd/MM/yyyy HH:mm:ss');
 		};
 	});
 

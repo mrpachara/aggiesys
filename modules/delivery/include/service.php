@@ -36,22 +36,37 @@
 			}
 
 			if(!empty($searchTerm['specials']['unsold'])){
-				$except = $searchTerm['specials']['unsold'][0];
+				$except = explode(',', implode(',', $searchTerm['specials']['unsold']));
 
+				$paramIn = array();
 				$where['sqls'][] = '(
 					(
-						SELECT
-							  COUNT("docref"."id_ref")
-						FROM "docref"
-							LEFT JOIN "doc" AS "_unsold_doc" ON ("docref"."id_doc" = "_unsold_doc"."id")
-							INNER JOIN "salehead" ON ("salehead"."id_doc" = "_unsold_doc"."id")
-						WHERE
-							    ("docref"."id_ref" = "doc"."id")
-							AND ("_unsold_doc"."id_doc" IS NULL)
-							AND ("salehead"."id" <> :_unsold_id)
-					) = 0
+						(
+							SELECT
+								  COUNT("docref"."id_ref")
+							FROM "docref"
+								LEFT JOIN "doc" AS "_unsold_doc" ON ("docref"."id_doc" = "_unsold_doc"."id")
+								INNER JOIN "salehead" ON ("salehead"."id_doc" = "_unsold_doc"."id")
+							WHERE
+								    ("docref"."id_ref" = "doc"."id")
+								AND ("_unsold_doc"."id_doc" IS NULL)
+						) = 0
+					)
+					OR ("deliveryhead"."id" IN ('.\sys\PDO::prepareIn(':_unsold_id', $except, $paramIn).'))
 				)';
-				$where['params'][':_unsold_id'] = $except;
+
+				$where['params'] = array_merge($where['params'], $paramIn);
+
+				$where['sqls'][] = '("doc"."id_doc" IS NULL)';
+			}
+
+			if(!empty($searchTerm['specials']['id'])){
+				$ids = explode(',', implode(',', $searchTerm['specials']['id']));
+
+				$paramIn = array();
+				$where['sqls'][] = '("deliveryhead"."id" IN ('.\sys\PDO::prepareIn(':_ids_id', $ids, $paramIn).'))';
+
+				$where['params'] = array_merge($where['params'], $paramIn);
 
 				$where['sqls'][] = '("doc"."id_doc" IS NULL)';
 			}
@@ -134,7 +149,7 @@
 			return $details;
 		}
 
-		protected function getEntity($id, $where){
+		protected function getEntity($id, $where, $forupdate){
 			$data = false;
 			if($id === null) {
 				$stmt = $this->getPdo()->prepare('SELECT '.\sys\PDO::getJsDate('CURRENT_TIMESTAMP').';');
@@ -174,6 +189,7 @@
 					, "id_doc"
 					FROM "deliveryhead"
 					'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
+					'.(($forupdate)? 'FOR UPDATE' : '').'
 				;');
 				$stmt->execute($where['params']);
 
@@ -199,23 +215,20 @@
 
 					$data['details'] = $this->getDetails($data['id']);
 
-					$data['_isrefered'] = false;
+					$stmt = $this->getPdo()->prepare('
+						SELECT
+							  COUNT("docref"."id_doc") AS "numref"
+						FROM "docref"
+							LEFT JOIN "doc" ON ("docref"."id_doc" = "doc"."id")
+						WHERE
+							    ("doc"."id_doc" IS NULL)
+							AND ("id_ref" = (SELECT "id_doc" FROM "deliveryhead" WHERE "id" = :id))
+					;');
+					$stmt->execute(array(
+						  ':id' => $data['id']
+					));
 
-					$this->getPdo()->beginTransaction();
-
-					try{
-						$stmt = $this->getPdo()->prepare('
-							DELETE FROM "doc"
-							WHERE "id" = (SELECT "id_doc" FROM "deliveryhead" WHERE "id" = :id)
-						;');
-						$stmt->execute(array(
-							  ':id' => $data['id']
-						));
-					} catch(\PDOException $excp){
-						$data['_isrefered'] = true;
-					}
-
-					$this->getPdo()->rollBack();
+					$data['_isrefered'] = ($stmt->fetchColumn() > 0);
 				}
 			}
 
@@ -223,27 +236,6 @@
 		}
 
 		protected function getAllEntity($where, $limit, &$pageData){
-			/*
-			$sqlPattern = '
-				SELECT
-					  "deliveryhead"."id" AS "id"
-					, "doc"."code" AS "code"
-					, '.\sys\PDO::getJsDate('"doc"."date"').' AS "date"
-					, "deliveryhead"."id_farm" AS "id_farm"
-					, "deliveryhead"."fullname" AS "fullname"
-					, "deliveryhead"."address" AS "address"
-					, "doc"."id_creator" AS "id_creator"
-					, ("doc"."id_doc" IS NOT NULL) AS "iscanceled"
-					, COUNT("docref"."id_ref") AS "numofref"
-				FROM "deliveryhead"
-					LEFT JOIN "doc" ON ("deliveryhead"."id_doc" = "doc"."id")
-					LEFT JOIN "docref" ON ("doc"."id" = "docref"."id_doc")
-					LEFT JOIN "farm" ON ("deliveryhead"."id_farm" = "farm"."id")
-				'.((!empty($where['sqls']))? 'WHERE '.implode(' AND ', $where['sqls']) : '').'
-				GROUP BY "deliveryhead"."id", "doc"."code", "doc"."date", "deliveryhead"."id_farm", "deliveryhead"."fullname", "deliveryhead"."address", "doc"."id_creator", "doc"."id_doc", "doc"."tstmp"
-				%s
-			';
-			*/
 			$sqlPattern = '
 				SELECT
 					  "deliveryhead"."id" AS "id"
