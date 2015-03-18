@@ -47,6 +47,13 @@ ic-svg>svg,
 	height: 100%;
 }
 
+.app-cl-bt-icon {
+	width: 32px;
+	height: 32px;
+
+	padding: 0px;
+}
+
 .app-cp-component-label {
 	font-weight: bold;
 

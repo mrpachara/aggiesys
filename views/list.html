@@ -30,7 +30,7 @@
 			<th  ng-repeat="field in model.fields" ng-if="!field.show || field.show[mode] || ((mode === null) && (field.show['list']))" ng-bind="field.name_field || field.name"></th>
 			<th class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
-					<md-button ng-repeat="link in model.links" ng-hide="(link.href || null) === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+					<md-button ng-repeat="link in model.links" ng-hide="(link.href || null) === null" ng-click="execute(link)" layout="row" layout-align="center center" class="app-cl-bt-icon" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>
@@ -45,7 +45,7 @@
 			</td>
 			<td class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
-					<md-button ng-repeat="link in item.links" ng-if="!link.resource" ng-disabled="link.href === null" ng-click="execute(link)" aria-label="{{link.rel}} entity">
+					<md-button ng-repeat="link in item.links" ng-if="!link.resource" ng-disabled="link.href === null" ng-click="execute(link)" layout="row" layout-align="center center" class="app-cl-bt-icon" aria-label="{{link.rel}} entity">
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>

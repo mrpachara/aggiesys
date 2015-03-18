@@ -163,7 +163,16 @@
 						$scope.$parent.$model[$scope.$parent.$meta.name] = [];
 
 						angular.forEach(values, function(value, key){
-							if(value) $scope.$parent.$model[$scope.$parent.$meta.name].push(key);
+							if(value){
+								var meetItem = null;
+								angular.forEach($scope.items, function(item){
+									if(meetItem != null) return;
+
+									if(key == item.value) meetItem = item;
+								});
+
+								$scope.$parent.$model[$scope.$parent.$meta.name].push(meetItem.value);
+							}
 						});
 					});
 
@@ -181,10 +190,17 @@
 				})
 			;
 		})
-		.controller('inputDynamicAutocomplete', function($scope, $http, $parse, $timeout, $element){
+		.controller('inputDynamicAutocomplete', function($scope, $element, $http, $parse, $timeout){
 			var expression = {};
 			angular.forEach($scope.$meta.expression, function(value, key){
 				expression[key] = $parse(value);
+			});
+
+			var $input = $element.find('input');
+
+			var defaultValue = {};
+			angular.forEach($scope.$parent.$model[$scope.$parent.$meta.name], function(value, key){
+				defaultValue[key] = null;
 			});
 
 			$scope.$autocomplete = {}
@@ -204,8 +220,14 @@
 			};
 
 			$scope.$watch('$autocomplete.selectedItem', function(value){
-				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : {};
+				$scope.$parent.$model[$scope.$parent.$meta.name] = (!angular.isUndefined(value))? value.data : defaultValue;
 				$scope.$autocomplete.searchText = '';
+
+				if($scope.$parent.$meta['required'] && (angular.equals($scope.$parent.$model[$scope.$parent.$meta.name], defaultValue))){
+					$input.attr('required', 'required');
+				} else{
+					$input.removeAttr('required');
+				}
 			});
 
 			$element.on('blur.inputDynamicSelect', 'input', function(ev){

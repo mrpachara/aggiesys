@@ -91,7 +91,7 @@ var less = {
 			<md-toolbar>
 				<header id="ly-header" class="md-toolbar-tools" flex>
 					<div layout-align="start center" layout="row">
-						<md-button id="app-cmd-view-cmd" ng-click="$mdSidenav('left').open()" hide-gt-md aria-label="show side nav">
+						<md-button id="app-cmd-view-cmd" ng-click="$mdSidenav('left').open()" hide-gt-md layout="row" layout-align="center center" clas="app-cl-bt-icon" aria-label="show side nav">
 							<ic-svg ic-href="#ic_menu"></ic-svg>
 						</md-button>
 					</div>
@@ -99,18 +99,18 @@ var less = {
 						<span>{{appViewTitle}}</span>
 					</h2>
 					<div ng-class="{'app-ly-opt-flex': appIsHasViewSearch && appIsActiveViewSearch}" layout="row">
-						<form id="app-cp-view-search" ng-show="appIsHasViewSearch" ng-class="{'app-st-active': appIsHasViewSearch && appIsActiveViewSearch, 'app-st-padding': appViewSearchText != appViewSearchTerm}" ng-submit="appSubmitViewSearch($event)" layout="row">
-							<md-button id="app-cmd-view-search" ng-click="appActiveViewSearch($event)" aria-label="search bar">
+						<form id="app-cp-view-search" ng-show="appIsHasViewSearch" ng-class="{'app-st-active': appIsHasViewSearch && appIsActiveViewSearch, 'app-st-padding': appViewSearchText != appViewSearchTerm}" ng-submit="appSubmitViewSearch($event)" layout="row" layout-align="center center">
+							<md-button id="app-cmd-view-search" ng-click="appActiveViewSearch($event)" layout="row" layout-align="center center" clas="app-cl-bt-icon" aria-label="search bar">
 								<ic-svg ic-href="#ic_search"></ic-svg>
 							</md-button>
 							<md-input-container class="app-cl-search-box" flex>
 								<input type="search" ng-blur="appDeactiveViewSearch()" name="term" ng-model="appViewSearchText" placeholder="{{appViewSearchTerm}}" />
 							</md-input-container>
-							<md-button id="app-cmd-view-search-reset" ng-click="appActiveViewSearch($event, '')" aria-label="reset search bar">
+							<md-button id="app-cmd-view-search-reset" ng-click="appActiveViewSearch($event, '')" layout="row" layout-align="center center" clas="app-cl-bt-icon" aria-label="reset search bar">
 								<ic-svg ic-href="#ic_clear"></ic-svg>
 							</md-button>
 						</form>
-						<md-button ng-click="appTestProgressLoad()" aria-label="more menu">
+						<md-button ng-click="appTestProgressLoad()" layout="row" layout-align="center center" clas="app-cl-bt-icon" aria-label="more menu">
 							<ic-svg ic-href="#ic_more_vert"></ic-svg>
 						</md-button>
 					</div>
