@@ -67,8 +67,6 @@
 				$where['sqls'][] = '("deliveryhead"."id" IN ('.\sys\PDO::prepareIn(':_ids_id', $ids, $paramIn).'))';
 
 				$where['params'] = array_merge($where['params'], $paramIn);
-
-				$where['sqls'][] = '("doc"."id_doc" IS NULL)';
 			}
 
 			return $where;
