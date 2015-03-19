@@ -31,6 +31,7 @@
 			<th class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
 					<md-button ng-repeat="link in model.links" ng-hide="(link.href || null) === null" ng-click="execute(link)" layout="row" layout-align="center center" class="app-cl-bt-icon" aria-label="{{link.rel}} entity">
+						<md-tooltip md-direction="left">{{link.rel}}</md-tooltip>
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>
@@ -46,6 +47,7 @@
 			<td class="app-view-list-toolsbar">
 				<div layout="row" class="app-view-action-list">
 					<md-button ng-repeat="link in item.links" ng-if="!link.resource" ng-disabled="link.href === null" ng-click="execute(link)" layout="row" layout-align="center center" class="app-cl-bt-icon" aria-label="{{link.rel}} entity">
+						<md-tooltip md-direction="left">{{link.rel}}</md-tooltip>
 						<ic-svg ic-href="#ic_view_list_{{link.rel}}"></ic-svg>
 					</md-button>
 				</div>

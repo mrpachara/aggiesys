@@ -237,7 +237,7 @@
 			});
 
 		})
-		.controller('inputDynamicDatalist', function($scope){
+		.controller('inputDynamicDatalist', function($scope, $element, $timeout){
 			$scope.$summary = {};
 			var meta = ($scope.$parent.$meta)? $scope.$parent.$meta : {};
 
@@ -246,6 +246,10 @@
 			}
 
 			$scope.addItem = function(){
+				$timeout(function(){
+					var $addItem = $element.find('#input-dynamic-datalist-addItem');
+					$addItem.blur();
+				}, 100);
 				$scope.$parent.$model[meta.name].push({});
 			};
 
