@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.0-rc1
+ * v0.9.0
  */
 /* mixin definition ; sets LTR and RTL within the same style call */
 .md-select-menu-container {
@@ -34,12 +34,12 @@
 
 md-input-container > md-select {
   margin: 0;
-  margin-top: 1.4em; }
+  margin-top: 3px; }
 
 md-select {
   display: inline-block;
-  margin-top: 1.5em;
-  margin-bottom: 1.625em;
+  margin-top: 0.35em;
+  margin-bottom: 0.8em;
   margin-left: 2px;
   margin-right: 2px; }
   md-select:focus {
@@ -62,18 +62,21 @@ md-select {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  padding-top: 9px;
+  padding-top: 17px;
   padding-bottom: 8px;
   border-bottom: 1px solid;
-  font-size: 1.6rem;
-  line-height: 0.8em;
   position: relative;
   box-sizing: border-box;
   min-width: 64px; }
   .md-select-label *:first-child {
     -webkit-flex: 1;
         -ms-flex: 1;
-            flex: 1; }
+            flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.2rem;
+    max-width: calc(100% - 2*8px); }
   .md-select-label .md-select-icon {
     -webkit-align-items: flex-end;
         -ms-flex-align: end;
@@ -97,7 +100,7 @@ md-select-menu {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
-  box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
   max-height: 256px;
   overflow-y: hidden;
   -webkit-transform-origin: left top;
@@ -112,8 +115,6 @@ md-select-menu {
     padding-top: 8px;
     padding-bottom: 8px; }
   html[dir=rtl] md-select-menu {
-    -webkit-transform-origin: left top;
-            transform-origin: left top;
     -webkit-transform-origin: right top;
             transform-origin: right top; }
   md-select-menu md-content {
@@ -142,13 +143,13 @@ md-option {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 1.6rem; }
+    font-size: 16px; }
 
 md-optgroup {
   display: block; }
   md-optgroup label {
     display: block;
-    font-size: 1.6rem;
+    font-size: 16px;
     text-transform: uppercase;
     padding: 16px 8px; }
   md-optgroup md-option {
@@ -156,5 +157,4 @@ md-optgroup {
 
 @media screen and (-ms-high-contrast: active) {
   .md-select-backdrop {
-    background-color: transparent; }
- }
+    background-color: transparent; } }
