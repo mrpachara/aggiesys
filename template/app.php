@@ -75,6 +75,9 @@ var less = {
 						<a href="carriage/list">ข้อมูลรถ</a>
 					</div>
 					<div>
+						<a href="employee/list">ข้อทีมงาน</a>
+					</div>
+					<div>
 						<a href="user/list">ข้อมูลผู้ใช้</a>
 					</div>
 					<div>
